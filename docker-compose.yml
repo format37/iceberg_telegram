@@ -1,0 +1,17 @@
+version: '3.8'
+services:
+
+  server: 
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+    build: server
+    network_mode: "host"
+    environment:
+      - TZ=Europe/Moscow
+      - WEBHOOK_HOST=service.icecorp.ru
+      - WEBHOOK_PORT=8443
+      - DOCKER_PORT=8443
+      - MRMSUPPORTBOT_TOKEN=${MRMSUPPORTBOT_TOKEN}
+      - MRMSUPPORTBOT_AUTH_LOGIN=${MRMSUPPORTBOT_AUTH_LOGIN}
+      - MRMSUPPORTBOT_AUTH_PASSWORD=${MRMSUPPORTBOT_AUTH_PASSWORD}
