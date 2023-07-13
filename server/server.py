@@ -248,11 +248,6 @@ def gpticebot_call_reset(message):
     request_str = json.dumps(data)
     content = requests.post(url, json=request_str)
     gpticebot.reply_to(message, ""+str(content.json()['result']))
-    """result = content.json()['result']
-    logger.info("gpticebot reset result: "+str(result))
-    if result != '':
-        gpticebot.reply_to(message, ""+str(content.json()['result']), parse_mode="MarkdownV2")
-        # gpticebot.reply_to(message, result, parse_mode="MarkdownV2")"""
 
 
 @gpticebot.message_handler(commands=['start'])
@@ -318,15 +313,17 @@ def gpticebot_call_message(message):
     try:
         user_id = message.from_user.id
         # Receive user's prompt
-        url = 'http://localhost:' + \
-            os.environ.get('GPTICEBOT_PORT')+'/message'
+        url = 'http://localhost:' + str(os.environ.get('GPTICEBOT_PORT')) + '/message'
         data = {
             "user_id": user_id,
             "message": message.text
         }
         request_str = json.dumps(data)
         content = requests.post(url, json=request_str)
-        gpticebot.reply_to(message, content.text, parse_mode="MarkdownV2")
+        # gpticebot.reply_to(message, content.text, parse_mode="MarkdownV2")
+        result = content.json()['result']
+        if result != '':
+            gpticebot.reply_to(message, ""+str(content.json()['result']), parse_mode="MarkdownV2")
     except Exception as e:
         gpticebot.reply_to(message, e)
 # === === === gpticebot --
