@@ -242,16 +242,7 @@ bots.append(gpticebot)
 
 @gpticebot.message_handler(commands=['reset'])
 def echo_message(message):
-    url = 'http://localhost:'+os.environ.get('GPTICEBOT_PORT')+'/reset_prompt'
-    data = {"user_id": message.from_user.id}
-    request_str = json.dumps(data)
-    content = requests.post(url, json=request_str)
-    gpticebot.reply_to(message, content.text, parse_mode="MarkdownV2")
-
-
-@gpticebot.message_handler(commands=['last_message'])
-def last_message(message):
-    url = 'http://localhost:'+os.environ.get('GPTICEBOT_PORT')+'/last_message'
+    url = 'http://localhost:'+os.environ.get('GPTICEBOT_PORT')+'/reset'
     data = {"user_id": message.from_user.id}
     request_str = json.dumps(data)
     content = requests.post(url, json=request_str)
@@ -260,7 +251,7 @@ def last_message(message):
 
 @gpticebot.message_handler(commands=['start'])
 def echo_message(message):
-    reply_text = """Приветствую, Я GPT-3 робот.
+    reply_text = """Приветствую, Я GPT-4 робот.
 Вы можете задавать мне любые вопросы, но помните, данные которые вы отправляете мне, однажды могут стать публичными.
 Чтобы начать диалог заново, используйте команду /reset. Пожалуйста, не забывайте использовать эту команду, поскольку длительные диалоги требуют значительных вычислительных ресурсов."""
     gpticebot.reply_to(message, escape_characters(reply_text), parse_mode="MarkdownV2")
@@ -322,7 +313,7 @@ def send_user(message):
         user_id = message.from_user.id
         # Receive user's prompt
         url = 'http://localhost:' + \
-            os.environ.get('GPTICEBOT_PORT')+'/regular_message'
+            os.environ.get('GPTICEBOT_PORT')+'/message'
         data = {
             "user_id": user_id,
             "message": message.text
@@ -332,63 +323,6 @@ def send_user(message):
         gpticebot.reply_to(message, content.text, parse_mode="MarkdownV2")
     except Exception as e:
         gpticebot.reply_to(message, e)
-
-
-# receive audio from telegram
-@gpticebot.message_handler(func=lambda message: True, content_types=['voice'])
-def echo_voice(message):
-    logger.info("gpticebot - voice message from user: " + str(message.from_user.id))
-    file_info = gpticebot.get_file(message.voice.file_id)
-    downloaded_file = gpticebot.download_file(file_info.file_path)
-    url = 'http://localhost:'+os.environ.get('GPTICEBOT_PORT')+'/voice_message'
-    # send user_id + voice as bytes, via post
-    logger.info("gpticebot - calling url: " + url)
-    r = requests.post(url, files={
-        'user_id': message.from_user.id,
-        'voice': downloaded_file
-    })
-    logger.info("gpticebot - response code: " + str(r.status_code))
-    logger.info("gpticebot - response headers: " + str(r.headers))
-
-    # There is two types of response:
-    # 1. text: return web.Response(text=message, content_type="text/html")
-    # 2. audio file: return web.Response(body=content, content_type="audio/wav")
-    # Check type, if response is text
-    if r.headers['content-type'] == 'text/html; charset=utf-8':
-        gpticebot.reply_to(message, r.text, parse_mode="MarkdownV2")
-        return
-    else:
-        # response returned as
-        # web.FileResponse(filename+'.wav')
-        # return as audio message
-        gpticebot.send_voice(message.chat.id, r.content)
-
-
-@gpticebot.inline_handler(func=lambda chosen_inline_result: True)
-def query_text(inline_query):
-    url = 'http://localhost:' + \
-        os.environ.get('GPTICEBOT_PORT')+'/inline'
-    data = {
-        "user_id": inline_query.from_user.id,
-        "query": inline_query.query
-        }
-    request_str = json.dumps(data)
-    content = requests.post(url, json=request_str)
-    
-    # answer 0
-    r0 = telebot.types.InlineQueryResultArticle(
-        '0',
-        content.json()['result'],
-        telebot.types.InputTextMessageContent(content.json()['result']),
-    )
-    answer = [r0]
-
-    gpticebot.answer_inline_query(
-        inline_query.id,
-        answer,
-        cache_time=0,
-        is_personal=True
-    )
 # === === === gpticebot --
 
 def main():

@@ -17,70 +17,7 @@ import json
 # enable logging
 logging.basicConfig(level=logging.INFO)
 
-
-def escape_characters(text):
-    """ https://core.telegram.org/bots/api#formatting-options
-    Please note:
-
-    Any character with code between 1 and 126 inclusively can be escaped anywhere with a preceding '\' character, in which case it is treated as an ordinary character and not a part of the markup. This implies that '\' character usually must be escaped with a preceding '\' character.
-    Inside pre and code entities, all '`' and '\' characters must be escaped with a preceding '\' character.
-    Inside (...) part of inline link definition, all ')' and '\' must be escaped with a preceding '\' character.
-    In all other places characters '_', '*', '[', ']', '(', ')', '~', '`', '>', '#', '+', '-', '=', '|', '{', '}', '.', '!' must be escaped with the preceding character '\'.
-    In case of ambiguity between italic and underline entities __ is always greadily treated from left to right as beginning or end of underline entity, so instead of ___italic underline___ use ___italic underline_\r__, where \r is a character with code 13, which will be ignored.
-    """
-    # characters = ['_', '*', '[', ']', '(', ')', '~', '`', '>', '#', '+', '-', '=', '|', '{', '}', '.', '!']
-    characters = ['_', '*', '[', ']', '(', ')', '~', '>', '#', '+', '-', '=', '|', '{', '}', '.', '!']
-    for character in characters:
-        text = text.replace(character, '\\'+character)
-    return text
-
-
-async def call_reset_prompt(request):
-    request_str = json.loads(str(await request.text()))
-    data = json.loads(request_str)
-    user_id = str(data['user_id'])
-    
-    authentication, message = authenticate(user_id)
-    if not authentication:
-        logging.info(str(dt.now())+' '+'User: '+str(user_id)+' not authenticated. message: '+str(message))
-        return web.Response(text=message, content_type="text/html")
-    
-    reset_prompt(user_id)
-    return web.Response(text='Память очищена', content_type="text/html")
-
-
-def reset_prompt(user_id):
-    logging.info(str(dt.now())+' '+'User: '+str(user_id)+' reset_prompt')
-    # read default prompt
-    config = read_config(user_id)
-    # init_prompt = config['init_prompt']
-    chat_gpt_init_prompt = config['chat_gpt_init_prompt']
-    total_tokens = config['total_tokens']
-    language = config['language']
-    name = config['name']
-    # names = config['names']
-    config = load_default_config(user_id)
-    config['total_tokens'] = total_tokens
-    # config['prompt'] = init_prompt
-    # config['init_prompt'] = init_prompt
-    config['chat_gpt_prompt'] = chat_gpt_init_prompt
-    config['chat_gpt_init_prompt'] = chat_gpt_init_prompt
-    config['language'] = language
-    config['name'] = name
-    # config['names'] = names
-    config['last_cmd'] = 'reset_prompt'
-    config['conversation_id'] = int(config['conversation_id']) + 1
-    save_config(config, user_id)
-
-
-def accept_feature_extractor(phrases, accept):
-    if len(accept) > 1 and accept['text'] != '':
-        accept_text = str(accept['text'])
-        conf_score = []
-        for result_rec in accept['result']:
-            conf_score.append(float(result_rec['conf']))
-        conf_mid = str(sum(conf_score)/len(conf_score))
-        phrases.append(accept_text)
+app = Flask(__name__)
 
 
 def text_chat_gpt(prompt):
@@ -134,9 +71,101 @@ def authenticate(user_id):
         return False, escape_characters(message)
 
 
-async def call_regular_message(request):
-    request_str = json.loads(str(await request.text()))
-    data = json.loads(request_str)
+def escape_characters(text):
+    """ https://core.telegram.org/bots/api#formatting-options
+    Please note:
+
+    Any character with code between 1 and 126 inclusively can be escaped anywhere with a preceding '\' character, in which case it is treated as an ordinary character and not a part of the markup. This implies that '\' character usually must be escaped with a preceding '\' character.
+    Inside pre and code entities, all '`' and '\' characters must be escaped with a preceding '\' character.
+    Inside (...) part of inline link definition, all ')' and '\' must be escaped with a preceding '\' character.
+    In all other places characters '_', '*', '[', ']', '(', ')', '~', '`', '>', '#', '+', '-', '=', '|', '{', '}', '.', '!' must be escaped with the preceding character '\'.
+    In case of ambiguity between italic and underline entities __ is always greadily treated from left to right as beginning or end of underline entity, so instead of ___italic underline___ use ___italic underline_\r__, where \r is a character with code 13, which will be ignored.
+    """
+    # characters = ['_', '*', '[', ']', '(', ')', '~', '`', '>', '#', '+', '-', '=', '|', '{', '}', '.', '!']
+    characters = ['_', '*', '[', ']', '(', ')', '~', '>', '#', '+', '-', '=', '|', '{', '}', '.', '!']
+    for character in characters:
+        text = text.replace(character, '\\'+character)
+    return text
+
+
+def openai_conversation(config, user_id, user_text):
+    # openai conversation
+    logging.info(str(dt.now())+' '+'User: '+str(user_id)+' openai conversation')
+    # init
+    chat_gpt_prompt = config['chat_gpt_prompt']
+    chat_gpt_prompt.append({"role": "user", "content": str(user_text)})
+    openai_response = text_chat_gpt(chat_gpt_prompt)
+    bot_text = openai_response['choices'][0]['message']['content']
+    chat_gpt_prompt.append({"role": "assistant", "content": bot_text})
+    config['chat_gpt_prompt'] = chat_gpt_prompt
+    total_tokens = openai_response['usage']['total_tokens']
+    config['total_tokens'] = int(config['total_tokens'])+int(total_tokens)
+    conversation_id = str(config['conversation_id'])
+
+    # save config
+    save_config(config, user_id)
+
+    # append conversation_id, datetime and prompt to logs/prompt_[iser_id].csv
+    # splitter is ;
+    with open('logs/prompt_'+user_id+'.csv', 'a') as f:
+        f.write(str(dt.now())+';'+conversation_id+';'+str(chat_gpt_prompt)+';'+str(total_tokens)+'\n')
+
+    return str(bot_text)
+
+
+def reset_prompt(user_id):
+    logging.info(str(dt.now())+' '+'User: '+str(user_id)+' reset_prompt')
+    # read default prompt
+    config = read_config(user_id)
+    # init_prompt = config['init_prompt']
+    chat_gpt_init_prompt = config['chat_gpt_init_prompt']
+    total_tokens = config['total_tokens']
+    language = config['language']
+    name = config['name']
+    # names = config['names']
+    config = load_default_config(user_id)
+    config['total_tokens'] = total_tokens
+    # config['prompt'] = init_prompt
+    # config['init_prompt'] = init_prompt
+    config['chat_gpt_prompt'] = chat_gpt_init_prompt
+    config['chat_gpt_init_prompt'] = chat_gpt_init_prompt
+    config['language'] = language
+    config['name'] = name
+    # config['names'] = names
+    config['last_cmd'] = 'reset_prompt'
+    config['conversation_id'] = int(config['conversation_id']) + 1
+    save_config(config, user_id)
+
+
+####################
+# Call functions:
+####################
+@app.route("/test")
+def call_test():
+    return "get ok"
+
+
+@app.route("/reset", methods=["POST"])
+async def call_reset(request):
+    """request_str = json.loads(str(await request.text()))
+    data = json.loads(request_str)"""
+    data = request.get_json()
+    user_id = str(data['user_id'])
+    
+    authentication, message = authenticate(user_id)
+    if not authentication:
+        logging.info(str(dt.now())+' '+'User: '+str(user_id)+' not authenticated. message: '+str(message))
+        return web.Response(text=message, content_type="text/html")
+    
+    reset_prompt(user_id)
+    return web.Response(text='Память очищена', content_type="text/html")
+
+
+@app.route("/message", methods=["POST"])
+def call_message():
+    """request_str = json.loads(str(await request.text()))
+    data = json.loads(request_str)"""
+    data = request.get_json()
     user_id = str(data['user_id'])
     logging.info(str(dt.now())+' '+'User: '+str(user_id)+' call_regular_message')
     authentication, message = authenticate(user_id)
@@ -171,34 +200,11 @@ async def call_regular_message(request):
     return web.Response(text=escape_characters(answer), content_type="text/html")
 
 
-def openai_conversation(config, user_id, user_text):
-    # openai conversation
-    logging.info(str(dt.now())+' '+'User: '+str(user_id)+' openai conversation')
-    # init
-    chat_gpt_prompt = config['chat_gpt_prompt']
-    chat_gpt_prompt.append({"role": "user", "content": str(user_text)})
-    openai_response = text_chat_gpt(chat_gpt_prompt)
-    bot_text = openai_response['choices'][0]['message']['content']
-    chat_gpt_prompt.append({"role": "assistant", "content": bot_text})
-    config['chat_gpt_prompt'] = chat_gpt_prompt
-    total_tokens = openai_response['usage']['total_tokens']
-    config['total_tokens'] = int(config['total_tokens'])+int(total_tokens)
-    conversation_id = str(config['conversation_id'])
-
-    # save config
-    save_config(config, user_id)
-
-    # append conversation_id, datetime and prompt to logs/prompt_[iser_id].csv
-    # splitter is ;
-    with open('logs/prompt_'+user_id+'.csv', 'a') as f:
-        f.write(str(dt.now())+';'+conversation_id+';'+str(chat_gpt_prompt)+';'+str(total_tokens)+'\n')
-
-    return str(bot_text)
-
-
+@app.route("/user_add", methods=["POST"])
 async def call_user_add(request):
-    request_str = json.loads(str(await request.text()))
-    data = json.loads(request_str)
+    """request_str = json.loads(str(await request.text()))
+    data = json.loads(request_str)"""
+    data = request.get_json()
     user_id = str(data['user_id'])
     new_user_id = str(data['new_user_id'])
     new_user_name = str(data['new_user_name'])
@@ -217,9 +223,11 @@ async def call_user_add(request):
     return web.Response(text=content, content_type="text/html")
 
 
+@app.route("/financial_report", methods=["POST"])
 async def call_financial_report(request):
-    request_str = json.loads(str(await request.text()))
-    data = json.loads(request_str)
+    """request_str = json.loads(str(await request.text()))
+    data = json.loads(request_str)"""
+    data = request.get_json()
     user_id = str(data['user_id'])
     count_of_days = int(data['count_of_days'])
 
@@ -334,7 +342,7 @@ async def call_financial_report(request):
     return web.Response(text=content, content_type="text/html")
 
 
-def main():
+"""def main():
     app = web.Application(client_max_size=1024**3)
     app.router.add_route('POST', '/regular_message', call_regular_message)
     app.router.add_route('POST', '/user_add', call_user_add)
@@ -346,3 +354,11 @@ def main():
 
 if __name__ == "__main__":
     main()
+"""
+
+if __name__ == "__main__":
+    app.run(
+        host='0.0.0.0',
+        debug=False,
+        port=int(os.environ.get("PORT", os.environ.get('PORT', '')))
+        )
