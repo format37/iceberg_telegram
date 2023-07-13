@@ -241,16 +241,19 @@ bots.append(gpticebot)
 
 
 @gpticebot.message_handler(commands=['reset'])
-def echo_message(message):
+def gpticebot_call_reset(message):
     url = 'http://localhost:'+os.environ.get('GPTICEBOT_PORT')+'/reset'
     data = {"user_id": message.from_user.id}
     request_str = json.dumps(data)
     content = requests.post(url, json=request_str)
-    gpticebot.reply_to(message, content.text, parse_mode="MarkdownV2")
+    result = content.json()['result']
+    if result != '':
+        gpticebot.reply_to(message, ""+str(content.json()['result']), parse_mode="MarkdownV2")
+        # gpticebot.reply_to(message, result, parse_mode="MarkdownV2")
 
 
 @gpticebot.message_handler(commands=['start'])
-def echo_message(message):
+def gpticebot_call_start(message):
     reply_text = """Приветствую, Я GPT-4 робот.
 Вы можете задавать мне любые вопросы, но помните, данные которые вы отправляете мне, однажды могут стать публичными.
 Чтобы начать диалог заново, используйте команду /reset. Пожалуйста, не забывайте использовать эту команду, поскольку длительные диалоги требуют значительных вычислительных ресурсов."""
@@ -259,7 +262,7 @@ def echo_message(message):
 
 
 @gpticebot.message_handler(commands=['add'])
-def echo_message(message):
+def gpticebot_call_add(message):
     user_id = message.from_user.id
     # Add new user. cmd in format: /add 123456789
     if message.text.startswith('/add'):
@@ -278,7 +281,7 @@ def echo_message(message):
         return
     
 @gpticebot.message_handler(commands=['fin'])
-def echo_message(message):
+def gpticebot_call_fin(message):
     user_id = message.from_user.id
     # Financial report. cmd for 10 days in format: /fin 10
     if message.text.startswith('/fin'):
@@ -308,7 +311,7 @@ def echo_message(message):
 
 
 @gpticebot.message_handler(func=lambda message: True, content_types=['text'])
-def send_user(message):
+def gpticebot_call_message(message):
     try:
         user_id = message.from_user.id
         # Receive user's prompt
