@@ -151,6 +151,7 @@ def call_test():
 def call_reset():
     print('call_reset_p')
     logger.info('call_reset')
+    return jsonify({"result": 'my_result'})
     """request_str = json.loads(str(await request.text()))
     data = json.loads(request_str)"""
     data = request.get_json()

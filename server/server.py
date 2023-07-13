@@ -247,11 +247,12 @@ def gpticebot_call_reset(message):
     data = {"user_id": message.from_user.id}
     request_str = json.dumps(data)
     content = requests.post(url, json=request_str)
-    result = content.json()['result']
+    gpticebot.reply_to(message, ""+str(content.json()['result']))
+    """result = content.json()['result']
     logger.info("gpticebot reset result: "+str(result))
     if result != '':
         gpticebot.reply_to(message, ""+str(content.json()['result']), parse_mode="MarkdownV2")
-        # gpticebot.reply_to(message, result, parse_mode="MarkdownV2")
+        # gpticebot.reply_to(message, result, parse_mode="MarkdownV2")"""
 
 
 @gpticebot.message_handler(commands=['start'])
