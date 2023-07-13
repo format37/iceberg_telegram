@@ -261,14 +261,14 @@ def call_message():
     """request_str = json.loads(str(await request.text()))
     data = json.loads(request_str)"""
     r = request.get_json()
-    data = json.loads(r)
-    user_id = str(data['user_id'])
-    user_name = data["user_name"]
-    chat_id = data["chat_id"]
-    chat_type = data["chat_type"]
-    message = data["text"]
+    r_dict = json.loads(r)
+    user_id = r_dict["user_id"]
+    user_name = r_dict["user_name"]
+    chat_id = r_dict["chat_id"]
+    chat_type = r_dict["chat_type"]
+    message = r_dict["text"]
 
-    logger.info(str(dt.now())+' '+'User: '+str(user_id)+' call_message: '+str(message))
+    logger.info('call_message')
     """
     # read prompt from user config
     config = read_config(user_id)
