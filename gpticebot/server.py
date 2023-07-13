@@ -146,7 +146,7 @@ def call_test():
 
 
 @app.route("/reset", methods=["POST"])
-async def call_reset(request):
+def call_reset(request):
     """request_str = json.loads(str(await request.text()))
     data = json.loads(request_str)"""
     data = request.get_json()
@@ -201,7 +201,7 @@ def call_message():
 
 
 @app.route("/user_add", methods=["POST"])
-async def call_user_add(request):
+def call_user_add(request):
     """request_str = json.loads(str(await request.text()))
     data = json.loads(request_str)"""
     data = request.get_json()
@@ -224,7 +224,7 @@ async def call_user_add(request):
 
 
 @app.route("/financial_report", methods=["POST"])
-async def call_financial_report(request):
+def call_financial_report(request):
     """request_str = json.loads(str(await request.text()))
     data = json.loads(request_str)"""
     data = request.get_json()
