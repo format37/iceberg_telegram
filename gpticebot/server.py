@@ -268,13 +268,8 @@ def call_message():
     chat_type = data["chat_type"]
     message = data["text"]
 
-    """logger.info(str(dt.now())+' '+'User: '+str(user_id)+' call_regular_message')
-    authentication, message = authenticate(user_id)
-    if not authentication:
-        logger.info(str(dt.now())+' '+'User: '+str(user_id)+' not authenticated. message: '+str(message))
-        # message = 'no'
-        # return web.Response(text=message, content_type="text/html")
-        return jsonify({"result": message})
+    logger.info(str(dt.now())+' '+'User: '+str(user_id)+' call_regular_message')
+    """
     # read prompt from user config
     config = read_config(user_id)
 
@@ -312,8 +307,13 @@ def call_message():
             reaction = True
             message = message[2:].strip()
     else:
-        # reaction = True
-        reaction = False # TODO: remove this line
+        authentication, message = authenticate(user_id)
+        if not authentication:
+            logger.info(str(dt.now())+' '+'User: '+str(user_id)+' not authenticated. message: '+str(message))
+            # message = 'no'
+            # return web.Response(text=message, content_type="text/html")
+            return jsonify({"result": message})
+        reaction = True
         config = read_config(user_id)
             
     # Define the prompt
