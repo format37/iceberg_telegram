@@ -313,25 +313,22 @@ def gpticebot_call_fin(message):
 
 @gpticebot.message_handler(func=lambda message: True, content_types=['text'])
 def gpticebot_call_message(message):
-    try:
-        user_id = message.from_user.id
-        # Receive user's prompt
-        url = 'http://localhost:' + str(os.environ.get('GPTICEBOT_PORT')) + '/message'
-        data = {
+    # try:
+    user_id = message.from_user.id
+    # Receive user's prompt
+    url = 'http://localhost:' + str(os.environ.get('GPTICEBOT_PORT')) + '/message'
+    data = {
         "user_id": message.from_user.id,
         "user_name": message.from_user.username,
         "chat_id": message.chat.id,
         "chat_type": message.chat.type,
         "text": message.text
         }
-        request_str = json.dumps(data)
-        content = requests.post(url, json=request_str)
-        # gpticebot.reply_to(message, content.text, parse_mode="MarkdownV2")
-        result = content.json()['result']
-        if result != '':
-            gpticebot.reply_to(message, ""+str(content.json()['result']), parse_mode="MarkdownV2")
-    except Exception as e:
-        gpticebot.reply_to(message, e)
+    request_str = json.dumps(data)
+    content = requests.post(url, json=request_str)
+    result = content.json()['result']
+    if result != '':
+        gpticebot.reply_to(message, ""+str(content.json()['result']))
 # === === === gpticebot --
 
 def main():
