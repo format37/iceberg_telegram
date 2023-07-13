@@ -270,35 +270,7 @@ def call_message():
     chat_type = r_dict["chat_type"]
     message = r_dict["text"]
 
-    logger.info('call_message: '+str(message))
-    """
-    # read prompt from user config
-    config = read_config(user_id)
-
-    answer = 'Regular messsage received'
-
-    if config['last_cmd'] == 'set_prompt':
-        config['chat_gpt_prompt'][0]['content'] = data['message']
-        config['last_cmd'] = 'regular_message'
-        answer = 'Prompt set successfull'
-    elif config['last_cmd'] == 'choose_language':
-        config['language'] = data['message']
-        config['last_cmd'] = 'regular_message'
-        answer = 'Current language: '+str(config['language'])
-    else:
-        config['last_cmd'] = 'regular_message'
-        if int(config['total_tokens']) < 0:
-            answer = openai_conversation(config, user_id, data['message'])
-        else:
-            answer = 'Not enough funds. Please, refill your account'
-    
-    save_config(config, user_id)
-    logger.info(str(dt.now())+' '+'User: '+str(user_id)+' call_regular_message answer: '+str(answer))
-    # dtype
-    logger.info(str(dt.now())+' '+'User: '+str(user_id)+' call_regular_message answer type: '+str(type(answer)))
-    # return web.Response(text=escape_characters(answer), content_type="text/html")
-    return jsonify({"result": escape_characters(answer)})"""
-
+    # logger.info('call_message: '+str(message))
     # Define the default answer
     result = ""
     reaction = False
@@ -309,19 +281,19 @@ def call_message():
             reaction = True
             message = message[2:].strip()
     else:
-        authentication, message = authenticate(user_id)
+        authentication, auth_message = authenticate(user_id)
         if not authentication:
             logger.info(str(dt.now())+' '+'User: '+str(user_id)+' not authenticated. message: '+str(message))
             # message = 'no'
             # return web.Response(text=message, content_type="text/html")
-            return jsonify({"result": message})
+            return jsonify({"result": auth_message})
         reaction = True
         config = read_config(user_id)
             
     # Define the prompt
     chat_gpt_prompt = config['chat_gpt_prompt']
     # Save the original message
-    logger.info("saving message: {}".format(message))
+    # logger.info("saving message: {}".format(message))
     save_message(user_id, user_name, chat_id, chat_type, message)
 
     if reaction:
@@ -337,7 +309,7 @@ def call_message():
         logger.info("prompt_tokents: {}".format(prompt_tokents))
         openai_response = text_chat_gpt(chat_gpt_prompt, config['model'])
         result = openai_response['choices'][0]['message']['content']
-        logger.info("result: {}".format(result))
+        # logger.info("result: {}".format(result))
         # Save the answer
         save_message('assistant', 'assistant', chat_id, chat_type, result)
         # Replace 'assistant: ' with ''

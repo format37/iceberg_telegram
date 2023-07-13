@@ -322,7 +322,7 @@ def gpticebot_call_message(message):
         "chat_type": message.chat.type,
         "text": message.text
         }
-    logger.info('gpticebot_call_message: '+str(message.text))
+    # logger.info('gpticebot_call_message: '+str(message.text))
     request_str = json.dumps(data)
     content = requests.post(url, json=request_str)
     result = content.json()['result']
