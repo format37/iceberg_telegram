@@ -318,8 +318,11 @@ def gpticebot_call_message(message):
         # Receive user's prompt
         url = 'http://localhost:' + str(os.environ.get('GPTICEBOT_PORT')) + '/message'
         data = {
-            "user_id": user_id,
-            "message": message.text
+        "user_id": message.from_user.id,
+        "user_name": message.from_user.username,
+        "chat_id": message.chat.id,
+        "chat_type": message.chat.type,
+        "text": message.text
         }
         request_str = json.dumps(data)
         content = requests.post(url, json=request_str)
