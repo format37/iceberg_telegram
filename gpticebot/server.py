@@ -185,7 +185,8 @@ def call_message():
     if not authentication:
         logger.info(str(dt.now())+' '+'User: '+str(user_id)+' not authenticated. message: '+str(message))
         # message = 'no'
-        return web.Response(text=message, content_type="text/html")
+        # return web.Response(text=message, content_type="text/html")
+        return jsonify({"result": message})
     # read prompt from user config
     config = read_config(user_id)
 
@@ -210,7 +211,8 @@ def call_message():
     logger.info(str(dt.now())+' '+'User: '+str(user_id)+' call_regular_message answer: '+str(answer))
     # dtype
     logger.info(str(dt.now())+' '+'User: '+str(user_id)+' call_regular_message answer type: '+str(type(answer)))
-    return web.Response(text=escape_characters(answer), content_type="text/html")
+    # return web.Response(text=escape_characters(answer), content_type="text/html")
+    return jsonify({"result": escape_characters(answer)})
 
 
 @app.route("/user_add", methods=["POST"])
@@ -234,7 +236,8 @@ def call_user_add(request):
         content = 'Пользователь '+str(new_user_id)+' '+str(new_user_name)+' добавлен'
     else:
         content = 'Нет доступа'
-    return web.Response(text=content, content_type="text/html")
+    # return web.Response(text=content, content_type="text/html")
+    return jsonify({"result": content})
 
 
 @app.route("/financial_report", methods=["POST"])
@@ -350,11 +353,13 @@ def call_financial_report(request):
         # Return image file
         with open('funds_spent.png', 'rb') as f:
             content = f.read()
-        return web.Response(body=content, content_type='image/png')
+        # return web.Response(body=content, content_type='image/png')
+        return jsonify({"result": content})
     
     else:
         content = 'Нет доступа'
-    return web.Response(text=content, content_type="text/html")
+    # return web.Response(text=content, content_type="text/html")
+    return jsonify({"result": content})
 
 
 """def main():
@@ -374,6 +379,6 @@ if __name__ == "__main__":
 if __name__ == "__main__":
     app.run(
         host='0.0.0.0',
-        debug=True,
+        debug=False,
         port=int(os.environ.get("PORT", os.environ.get('PORT', '')))
         )
