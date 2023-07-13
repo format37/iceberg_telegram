@@ -264,8 +264,7 @@ def gpticebot_call_add(message):
     user_id = message.from_user.id
     # Add new user. cmd in format: /add 123456789
     if message.text.startswith('/add'):
-        url = 'http://localhost:' + \
-            os.environ.get('GPTICEBOT_PORT')+'/user_add'
+        url = 'http://localhost:' + str(os.environ.get('GPTICEBOT_PORT')) + '/user_add'
         new_user_id = message.text.split()[1]
         new_user_name = message.text.split()[2]
         data = {
@@ -275,8 +274,11 @@ def gpticebot_call_add(message):
         }
         request_str = json.dumps(data)
         content = requests.post(url, json=request_str)
-        gpticebot.reply_to(message, escape_characters(content.text), parse_mode="MarkdownV2")
-        return
+        # gpticebot.reply_to(message, escape_characters(content.text), parse_mode="MarkdownV2")
+        result = content.json()['result']
+        if result != '':
+            gpticebot.reply_to(message, ""+str(content.json()['result']), parse_mode="MarkdownV2")
+        # return
     
 @gpticebot.message_handler(commands=['fin'])
 def gpticebot_call_fin(message):
