@@ -12,6 +12,8 @@ import csv
 import ast
 import datetime
 import json
+import glob
+import tiktoken
 
 
 # init logging
@@ -22,12 +24,16 @@ logger.setLevel(logging.INFO)
 app = Flask(__name__)
 
 
-def text_chat_gpt(prompt):
+def token_counter(text, model):
+    enc = tiktoken.encoding_for_model(model)
+    tokens = enc.encode(str(text))
+    return len(tokens)
+
+
+def text_chat_gpt(prompt, model):
     openai.api_key = os.getenv("PHRASE_SEED")
     answer = openai.ChatCompletion.create(
-        # model="gpt-3.5-turbo",
-        # model = 'gpt-4-32k-0314',
-        model = 'gpt-4',
+        model = model,
         messages=prompt
     )
     return answer
@@ -90,7 +96,7 @@ def escape_characters(text):
     return text
 
 
-def openai_conversation(config, user_id, user_text):
+"""def openai_conversation(config, user_id, user_text):
     # openai conversation
     logger.info(str(dt.now())+' '+'User: '+str(user_id)+' openai conversation')
     # init
@@ -112,7 +118,7 @@ def openai_conversation(config, user_id, user_text):
     with open('logs/prompt_'+user_id+'.csv', 'a') as f:
         f.write(str(dt.now())+';'+conversation_id+';'+str(chat_gpt_prompt)+';'+str(total_tokens)+'\n')
 
-    return str(bot_text)
+    return str(bot_text)"""
 
 
 def reset_prompt(user_id):
@@ -137,6 +143,83 @@ def reset_prompt(user_id):
     config['last_cmd'] = 'reset_prompt'
     config['conversation_id'] = int(config['conversation_id']) + 1
     save_config(config, user_id)
+
+
+def read_latest_messages(user_id, chat_id, chat_type, chat_gpt_prompt_original, model):
+    token_limit = 3000
+    chat_gpt_prompt = []
+    if chat_type == 'group' or chat_type == 'supergroup':
+        logger.info("read group chat")
+        # Create group id folder in the data path if not exist
+        path = os.path.join("data", "groups", str(chat_id))
+        # Get all files in folder
+        list_of_files = glob.glob(path + "/*.json")
+    else:
+        logger.info("read private chat")
+        # Create user id folder in the data path if not exist
+        path = os.path.join("data", "users", str(user_id))
+        # Get all files in folder
+        list_of_files = glob.glob(path + "/*.json")
+
+    # Sort files by creation time ascending
+    list_of_files.sort(key=os.path.getctime, reverse=True)
+
+    # Iterate over sorted files and append message to messages list
+    limit_reached = False
+    for file_name in list_of_files:
+        logger.info("reading file: "+file_name)
+        # Calculate the token length of the message
+        if limit_reached or token_counter(chat_gpt_prompt, model)<token_limit:
+            limit_reached = True
+            with open(file_name, "r") as f:
+                data = json.load(f)
+                if data["user_name"] == "assistant":
+                    role = "assistant"
+                    chat_gpt_prompt.append({"role": role, "content": data["message"]})
+                else:
+                    role = "user"
+                    chat_gpt_prompt.append({"role": role, "content": data["user_name"]+': '+data["message"]})
+        else:
+            # Remove file in path
+            logger.info("token limit reached. removing file: "+file_name)
+            os.remove(file_name) 
+
+    # Sort chat_gpt_prompt reversed
+    chat_gpt_prompt.reverse()
+    # Now add all values of chat_gpt_prompt to chat_gpt_prompt_original
+    for item in chat_gpt_prompt:
+        chat_gpt_prompt_original.append(item)
+
+    logger.info("chat_gpt_prompt_original: "+str(chat_gpt_prompt_original))
+
+    return chat_gpt_prompt_original
+
+
+def save_message(user_id, user_name, chat_id, chat_type, message):
+    date_time = datetime.datetime.now().strftime("%Y-%m-%d_%H_%M_%S_%f")
+    data = {
+        "user_id": user_id,
+        "user_name": user_name,
+        "message": message,
+    }
+    if chat_type == 'group' or chat_type == 'supergroup':
+        logger.info("group chat: "+str(chat_id))
+        # Create group id folder in the data path if not exist
+        group_path = os.path.join("data", "groups", str(chat_id))
+        os.makedirs(group_path, exist_ok=True)
+        # Each message saved as a new file with date in a filename
+        file_name = f"{date_time}.json"
+        with open(os.path.join(group_path, file_name), "w") as f:
+            json.dump(data, f)
+    else:
+        logger.info("private chat: "+str(user_id))
+        # Create user id folder in the data path if not exist
+        user_path = os.path.join("data", "users", str(user_id))
+        os.makedirs(user_path, exist_ok=True)
+        # Each message saved as a new file with date in a filename
+        file_name = f"{date_time}.json"
+        with open(os.path.join(user_path, file_name), "w") as f:
+            json.dump(data, f)
 
 
 ####################
@@ -180,7 +263,12 @@ def call_message():
     r = request.get_json()
     data = json.loads(r)
     user_id = str(data['user_id'])
-    logger.info(str(dt.now())+' '+'User: '+str(user_id)+' call_regular_message')
+    user_name = data["user_name"]
+    chat_id = data["chat_id"]
+    chat_type = data["chat_type"]
+    message = data["text"]
+
+    """logger.info(str(dt.now())+' '+'User: '+str(user_id)+' call_regular_message')
     authentication, message = authenticate(user_id)
     if not authentication:
         logger.info(str(dt.now())+' '+'User: '+str(user_id)+' not authenticated. message: '+str(message))
@@ -212,7 +300,47 @@ def call_message():
     # dtype
     logger.info(str(dt.now())+' '+'User: '+str(user_id)+' call_regular_message answer type: '+str(type(answer)))
     # return web.Response(text=escape_characters(answer), content_type="text/html")
-    return jsonify({"result": escape_characters(answer)})
+    return jsonify({"result": escape_characters(answer)})"""
+
+    # Define the default answer
+    result = ""
+    reaction = False
+    if chat_type == 'group' or chat_type == 'supergroup':
+        # Read config
+        config = read_config(chat_id)        
+        if message.startswith("/*") and len(message.strip()) > 2:
+            reaction = True
+            message = message[2:].strip()
+    else:
+        # reaction = True
+        reaction = False # TODO: remove this line
+        config = read_config(user_id)
+            
+    # Define the prompt
+    chat_gpt_prompt = config['chat_gpt_prompt']
+    # Save the original message
+    save_message(user_id, user_name, chat_id, chat_type, message)
+
+    if reaction:
+        chat_gpt_prompt = read_latest_messages(
+            user_id, 
+            chat_id, 
+            chat_type, 
+            chat_gpt_prompt,
+            config['model']
+            )
+        # logger.info("chat_gpt_prompt: {}".format(chat_gpt_prompt))
+        prompt_tokents = token_counter(chat_gpt_prompt, config['model'])
+        logger.info("prompt_tokents: {}".format(prompt_tokents))
+        openai_response = text_chat_gpt(chat_gpt_prompt, config['model'])
+        result = openai_response['choices'][0]['message']['content']
+        logger.info("result: {}".format(result))
+        # Save the answer
+        save_message('assistant', 'assistant', chat_id, chat_type, result)
+        # Replace 'assistant: ' with ''
+        result = result.replace('assistant: ', '')
+
+    return jsonify({"result": result})
 
 
 @app.route("/user_add", methods=["POST"])
