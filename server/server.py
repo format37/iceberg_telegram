@@ -244,7 +244,11 @@ bots.append(gpticebot)
 def gpticebot_call_reset(message):
     logger.info("gpticebot reset: "+str(message.from_user))
     url = 'http://localhost:'+os.environ.get('GPTICEBOT_PORT')+'/reset'
-    data = {"user_id": message.from_user.id}
+    data = {
+        "user_id": message.from_user.id,
+        "chat_id": message.chat.id,
+        "chat_type": message.chat.type
+        }
     request_str = json.dumps(data)
     content = requests.post(url, json=request_str)
     gpticebot.reply_to(message, ""+str(content.json()['result']))
