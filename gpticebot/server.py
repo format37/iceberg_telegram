@@ -34,6 +34,44 @@ def escape_characters(text):
     return text
 
 
+async def call_reset_prompt(request):
+    request_str = json.loads(str(await request.text()))
+    data = json.loads(request_str)
+    user_id = str(data['user_id'])
+    
+    authentication, message = authenticate(user_id)
+    if not authentication:
+        logging.info(str(dt.now())+' '+'User: '+str(user_id)+' not authenticated. message: '+str(message))
+        return web.Response(text=message, content_type="text/html")
+    
+    reset_prompt(user_id)
+    return web.Response(text='Память очищена', content_type="text/html")
+
+
+def reset_prompt(user_id):
+    logging.info(str(dt.now())+' '+'User: '+str(user_id)+' reset_prompt')
+    # read default prompt
+    config = read_config(user_id)
+    # init_prompt = config['init_prompt']
+    chat_gpt_init_prompt = config['chat_gpt_init_prompt']
+    total_tokens = config['total_tokens']
+    language = config['language']
+    name = config['name']
+    # names = config['names']
+    config = load_default_config(user_id)
+    config['total_tokens'] = total_tokens
+    # config['prompt'] = init_prompt
+    # config['init_prompt'] = init_prompt
+    config['chat_gpt_prompt'] = chat_gpt_init_prompt
+    config['chat_gpt_init_prompt'] = chat_gpt_init_prompt
+    config['language'] = language
+    config['name'] = name
+    # config['names'] = names
+    config['last_cmd'] = 'reset_prompt'
+    config['conversation_id'] = int(config['conversation_id']) + 1
+    save_config(config, user_id)
+    
+
 def accept_feature_extractor(phrases, accept):
     if len(accept) > 1 and accept['text'] != '':
         accept_text = str(accept['text'])
@@ -300,6 +338,7 @@ def main():
     app.router.add_route('POST', '/regular_message', call_regular_message)
     app.router.add_route('POST', '/user_add', call_user_add)
     app.router.add_route('POST', '/financial_report', call_financial_report)
+    app.router.add_route('POST', '/reset_prompt', call_reset_prompt)
     logging.info(str(dt.now())+' '+'Server started')
     web.run_app(app, port=os.environ.get('PORT', ''))
 
