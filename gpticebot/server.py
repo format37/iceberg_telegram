@@ -216,7 +216,7 @@ def call_message():
 
 
 @app.route("/user_add", methods=["POST"])
-def call_user_add(request):
+def call_user_add():
     """request_str = json.loads(str(await request.text()))
     data = json.loads(request_str)"""
     r = request.get_json()
@@ -241,7 +241,7 @@ def call_user_add(request):
 
 
 @app.route("/financial_report", methods=["POST"])
-def call_financial_report(request):
+def call_financial_report():
     """request_str = json.loads(str(await request.text()))
     data = json.loads(request_str)"""
     r = request.get_json()
@@ -280,8 +280,6 @@ def call_financial_report(request):
             
             if not '.csv' in filename:
                 continue
-            
-            
                 
             # Extract user ID from filename
             user_id = filename.split('.')[0]

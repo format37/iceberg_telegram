@@ -304,9 +304,10 @@ def gpticebot_call_fin(message):
         content = requests.post(url, json=request_str)
         # Check type, if response is text
         if content.headers['content-type'] == 'text/html; charset=utf-8':
-            gpticebot.reply_to(message, content.text, parse_mode="MarkdownV2")
+            gpticebot.reply_to(message, str(content.json()['result']), parse_mode="MarkdownV2")
         elif content.headers['content-type'] == 'image/png':
-            gpticebot.send_photo(message.chat.id, content.content)
+            # gpticebot.send_photo(message.chat.id, content.content)
+            gpticebot.send_photo(message.chat.id, content.json()['result'])
         return
 
 
