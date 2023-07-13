@@ -47,7 +47,8 @@ def load_default_config(user_id):
     return config
 
 
-def read_config(user_id):
+def read_config(user_id_original):
+    user_id = str(user_id_original)
     conf_path = 'user_conf/'
     # if user.json conf not in user_conf folder, create it
     # default config file: config.json
@@ -60,7 +61,8 @@ def read_config(user_id):
     return config
 
 
-def save_config(config, user_id):
+def save_config(config, user_id_original):
+    user_id = str(user_id_original)
     # user configuration
     conf_path = 'user_conf/'
     # save config
