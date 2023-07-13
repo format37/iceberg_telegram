@@ -2,9 +2,12 @@ version: '3.8'
 services:
 
   server: 
+    restart: always
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - /etc/timezone:/etc/timezone:ro
+      - ./data:/app/data
+      - ./data_test:/app/data_test
     build: server
     network_mode: "host"
     environment:
@@ -12,6 +15,45 @@ services:
       - WEBHOOK_HOST=service.icecorp.ru
       - WEBHOOK_PORT=8443
       - DOCKER_PORT=8443
+      - GPTICEBOT_PORT=4200
       - MRMSUPPORTBOT_TOKEN=${MRMSUPPORTBOT_TOKEN}
       - MRMSUPPORTBOT_AUTH_LOGIN=${MRMSUPPORTBOT_AUTH_LOGIN}
       - MRMSUPPORTBOT_AUTH_PASSWORD=${MRMSUPPORTBOT_AUTH_PASSWORD}
+      - MRMINFOBOT_TOKEN=${MRMINFOBOT_TOKEN}
+      - MRMINFOTESTBOT_TOKEN=${MRMINFOTESTBOT_TOKEN}
+      - MRMSUPPORTBOT_TEST_TOKEN=${MRMSUPPORTBOT_TEST_TOKEN}
+      - PARTNERS_ICEBERG_BOT=${PARTNERS_ICEBERG_BOT}
+      - GPTICEBOT_TOKEN=${GPTICEBOT_TOKEN}
+
+  gpticebot:
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+      - ./gpticebot/user_conf:/server/user_conf
+      - ./gpticebot/logs:/server/logs
+    build: gpticebot
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "3"
+    network_mode: "host"
+    environment:
+      - TZ=Europe/Moscow
+      - PORT=4200
+      - STT_SERVER=ws://localhost:2700
+      - TTS_SERVER=http://localhost:10005
+      - PHRASE_SEED=
+
+  folder_cleaner:
+    restart: always
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+      - ./data:/app/data
+    build: folder_cleaner
+    network_mode: "host"
+    environment:
+      - TZ=Europe/Moscow
+      - HOST=0.0.0.0
+      - PORT=5000
+      - KEY=${KEY}
