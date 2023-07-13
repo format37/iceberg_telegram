@@ -1,3 +1,4 @@
+from flask import Flask, request, jsonify, Response
 from asyncio.log import logger
 from aiohttp import web
 import os
@@ -70,7 +71,7 @@ def reset_prompt(user_id):
     config['last_cmd'] = 'reset_prompt'
     config['conversation_id'] = int(config['conversation_id']) + 1
     save_config(config, user_id)
-    
+
 
 def accept_feature_extractor(phrases, accept):
     if len(accept) > 1 and accept['text'] != '':

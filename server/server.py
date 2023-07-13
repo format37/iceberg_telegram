@@ -240,16 +240,6 @@ gpticebot = default_bot_init('GPTICEBOT_TOKEN')
 bots.append(gpticebot)
 
 
-@gpticebot.message_handler(commands=['check_balance'])
-def echo_message(message):
-    url = 'http://localhost:' + \
-        os.environ.get('GPTICEBOT_PORT')+'/check_balance'
-    data = {"user_id": message.from_user.id}
-    request_str = json.dumps(data)
-    content = requests.post(url, json=request_str)
-    gpticebot.reply_to(message, content.text, parse_mode="MarkdownV2")
-
-
 @gpticebot.message_handler(commands=['reset'])
 def echo_message(message):
     url = 'http://localhost:'+os.environ.get('GPTICEBOT_PORT')+'/reset_prompt'
