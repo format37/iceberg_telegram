@@ -147,11 +147,12 @@ def call_test():
 
 @app.route("/reset", methods=["POST"])
 def call_reset():
-    logging.info(str(dt.now())+' '+'User: '+str(user_id)+' call_reset')
+    
     """request_str = json.loads(str(await request.text()))
     data = json.loads(request_str)"""
     data = request.get_json()
     user_id = str(data['user_id'])
+    logging.info(str(dt.now())+' '+'User: '+str(user_id)+' call_reset')
     
     authentication, message = authenticate(user_id)
     if not authentication:
