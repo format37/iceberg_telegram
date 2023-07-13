@@ -270,7 +270,7 @@ def call_message():
     chat_type = r_dict["chat_type"]
     message = r_dict["text"]
 
-    logger.info('call_message')
+    logger.info('call_message: '+str(message))
     """
     # read prompt from user config
     config = read_config(user_id)
