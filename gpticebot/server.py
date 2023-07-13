@@ -268,7 +268,7 @@ def call_message():
     chat_type = data["chat_type"]
     message = data["text"]
 
-    logger.info(str(dt.now())+' '+'User: '+str(user_id)+' call_regular_message')
+    logger.info(str(dt.now())+' '+'User: '+str(user_id)+' call_message: '+str(message))
     """
     # read prompt from user config
     config = read_config(user_id)

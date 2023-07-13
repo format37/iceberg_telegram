@@ -313,8 +313,6 @@ def gpticebot_call_fin(message):
 
 @gpticebot.message_handler(func=lambda message: True, content_types=['text'])
 def gpticebot_call_message(message):
-    # try:
-    user_id = message.from_user.id
     # Receive user's prompt
     url = 'http://localhost:' + str(os.environ.get('GPTICEBOT_PORT')) + '/message'
     data = {
