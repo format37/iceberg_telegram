@@ -166,6 +166,7 @@ def delete_conversation_files(user_id, chat_id, chat_type):
     list_of_files.sort(key=os.path.getctime)
     # Delete all files except the last one
     for file_path in list_of_files[:-1]:
+        logger.info("delete file: "+file_path)
         os.remove(file_path)
 
 
@@ -214,7 +215,7 @@ def read_latest_messages(user_id, chat_id, chat_type, chat_gpt_prompt_original, 
     for item in chat_gpt_prompt:
         chat_gpt_prompt_original.append(item)
 
-    logger.info("chat_gpt_prompt_original: "+str(chat_gpt_prompt_original))
+    # logger.info("chat_gpt_prompt_original: "+str(chat_gpt_prompt_original))
 
     return chat_gpt_prompt_original
 
