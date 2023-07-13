@@ -147,6 +147,7 @@ def call_test():
 
 @app.route("/reset", methods=["POST"])
 def call_reset():
+    logging.info(str(dt.now())+' '+'User: '+str(user_id)+' call_reset')
     """request_str = json.loads(str(await request.text()))
     data = json.loads(request_str)"""
     data = request.get_json()
@@ -160,7 +161,9 @@ def call_reset():
     
     reset_prompt(user_id)
     # return web.Response(text='Память очищена', content_type="text/html")
-    return jsonify({'text': 'Память очищена'})
+    result = jsonify({'result': 'Память очищена'})
+    logging.info(str(dt.now())+' '+'User: '+str(user_id)+' reset: '+str(result))
+    return result
 
 
 @app.route("/message", methods=["POST"])
