@@ -1,13 +1,8 @@
 from asyncio.log import logger
 from aiohttp import web
 import os
-import uuid
-import asyncio
-import wave
-import websockets
 import json
 import openai
-import requests
 from datetime import datetime as dt
 import logging
 import matplotlib.pyplot as plt
@@ -49,47 +44,6 @@ def accept_feature_extractor(phrases, accept):
         phrases.append(accept_text)
 
 
-"""async def stt(uri, file_name, language_code):
-    with open(file_name, 'rb') as f:
-        r = requests.post(uri, files={'file': f}, data={'language_code': language_code})
-    logger.info('stt: '+r.text)
-    return r.text"""
-
-def language_parameters(config):
-    # Define the language code and name of the voice
-    language_code = 'English'
-    model = 'en-US-Neural2-F'
-    language = config['language']
-    data_path = 'data/'
-    with open(data_path+'languages.json', 'r') as f:
-        languages = json.load(f)
-    for language in languages.values():
-        if language['name'] == config['language']:
-            language_code = language['code']
-            model = language['female_model']
-            break
-    return language_code, model
-
-def tts(tts_text, filename, config):
-    tts_server = os.environ.get('TTS_SERVER', '')
-    # https://cloud.google.com/text-to-speech/docs/voices
-    # https://cloud.google.com/text-to-speech
-    
-    language_code, model = language_parameters(config)
-    logger.info('tts: '+tts_text+'\n'+language_code+' '+model)
-    
-    data = {
-        'text':tts_text,
-        'language':language_code,
-        'model':model,
-        'speed':1.5
-    }
-    response = requests.post(tts_server+'/inference', json=data)
-    # Save response as audio file
-    with open(filename+".wav", "wb") as f:
-        f.write(response.content)
-
-
 def text_chat_gpt(prompt):
     openai.api_key = os.getenv("PHRASE_SEED")
     answer = openai.ChatCompletion.create(
@@ -128,119 +82,6 @@ def save_config(config, user_id):
     # save config
     with open(conf_path+user_id+'.json', 'w') as f:
         json.dump(config, f)
-
-
-async def call_show_prompt(request):
-    request_str = json.loads(str(await request.text()))
-    data = json.loads(request_str)
-    user_id = str(data['user_id'])
-    logging.info(str(dt.now())+' '+'User: '+str(user_id)+' call_show_prompt')
-    # read prompt from user config
-    config = read_config(user_id)
-    config['last_cmd'] = 'show_prompt'
-    save_config(config, user_id)
-    # content = str(config['prompt'])
-    content = str(config['chat_gpt_prompt'][-1]['content'])
-    return web.Response(text=content, content_type="text/html")
-
-
-def reset_prompt(user_id):
-    logging.info(str(dt.now())+' '+'User: '+str(user_id)+' reset_prompt')
-    # read default prompt
-    config = read_config(user_id)
-    # init_prompt = config['init_prompt']
-    chat_gpt_init_prompt = config['chat_gpt_init_prompt']
-    total_tokens = config['total_tokens']
-    language = config['language']
-    name = config['name']
-    # names = config['names']
-    config = load_default_config(user_id)
-    config['total_tokens'] = total_tokens
-    # config['prompt'] = init_prompt
-    # config['init_prompt'] = init_prompt
-    config['chat_gpt_prompt'] = chat_gpt_init_prompt
-    config['chat_gpt_init_prompt'] = chat_gpt_init_prompt
-    config['language'] = language
-    config['name'] = name
-    # config['names'] = names
-    config['last_cmd'] = 'reset_prompt'
-    config['conversation_id'] = int(config['conversation_id']) + 1
-    save_config(config, user_id)
-
-
-async def call_reset_prompt(request):
-    request_str = json.loads(str(await request.text()))
-    data = json.loads(request_str)
-    user_id = str(data['user_id'])
-    
-    authentication, message = authenticate(user_id)
-    if not authentication:
-        logging.info(str(dt.now())+' '+'User: '+str(user_id)+' not authenticated. message: '+str(message))
-        return web.Response(text=message, content_type="text/html")
-    
-    reset_prompt(user_id)
-    return web.Response(text='Память очищена', content_type="text/html")
-
-
-async def call_set_prompt(request):
-    request_str = json.loads(str(await request.text()))
-    data = json.loads(request_str)
-    user_id = str(data['user_id'])
-    logging.info(str(dt.now())+' '+'User: '+str(user_id)+' call_set_prompt')
-
-    authentication, message = authenticate(user_id)
-    if not authentication:
-        logging.info(str(dt.now())+' '+'User: '+str(user_id)+' not authenticated. message: '+str(message))
-        return web.Response(text=message, content_type="text/html")
-    
-    # read prompt from user config
-    config = read_config(user_id)
-    # set new prompt
-    # config['prompt'] = data['prompt']
-    config['last_cmd'] = 'set_prompt'
-    save_config(config, user_id)
-    return web.Response(text='Please, send me a new init prompt', content_type="text/html")
-
-async def call_last_message(request):
-    request_str = json.loads(str(await request.text()))
-    data = json.loads(request_str)
-    user_id = str(data['user_id'])
-    logging.info(str(dt.now())+' '+'User: '+str(user_id)+' call_last_message')
-    
-    authentication, message = authenticate(user_id)
-    if not authentication:
-        logging.info(str(dt.now())+' '+'User: '+str(user_id)+' not authenticated. message: '+str(message))
-        return web.Response(text=message, content_type="text/html")
-    
-    # read prompt from user config
-    config = read_config(user_id)
-    # Read last message from prompt
-    last_message = config['chat_gpt_prompt'][-1]['content']    
-    return web.Response(text=last_message, content_type="text/html")
-
-
-async def call_update_settings(request):
-    try:
-        request_str = json.loads(str(await request.text()))
-        data = json.loads(request_str)
-        user_id = str(data['user_id'])
-        logging.info(str(dt.now())+' '+'User: '+str(user_id)+' update_settings')
-        # read prompt from user config
-        config = read_config(user_id)
-        # set new prompt
-        # config['prompt'] = data['prompt']
-        # config['last_cmd'] = 'set_prompt'
-        """for key in data['config']:
-            logger.info(str(key)+': '+str(data['config'][key]))
-            config[key] = data['config'][key]"""
-        for key, value in data['config'].items():
-            logger.info(str(key)+': '+str(value))
-            config[key] = value
-        save_config(config, user_id)
-        return web.Response(text='Ok', content_type="text/html")
-    except Exception as e:
-        logger.error(e)
-        return web.Response(text='Error', content_type="text/html")
 
 
 def authenticate(user_id):
@@ -314,122 +155,6 @@ def openai_conversation(config, user_id, user_text):
         f.write(str(dt.now())+';'+conversation_id+';'+str(chat_gpt_prompt)+';'+str(total_tokens)+'\n')
 
     return str(bot_text)
-
-
-async def call_voice(request):
-    logging.info(str(dt.now())+' '+'call_voice')
-    # return web.Response(text='x', content_type="text/html")
-    # get user_id and voice file from post request
-    reader = await request.multipart()
-    
-    # read user_id
-    field = await reader.next()
-    user_id = await field.read()
-    # convert bytearray to text
-    user_id = user_id.decode('utf-8')
-
-    authentication, message = authenticate(user_id)
-    if not authentication:
-        logging.info(str(dt.now())+' '+'User: '+str(user_id)+' not authenticated. message: '+str(message))
-        # message = 'no'
-        return web.Response(text=message, content_type="text/html")
-    
-    logging.info(str(dt.now())+' '+'User: '+str(user_id)+' call_voice')
-    
-    config = read_config(user_id)
-
-    # Read accepted users list from text file
-    #granted_users = []
-    #with open('granted_users.txt', 'r') as f:
-    #    for line in f:
-    #        granted_users.append(line.strip())
-
-    
-    # Check is user id in accepted users
-    # if user_id in granted_users:
-
-    # check user balance
-    if int(config['total_tokens']) < 0:
-
-        # generate a random token for the filename
-        filename = str(uuid.uuid4())
-        
-        # read voice file
-        field = await reader.next()        
-        voice = await field.read()
-        # save voice file
-        logging.info(str(dt.now())+' '+'User: '+str(user_id)+' call_voice.save voice file')
-        with open(filename+'.ogg', 'wb') as new_file:
-            new_file.write(voice)
-        logging.info(str(dt.now())+' '+'User: '+str(user_id)+' call_voice.convert to wav')
-        # convert to wav
-        # os.system('ffmpeg -i '+filename+'.ogg -ac 1 -ar 16000 '+filename+'.wav -y')
-        
-        # transcribe and receive response
-        logging.info(str(dt.now())+' '+'User: '+str(user_id)+' call_voice.transcribe and receive response')
-        stt_url = os.environ.get('STT_SERVER', '')+'/inference'
-        # user_text = await stt(stt_uri+'/inference', filename+'.wav')
-        # with open(file_path, 'rb') as f:
-        #     r = requests.post(stt_url, files={'file': f})
-        # r = requests.post(uri, files={'file': f}, data={'language_code': language_code})
-        # language_code = 'en-US'
-        language_code, model = language_parameters(config)
-        r = requests.post(stt_url, files={'file': voice}, data={'language_code': language_code})
-        # r = await stt(stt_url, filename+'.ogg', 'en-US')
-        user_text = r.text
-
-        # remove ogg file
-        os.remove(filename+'.ogg')
-
-        # safe
-        #if len(config['prompt']) > 1500:
-        #    #config = load_default_config(user_id)
-        #    reset_prompt(user_id)
-
-        bot_text = openai_conversation(config, user_id, user_text)
-
-        # remove user's voice wav file
-        # os.remove(filename+'.wav')
-
-        # synthesis text to speech
-        logging.info(str(dt.now())+' '+'User: '+str(user_id)+' call_voice.synthesis text to speech')
-        tts(bot_text, filename, config)
-        file_should_be_removed = True
-    else:
-        filename = 'data/add_funds'
-        file_should_be_removed = False
-
-    # read audio file
-    with open(filename+'.wav', 'rb') as f:
-        content = f.read()
-
-    if file_should_be_removed:
-        # remove synthesis wav file
-        os.remove(filename+'.wav')
-    logging.info(str(dt.now())+' '+'User: '+str(user_id)+' call_voice.response')
-    return web.Response(body=content, content_type="audio/wav")
-
-
-async def call_check_balance(request):
-    request_str = json.loads(str(await request.text()))
-    data = json.loads(request_str)
-    user_id = str(data['user_id'])
-    logging.info(str(dt.now())+' '+'User: '+str(user_id)+' call_check_balance')
-    
-    authentication, message = authenticate(user_id)
-    if not authentication:
-        logging.info(str(dt.now())+' '+'User: '+str(user_id)+' not authenticated. message: '+str(message))
-        return web.Response(text=message, content_type="text/html")
-    
-    # read prompt from user config
-    config = read_config(user_id)
-    total_tokens = int(config['total_tokens'])
-    price = float(config['price'])
-    balance = -total_tokens/1000*price
-    # round
-    balance = round(balance, 2)
-    content = '$'+str(balance)+'\nДля пополнения обратитесь к @format37'
-    return web.Response(text=content, content_type="text/html")
 
 
 async def call_user_add(request):
@@ -570,62 +295,9 @@ async def call_financial_report(request):
     return web.Response(text=content, content_type="text/html")
 
 
-async def call_inline(request):
-    r = await request.json()
-    # logger.info("request data: {}".format(r))
-    # Assuming r is a JSON-formatted string
-    r_dict = json.loads(r)
-    user_id = r_dict["user_id"]
-    # logger.info("user_id: {}".format(user_id))
-    # Read userlist from data/users.txt
-    """with open("data/access.txt", "r") as f:
-        userlist = f.read().splitlines()
-    # replace new line
-    userlist = [int(x) for x in userlist]"""
-    authentication, result = authenticate(user_id)
-    if not authentication:
-        # message = 'Доступа нет'
-        logging.info(str(dt.now())+' '+'User: '+str(user_id)+' not authenticated. message: '+str(result))
-        # message = 'no'
-        # return web.Response(text=message, content_type="text/html")
-    else:
-    
-        # if user_id in userlist:
-        # if True:
-        config = read_config(user_id)
-        logger.info("inline query: {}".format(r_dict["query"]))
-        query = r_dict["query"]
-        openai.api_key = os.getenv("PHRASE_SEED")
-        answer = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo",
-        messages=[
-                # {"role": "system", "content": "You are a helpful assistant."},
-                {"role": "system", "content": config['chat_gpt_prompt']},
-                {"role": "user", "content": str(query)}
-            ]
-        )
-        logger.info("answer: {}".format(answer))
-        result = answer['choices'][0]['message']['content']
-
-    """else:
-        logger.info("User not allowed: {}".format(user_id))
-        result = "You are not allowed to access this service"
-    """
-    # return jsonify({"result": result})
-    return web.json_response({"result": result})
-
-
 def main():
     app = web.Application(client_max_size=1024**3)
-    app.router.add_route('POST', '/voice_message', call_voice)
-    app.router.add_route('POST', '/show_prompt', call_show_prompt)
-    app.router.add_route('POST', '/reset_prompt', call_reset_prompt)
-    app.router.add_route('POST', '/set_prompt', call_set_prompt)
     app.router.add_route('POST', '/regular_message', call_regular_message)
-    app.router.add_route('POST', '/check_balance', call_check_balance)
-    app.router.add_route('POST', '/update_settings', call_update_settings)
-    app.router.add_route('POST', '/last_message', call_last_message)
-    app.router.add_route('POST', '/inline', call_inline)
     app.router.add_route('POST', '/user_add', call_user_add)
     app.router.add_route('POST', '/financial_report', call_financial_report)
     logging.info(str(dt.now())+' '+'Server started')
