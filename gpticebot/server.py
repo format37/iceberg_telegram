@@ -14,8 +14,10 @@ import datetime
 import json
 
 
-# enable logging
+# init logging
 logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 
 app = Flask(__name__)
 
@@ -90,7 +92,7 @@ def escape_characters(text):
 
 def openai_conversation(config, user_id, user_text):
     # openai conversation
-    logging.info(str(dt.now())+' '+'User: '+str(user_id)+' openai conversation')
+    logger.info(str(dt.now())+' '+'User: '+str(user_id)+' openai conversation')
     # init
     chat_gpt_prompt = config['chat_gpt_prompt']
     chat_gpt_prompt.append({"role": "user", "content": str(user_text)})
@@ -114,7 +116,7 @@ def openai_conversation(config, user_id, user_text):
 
 
 def reset_prompt(user_id):
-    logging.info(str(dt.now())+' '+'User: '+str(user_id)+' reset_prompt')
+    logger.info(str(dt.now())+' '+'User: '+str(user_id)+' reset_prompt')
     # read default prompt
     config = read_config(user_id)
     # init_prompt = config['init_prompt']
@@ -152,18 +154,18 @@ def call_reset():
     data = json.loads(request_str)"""
     data = request.get_json()
     user_id = str(data['user_id'])
-    logging.info(str(dt.now())+' '+'User: '+str(user_id)+' call_reset')
+    logger.info(str(dt.now())+' '+'User: '+str(user_id)+' call_reset')
     
     authentication, message = authenticate(user_id)
     if not authentication:
-        logging.info(str(dt.now())+' '+'User: '+str(user_id)+' not authenticated. message: '+str(message))
+        logger.info(str(dt.now())+' '+'User: '+str(user_id)+' not authenticated. message: '+str(message))
         # return web.Response(text=message, content_type="text/html")
         return jsonify({'text': message})
     
     reset_prompt(user_id)
     # return web.Response(text='Память очищена', content_type="text/html")
     result = jsonify({'result': 'Память очищена'})
-    logging.info(str(dt.now())+' '+'User: '+str(user_id)+' reset: '+str(result))
+    logger.info(str(dt.now())+' '+'User: '+str(user_id)+' reset: '+str(result))
     return result
 
 
@@ -173,10 +175,10 @@ def call_message():
     data = json.loads(request_str)"""
     data = request.get_json()
     user_id = str(data['user_id'])
-    logging.info(str(dt.now())+' '+'User: '+str(user_id)+' call_regular_message')
+    logger.info(str(dt.now())+' '+'User: '+str(user_id)+' call_regular_message')
     authentication, message = authenticate(user_id)
     if not authentication:
-        logging.info(str(dt.now())+' '+'User: '+str(user_id)+' not authenticated. message: '+str(message))
+        logger.info(str(dt.now())+' '+'User: '+str(user_id)+' not authenticated. message: '+str(message))
         # message = 'no'
         return web.Response(text=message, content_type="text/html")
     # read prompt from user config
@@ -200,9 +202,9 @@ def call_message():
             answer = 'Not enough funds. Please, refill your account'
     
     save_config(config, user_id)
-    logging.info(str(dt.now())+' '+'User: '+str(user_id)+' call_regular_message answer: '+str(answer))
+    logger.info(str(dt.now())+' '+'User: '+str(user_id)+' call_regular_message answer: '+str(answer))
     # dtype
-    logging.info(str(dt.now())+' '+'User: '+str(user_id)+' call_regular_message answer type: '+str(type(answer)))
+    logger.info(str(dt.now())+' '+'User: '+str(user_id)+' call_regular_message answer type: '+str(type(answer)))
     return web.Response(text=escape_characters(answer), content_type="text/html")
 
 
@@ -214,7 +216,7 @@ def call_user_add(request):
     user_id = str(data['user_id'])
     new_user_id = str(data['new_user_id'])
     new_user_name = str(data['new_user_name'])
-    logging.info(str(dt.now())+' '+'User: '+str(user_id)+' call_user_add: '+str(new_user_id)+' '+str(new_user_name))
+    logger.info(str(dt.now())+' '+'User: '+str(user_id)+' call_user_add: '+str(new_user_id)+' '+str(new_user_name))
     # Check is user_id in admins.txt
     with open('data/admins.txt', 'r') as f:
         admins = f.read().splitlines()
@@ -237,7 +239,7 @@ def call_financial_report(request):
     user_id = str(data['user_id'])
     count_of_days = int(data['count_of_days'])
 
-    logging.info(str(dt.now())+' '+'User: '+str(user_id)+' call_financial_report: '+str(count_of_days))
+    logger.info(str(dt.now())+' '+'User: '+str(user_id)+' call_financial_report: '+str(count_of_days))
     # Check is user_id in admins.txt
     with open('data/admins.txt', 'r') as f:
         admins = f.read().splitlines()
@@ -298,13 +300,13 @@ def call_financial_report(request):
                     if count_of_days > 0 and datetime.datetime.strptime(date, '%Y-%m-%d') < cutoff_date:
                         continue
                     
-                    logging.info('row[2] value: '+str(row[2]))
-                    logging.info('row[2] type: '+str(type(row[2])))
+                    logger.info('row[2] value: '+str(row[2]))
+                    logger.info('row[2] type: '+str(type(row[2])))
                     # Evaluate token count and calculate funds
                     try:
                         token_count = len(ast.literal_eval(row[2]))
                     except Exception as e:
-                        logging.info('token calculation error. Exception: '+str(e))
+                        logger.info('token calculation error. Exception: '+str(e))
                         token_count = 1000
                     funds = token_count * 0.02 / 1000
                     
@@ -354,7 +356,7 @@ def call_financial_report(request):
     app.router.add_route('POST', '/user_add', call_user_add)
     app.router.add_route('POST', '/financial_report', call_financial_report)
     app.router.add_route('POST', '/reset_prompt', call_reset_prompt)
-    logging.info(str(dt.now())+' '+'Server started')
+    logger.info(str(dt.now())+' '+'Server started')
     web.run_app(app, port=os.environ.get('PORT', ''))
 
 
