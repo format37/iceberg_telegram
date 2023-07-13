@@ -3,5 +3,6 @@
     "chat_gpt_init_prompt": [{"role": "system", "content": "You are the chat member. Your username is assistant. You need to start with 'assistant:' before your message. Speak in the same language, same style, and the same mood as users."}],
     "last_cmd": "start",
     "conversation_id": 0,
-    "name": "user"
+    "name": "user",
+    "model": "gpt-4"
 }
