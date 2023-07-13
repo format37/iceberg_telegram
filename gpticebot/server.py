@@ -149,11 +149,12 @@ def call_test():
 
 @app.route("/reset", methods=["POST"])
 def call_reset():
-    print('call_reset_p')
-    logger.info('call_reset')
+    # print('call_reset_p')
+    # logger.info('call_reset')
     """request_str = json.loads(str(await request.text()))
     data = json.loads(request_str)"""
-    data = request.get_json()
+    r = request.get_json()
+    data = json.loads(r)
     user_id = str(data['user_id'])
     # logger.info(str(dt.now())+' '+'User: '+str(user_id)+' call_reset')
     
@@ -176,7 +177,8 @@ def call_reset():
 def call_message():
     """request_str = json.loads(str(await request.text()))
     data = json.loads(request_str)"""
-    data = request.get_json()
+    r = request.get_json()
+    data = json.loads(r)
     user_id = str(data['user_id'])
     logger.info(str(dt.now())+' '+'User: '+str(user_id)+' call_regular_message')
     authentication, message = authenticate(user_id)
@@ -215,7 +217,8 @@ def call_message():
 def call_user_add(request):
     """request_str = json.loads(str(await request.text()))
     data = json.loads(request_str)"""
-    data = request.get_json()
+    r = request.get_json()
+    data = json.loads(r)
     user_id = str(data['user_id'])
     new_user_id = str(data['new_user_id'])
     new_user_name = str(data['new_user_name'])
@@ -238,7 +241,8 @@ def call_user_add(request):
 def call_financial_report(request):
     """request_str = json.loads(str(await request.text()))
     data = json.loads(request_str)"""
-    data = request.get_json()
+    r = request.get_json()
+    data = json.loads(r)
     user_id = str(data['user_id'])
     count_of_days = int(data['count_of_days'])
 
@@ -370,6 +374,6 @@ if __name__ == "__main__":
 if __name__ == "__main__":
     app.run(
         host='0.0.0.0',
-        debug=False,
+        debug=True,
         port=int(os.environ.get("PORT", os.environ.get('PORT', '')))
         )
