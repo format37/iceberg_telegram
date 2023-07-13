@@ -321,6 +321,7 @@ def call_message():
     # Define the prompt
     chat_gpt_prompt = config['chat_gpt_prompt']
     # Save the original message
+    logger.info("saving message: {}".format(message))
     save_message(user_id, user_name, chat_id, chat_type, message)
 
     if reaction:
