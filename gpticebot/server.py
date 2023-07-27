@@ -1,6 +1,4 @@
 from flask import Flask, request, jsonify, Response
-# from asyncio.log import logger
-# from aiohttp import web
 import os
 import json
 import openai
@@ -98,56 +96,6 @@ def escape_characters(text):
     return text
 
 
-"""def openai_conversation(config, user_id, user_text):
-    # openai conversation
-    logger.info(str(dt.now())+' '+'User: '+str(user_id)+' openai conversation')
-    # init
-    chat_gpt_prompt = config['chat_gpt_prompt']
-    chat_gpt_prompt.append({"role": "user", "content": str(user_text)})
-    openai_response = text_chat_gpt(chat_gpt_prompt)
-    bot_text = openai_response['choices'][0]['message']['content']
-    chat_gpt_prompt.append({"role": "assistant", "content": bot_text})
-    config['chat_gpt_prompt'] = chat_gpt_prompt
-    total_tokens = openai_response['usage']['total_tokens']
-    config['total_tokens'] = int(config['total_tokens'])+int(total_tokens)
-    conversation_id = str(config['conversation_id'])
-
-    # save config
-    save_config(config, user_id)
-
-    # append conversation_id, datetime and prompt to logs/prompt_[iser_id].csv
-    # splitter is ;
-    with open('logs/prompt_'+user_id+'.csv', 'a') as f:
-        f.write(str(dt.now())+';'+conversation_id+';'+str(chat_gpt_prompt)+';'+str(total_tokens)+'\n')
-
-    return str(bot_text)"""
-
-
-# def reset_prompt(user_id):
-# logger.info(str(dt.now())+' '+'User: '+str(user_id)+' reset_prompt')
-"""# read default prompt
-config = read_config(user_id)
-# init_prompt = config['init_prompt']
-chat_gpt_init_prompt = config['chat_gpt_init_prompt']
-total_tokens = config['total_tokens']
-language = config['language']
-name = config['name']
-# names = config['names']
-config = load_default_config(user_id)
-config['total_tokens'] = total_tokens
-# config['prompt'] = init_prompt
-# config['init_prompt'] = init_prompt
-config['chat_gpt_prompt'] = chat_gpt_init_prompt
-config['chat_gpt_init_prompt'] = chat_gpt_init_prompt
-config['language'] = language
-config['name'] = name
-# config['names'] = names
-config['last_cmd'] = 'reset_prompt'
-config['conversation_id'] = int(config['conversation_id']) + 1
-save_config(config, user_id)"""
-    
-
-
 def delete_conversation_files(user_id, chat_id, chat_type):
     if chat_type == 'group' or chat_type == 'supergroup':
         logger.info("delete group chat")
@@ -165,7 +113,8 @@ def delete_conversation_files(user_id, chat_id, chat_type):
     # Sort files by creation time ascending
     list_of_files.sort(key=os.path.getctime)
     # Delete all files except the last one
-    for file_path in list_of_files[:-1]:
+    # for file_path in list_of_files[:-1]:
+    for file_path in list_of_files:
         logger.info("delete file: "+file_path)
         os.remove(file_path)
 
@@ -190,24 +139,6 @@ def read_latest_messages(user_id, chat_id, chat_type, chat_gpt_prompt_original, 
     list_of_files.sort(key=os.path.getctime, reverse=True)
 
     # Iterate over sorted files and append message to messages list
-    """limit_reached = False
-    for file_name in list_of_files:
-        logger.info("reading file: "+file_name)
-        # Calculate the token length of the message
-        if limit_reached or token_counter(chat_gpt_prompt, model)<token_limit:
-            limit_reached = True
-            with open(file_name, "r") as f:
-                data = json.load(f)
-                if data["user_name"] == "assistant":
-                    role = "assistant"
-                    chat_gpt_prompt.append({"role": role, "content": data["message"]})
-                else:
-                    role = "user"
-                    chat_gpt_prompt.append({"role": role, "content": data["user_name"]+': '+data["message"]})
-        else:
-            # Remove file in path
-            logger.info("token limit reached. removing file: "+file_name)
-            os.remove(file_name) """
     limit_reached = False
     for file_name in list_of_files:
         logger.info("reading file: "+file_name)
@@ -506,20 +437,6 @@ def call_financial_report():
     # return web.Response(text=content, content_type="text/html")
     return jsonify({"result": content})
 
-
-"""def main():
-    app = web.Application(client_max_size=1024**3)
-    app.router.add_route('POST', '/regular_message', call_regular_message)
-    app.router.add_route('POST', '/user_add', call_user_add)
-    app.router.add_route('POST', '/financial_report', call_financial_report)
-    app.router.add_route('POST', '/reset_prompt', call_reset_prompt)
-    logger.info(str(dt.now())+' '+'Server started')
-    web.run_app(app, port=os.environ.get('PORT', ''))
-
-
-if __name__ == "__main__":
-    main()
-"""
 
 if __name__ == "__main__":
     app.run(
