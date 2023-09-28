@@ -212,8 +212,8 @@ def call_reset():
     data = json.loads(request_str)"""
     r = request.get_json()
     data = json.loads(r)
-    user_id = str(data['user_id'])
-    chat_id = str(data['chat_id'])
+    user_id = 'id'+str(data['user_id'])
+    chat_id = 'id'+str(data['chat_id'])
     chat_type = str(data['chat_type'])
     # logger.info(str(dt.now())+' '+'User: '+str(user_id)+' call_reset')
     
@@ -239,9 +239,9 @@ def call_message():
     data = json.loads(request_str)"""
     r = request.get_json()
     r_dict = json.loads(r)
-    user_id = r_dict["user_id"]
+    user_id = 'id'+r_dict["user_id"]
     user_name = r_dict["user_name"]
-    chat_id = r_dict["chat_id"]
+    chat_id = 'id'+r_dict["chat_id"]
     chat_type = r_dict["chat_type"]
     message = r_dict["text"]
 
@@ -299,7 +299,7 @@ def call_user_add():
     data = json.loads(request_str)"""
     r = request.get_json()
     data = json.loads(r)
-    user_id = str(data['user_id'])
+    user_id = 'id'+str(data['user_id'])
     new_user_id = str(data['new_user_id'])
     new_user_name = str(data['new_user_name'])
     logger.info(str(dt.now())+' '+'User: '+str(user_id)+' call_user_add: '+str(new_user_id)+' '+str(new_user_name))
