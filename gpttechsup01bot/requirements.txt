@@ -1,0 +1,6 @@
+# aiohttp
+# websockets
+requests
+matplotlib
+flask_cors
+tiktoken
