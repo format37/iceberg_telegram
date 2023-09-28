@@ -217,9 +217,9 @@ def call_reset():
     chat_type = str(data['chat_type'])
     # logger.info(str(dt.now())+' '+'User: '+str(user_id)+' call_reset')
     
-    authentication, message = authenticate(user_id)
+    authentication, message = authenticate(chat_id)
     if not authentication:
-        logger.info(str(dt.now())+' '+'User: '+str(user_id)+' not authenticated. message: '+str(message))
+        logger.info(str(dt.now())+' '+'Group: '+str(chat_id)+' not authenticated. message: '+str(message))
         # return web.Response(text=message, content_type="text/html")
         # return jsonify({'text': message})
         return jsonify({"result": message})
@@ -256,9 +256,9 @@ def call_message():
             reaction = True
             message = message[2:].strip()
     else:
-        authentication, auth_message = authenticate(user_id)
+        authentication, auth_message = authenticate(chat_id)
         if not authentication:
-            logger.info(str(dt.now())+' '+'User: '+str(user_id)+' not authenticated. message: '+str(message))
+            logger.info(str(dt.now())+' '+'Group: '+str(chat_id)+' not authenticated. message: '+str(message))
             # message = 'no'
             # return web.Response(text=message, content_type="text/html")
             return jsonify({"result": auth_message})

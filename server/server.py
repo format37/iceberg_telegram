@@ -334,6 +334,105 @@ def gpticebot_call_message(message):
         gpticebot.reply_to(message, ""+str(content.json()['result']))
 # === === === gpticebot --
 
+# === === === gpttechsup01bot ++
+gpttechsup01bot = default_bot_init('GPT_TECH_SUP_01_BOT_TOKEN')
+bots.append(gpttechsup01bot)
+
+
+@gpttechsup01bot.message_handler(commands=['reset'])
+def gpttechsup01bot_call_reset(message):
+    logger.info("gpttechsup01bot reset: "+str(message.from_user))
+    url = 'http://localhost:'+os.environ.get('GPT_TECH_SUP_01_BOT_PORT')+'/reset'
+    data = {
+        "user_id": message.from_user.id,
+        "chat_id": message.chat.id,
+        "chat_type": message.chat.type
+        }
+    request_str = json.dumps(data)
+    content = requests.post(url, json=request_str)
+    gpttechsup01bot.reply_to(message, ""+str(content.json()['result']))
+
+
+@gpttechsup01bot.message_handler(commands=['start'])
+def gpttechsup01bot_call_start(message):
+    reply_text = """Приветствую, Я GPT-4 робот.
+Вы можете задавать мне любые вопросы, но помните, данные которые вы отправляете мне, однажды могут стать публичными.
+Чтобы начать диалог заново, используйте команду /reset. Пожалуйста, не забывайте использовать эту команду, поскольку длительные диалоги требуют значительных вычислительных ресурсов."""
+    gpttechsup01bot.reply_to(message, escape_characters(reply_text), parse_mode="MarkdownV2")
+    return
+
+
+@gpttechsup01bot.message_handler(commands=['add'])
+def gpttechsup01bot_call_add(message):
+    user_id = message.from_user.id
+    # Add new user. cmd in format: /add 123456789
+    if message.text.startswith('/add'):
+        url = 'http://localhost:' + str(os.environ.get('GPT_TECH_SUP_01_BOT_PORT')) + '/user_add'
+        new_user_id = message.text.split()[1]
+        new_user_name = message.text.split()[2]
+        data = {
+            "user_id": user_id,
+            "new_user_id": new_user_id,
+            "new_user_name": new_user_name
+        }
+        request_str = json.dumps(data)
+        content = requests.post(url, json=request_str)
+        # gpttechsup01bot.reply_to(message, escape_characters(content.text), parse_mode="MarkdownV2")
+        result = content.json()['result']
+        if result != '':
+            gpttechsup01bot.reply_to(message, ""+str(content.json()['result']), parse_mode="MarkdownV2")
+        # return
+    
+@gpttechsup01bot.message_handler(commands=['fin'])
+def gpttechsup01bot_call_fin(message):
+    user_id = message.from_user.id
+    # Financial report. cmd for 10 days in format: /fin 10
+    if message.text.startswith('/fin'):
+        url = 'http://localhost:' + \
+            os.environ.get('GPT_TECH_SUP_01_BOT_PORT')+'/financial_report'
+        
+        # extract number using regular expressions
+        match = re.search(r'\d+', message.text)
+        if match:
+            count_of_days = int(match.group())
+        else:
+            count_of_days = 0
+        if message.text == '/fin':
+            count_of_days = 0
+        data = {
+            "user_id": user_id,
+            "count_of_days": count_of_days
+        }
+        request_str = json.dumps(data)
+        content = requests.post(url, json=request_str)
+        # Check type, if response is text
+        if content.headers['content-type'] == 'text/html; charset=utf-8':
+            gpttechsup01bot.reply_to(message, str(content.json()['result']), parse_mode="MarkdownV2")
+        elif content.headers['content-type'] == 'image/png':
+            # gpttechsup01bot.send_photo(message.chat.id, content.content)
+            gpttechsup01bot.send_photo(message.chat.id, content.json()['result'])
+        return
+
+
+@gpttechsup01bot.message_handler(func=lambda message: True, content_types=['text'])
+def gpttechsup01bot_call_message(message):
+    # Receive user's prompt
+    url = 'http://localhost:' + str(os.environ.get('GPT_TECH_SUP_01_BOT_PORT')) + '/message'
+    data = {
+        "user_id": message.from_user.id,
+        "user_name": message.from_user.username,
+        "chat_id": message.chat.id,
+        "chat_type": message.chat.type,
+        "text": message.text
+        }
+    # logger.info('gpttechsup01bot_call_message: '+str(message.text))
+    request_str = json.dumps(data)
+    content = requests.post(url, json=request_str)
+    result = content.json()['result']
+    if result != '':
+        gpttechsup01bot.reply_to(message, ""+str(content.json()['result']))
+# === === === gpttechsup01bot --
+
 def main():
     logger.info("main: Starting server")
     app = web.Application()
