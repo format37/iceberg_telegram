@@ -23,7 +23,7 @@ app = Flask(__name__)
 
 
 def token_counter(text, model):
-    enc = tiktoken.encoding_for_model(model)
+    enc = tiktoken.encoding_for_model('gpt-3.5-turbo-0613')
     tokens = enc.encode(str(text))
     return len(tokens)
 
