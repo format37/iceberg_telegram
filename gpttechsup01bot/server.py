@@ -239,9 +239,9 @@ def call_message():
     data = json.loads(request_str)"""
     r = request.get_json()
     r_dict = json.loads(r)
-    user_id = 'id'+r_dict["user_id"]
+    user_id = 'id'+str(r_dict["user_id"])
     user_name = r_dict["user_name"]
-    chat_id = 'id'+r_dict["chat_id"]
+    chat_id = 'id'+str(r_dict["chat_id"])
     chat_type = r_dict["chat_type"]
     message = r_dict["text"]
 
