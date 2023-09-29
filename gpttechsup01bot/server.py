@@ -30,9 +30,11 @@ def token_counter(text, model):
 
 def text_chat_gpt(prompt, model):
     openai.api_key = os.getenv("PHRASE_SEED")
+    temperature=0.1
     answer = openai.ChatCompletion.create(
         model = model,
-        messages=prompt
+        messages=prompt,
+        temperature=temperature
     )
     return answer
 
