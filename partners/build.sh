@@ -1,1 +1,1 @@
-docker build -t partners_bot .
+sudo docker build -t partners_bot .
