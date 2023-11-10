@@ -1,28 +1,22 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-import ssl
-import os
-from aiohttp import web
+from fastapi import FastAPI, Request, HTTPException
+from fastapi.responses import JSONResponse
 import telebot
+import os
 import logging
-import requests
-import json
-import re
+import ssl
 
-from iceberg import (
-    mrm_support_redirect,
+
+# mrm_support_redirect,
+# escape_characters
+from iceberg import (    
     bot_start,
     contact,
     mrm_support_receive_photo,
     mrm_support_text,
     mrm_support_bot_button_handler,
-    escape_characters
+    mrm_support_redirect
 )
-import math
-
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
-logger.info("Starting")
+# import math
 
 clientPath_prod = [
     'http://10.2.4.123/productionMSK/ws/Telegram.1cws?wsdl',
@@ -38,146 +32,152 @@ clientPath_test = [
 DATA_PATH_PROD = 'data/'
 DATA_PATH_TEST = 'data/test/'
 
-# BID_ROW_WIDTH = 3
 
-WEBHOOK_HOST = os.environ.get('WEBHOOK_HOST', '')
-WEBHOOK_PORT = os.environ.get('WEBHOOK_PORT', '')  # 443, 80, 88 or 8443 (port need to be 'open')
-WEBHOOK_LISTEN = '0.0.0.0'  # In some VPS you may need to put here the IP addr
+
+# Initialize FastAPI app
+app = FastAPI()
+
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+# Environment variables 
+WEBHOOK_HOST = os.environ.get('WEBHOOK_HOST', '')  
+WEBHOOK_PORT = os.environ.get('WEBHOOK_PORT', '')
 WEBHOOK_SSL_CERT = 'webhook_cert.pem'
 WEBHOOK_SSL_PRIV = 'webhook_pkey.pem'
 
-# Quick'n'dirty SSL certificate generation:
-#
-# openssl genrsa -out webhook_pkey.pem 2048
-# openssl req -new -x509 -days 3650 -key webhook_pkey.pem -out webhook_cert.pem
-#
-# When asked for "Common Name (e.g. server FQDN or YOUR name)" you should reply
-# with the same value in you put in WEBHOOK_HOST
+# Initialize bots
+bots = []
 
-# Set the inline query timeout to 60 seconds
-try:
-    telebot.apihelper.SEARCH_INLINE_TIMEOUT = 60
-except telebot.apihelper.ApiTelegramBotException as e:
-    logger.error(e)
-
-async def call_test(request):
-    logger.info("test")
-    content = "get ok"
-    return web.Response(text=content, content_type="text/html")
-
-
-def default_bot_init(bot_token_env):
-    API_TOKEN = os.environ.get(bot_token_env, '')
-    bot = telebot.TeleBot(API_TOKEN)
-
-    WEBHOOK_URL_BASE = "https://{}:{}".format(
-            os.environ.get('WEBHOOK_HOST', ''), 
-            os.environ.get('WEBHOOK_PORT', '')
-            )
-    WEBHOOK_URL_PATH = "/{}/".format(API_TOKEN)
-
-    # Remove webhook, it fails sometimes the set if there is a previous webhook
+def init_bot(token):
+    bot = telebot.TeleBot(token)
+    
+    url = f"https://{WEBHOOK_HOST}:{WEBHOOK_PORT}/{token}/"
     bot.remove_webhook()
-
-    # Set webhook
-    wh_res = bot.set_webhook(url=WEBHOOK_URL_BASE + WEBHOOK_URL_PATH,certificate=open(WEBHOOK_SSL_CERT, 'r'))
-    print(bot_token_env, 'webhook set', wh_res)
-    # print(WEBHOOK_URL_BASE + WEBHOOK_URL_PATH)
-
+    bot.set_webhook(url=url, certificate=open(WEBHOOK_SSL_CERT, 'r'))
+    
+    bots.append(bot)
     return bot
 
-
-# Process webhook calls
-async def handle(request):
+@app.post("/{token}/")
+async def handle(request: Request, token: str):
+    update = telebot.types.Update.de_json(await request.json())
     for bot in bots:
-        if request.match_info.get('token') == bot.token:
-            request_body_dict = await request.json()
-            update = telebot.types.Update.de_json(request_body_dict)
-            bot.process_new_updates([update])                        
-            return web.Response()
+        if bot.token == token:
+            bot.process_new_updates([update])
+            return JSONResponse({"ok": True})
+    raise HTTPException(status_code=403, detail="Invalid token")
+            
+@app.on_event("startup")
+async def startup():
+    # Create bots
+    init_bot(os.environ['BOT1_TOKEN']) 
+    init_bot(os.environ['BOT2_TOKEN'])
+    
+    context = ssl.SSLContext(ssl.PROTOCOL_TLSv1_2) 
+    context.load_cert_chain(WEBHOOK_SSL_CERT, WEBHOOK_SSL_PRIV)
+    app.state.ssl_context = context
 
-    return web.Response(status=403)
-
-
-bots	= []
 
 # === === === partners_iceberg_bot ++
-partners_iceberg_bot = default_bot_init('PARTNERS_ICEBERG_BOT')
-bots.append(partners_iceberg_bot)
+partners_iceberg_bot = init_bot(os.environ['PARTNERS_ICEBERG_BOT_TOKEN'])
 
+@app.post("/partners_iceberg_bot/start")
+async def partners_iceberg_bot_start(update: telebot.types.Update):
+    # Call bot_start function
+    return JSONResponse({"ok": True})
 
-@partners_iceberg_bot.message_handler(commands=['start'])
-def partners_iceberg_bot_start(message):
-    bot_start(message, partners_iceberg_bot, logger)
+@app.post("/partners_iceberg_bot/contact")  
+async def partners_iceberg_bot_contact(update: telebot.types.Update):
+    # Call contact function
+    return JSONResponse({"ok": True}) 
 
-
-@partners_iceberg_bot.message_handler(content_types=['contact']) 
-def partners_iceberg_bot_contact(message):
-     contact(message, partners_iceberg_bot, logger, clientPath_prod, 'partners_iceberg_bot')
+@app.post("/partners_iceberg_bot/{message_type}")
+async def partners_iceberg_bot_message(message_type: str, update: telebot.types.Update):
+    # Call appropriate message handler based on type
+    if message_type == "text":
+        handle_text_message(update)
+    elif message_type == "photo":
+        handle_photo_message(update)
+        
+    return JSONResponse({"ok": True})
 # === === === partners_iceberg_bot --
 
 
 # === === === mrminfobot ++
-mrminfobot = default_bot_init('MRMINFOBOT_TOKEN')
-bots.append(mrminfobot)
+# Initialize bot
+mrminfobot = init_bot(os.environ['MRMINFOBOT_TOKEN'])
 
-# photo, redirect
-@mrminfobot.message_handler(func=lambda message: True, content_types = ['text', 'photo', 'video', 'document', 'audio', 'voice', 'location', 'contact', 'sticker'])
-def mrminfobot_message_handler(message):
-    logger.info("mrminfobot message_handler: "+str(message.from_user))
+@app.post("/mrminfobot/{message_type}")  
+async def mrminfobot_message(message_type: str, update: telebot.types.Update):
+    
+    if message_type in ["text", "photo", "video", "document", "audio", "voice", "location", "contact", "sticker"]:
+        # Call mrm_support_redirect 
+        return JSONResponse({"ok": True})
+
+    else:
+        return HTTPException(status_code=400, detail="Invalid message type")
+        
+# Handle callbacks        
+@app.post("/mrminfobot/callback")
+async def mrminfobot_callback(update: telebot.types.Update):
+    message = update.callback_query
     mrm_support_redirect(message, mrminfobot, logger, clientPath_prod)
+    return JSONResponse({"ok": True})
 # === === === mrminfobot --
 
 
-# === === === mrminfotestbot ++
-mrminfotestbot = default_bot_init('MRMINFOTESTBOT_TOKEN')
-bots.append(mrminfotestbot)
-
-# Any message, including text, photo, video, etc.
-@mrminfotestbot.message_handler(func=lambda message: True, content_types = ['text', 'photo', 'video', 'document', 'audio', 'voice', 'location', 'contact', 'sticker'])
-def mrminfotestbot_message_handler(message):
-    logger.info("mrminfotestbot message_handler: "+str(message.from_user))
-    mrm_support_redirect(message, mrminfotestbot, logger, clientPath_test)
-# # === === === mrminfotestbot --
-
-
 # === === === mrmsupport_bot ++
-mrmsupport_bot = default_bot_init('MRMSUPPORTBOT_TOKEN')
-bots.append(mrmsupport_bot)
+# Initialize bot
+mrmsupport_bot = init_bot(os.environ['MRMSUPPORTBOT_TOKEN'])
 
-
-@mrmsupport_bot.message_handler(commands=['start'])
-def mrmsupport_bot_start(message):
+# Handle start command
+@app.post("/mrmsupport_bot/start")  
+async def mrmsupport_bot_start(update: telebot.types.Update):
+    # bot_start(update)  
+    message = update.message
     bot_start(message, mrmsupport_bot, logger)
+    return JSONResponse({"ok": True})
 
+# Handle contact
+@app.post("/mrmsupport_bot/contact")
+async def mrmsupport_bot_contact(update: telebot.types.Update):
+    # contact(update)
+    message = update.message
+    contact(message, mrmsupport_bot, logger, clientPath_test, 'mrmsupport_bot')
+    return JSONResponse({"ok": True})
 
-@mrmsupport_bot.message_handler(content_types=['contact'])
-def mrmsupport_bot_contact(message):
-    contact(message, mrmsupport_bot, logger, clientPath_prod, 'mrmsupport_bot')
-
-
-# Receive compressed and uncompressed photos from user
-@mrmsupport_bot.message_handler(content_types=['photo', 'document'])
-def mrmsupport_bot_photo(message):
-    mrm_support_receive_photo(message, mrmsupport_bot, logger, DATA_PATH_PROD)
-
-
-@mrmsupport_bot.message_handler(func=lambda message: True, content_types=['text'])
-def mrmsupport_bot_text(message):
-    mrm_support_text(
-        message = message,
-        bot = mrmsupport_bot,
-        logger = logger,
-        data_path = DATA_PATH_PROD,
-        clientPath = clientPath_prod,
-        row_width = 3,
-        max_buttons_per_page = 14
-        )                                                                   
-
-
-@mrmsupport_bot.callback_query_handler(func=lambda call: True)
-def mrmsupport_bot_button(call):
-    mrm_support_bot_button_handler(
+# Handle messages
+@app.post("/mrmsupport_bot/{message_type}") 
+async def mrmsupport_bot_message(message_type: str, update: telebot.types.Update):
+    if message_type == "text":
+        # mrm_support_text(update)
+        message = update.message
+        mrm_support_text(
+            message = message,
+            bot = mrmsupport_bot,
+            logger = logger,
+            data_path = DATA_PATH_PROD,
+            clientPath = clientPath_prod,
+            row_width = 3,
+            max_buttons_per_page = 14
+        )
+    elif message_type in ["photo", "document"]:
+        # mrm_support_receive_photo(update)
+        message = update.message
+        mrm_support_receive_photo(message, mrmsupport_bot, logger, DATA_PATH_PROD)
+    else:
+        raise HTTPException(status_code=400, detail="Invalid message type")
+        
+    return JSONResponse({"ok": True})
+    
+# Handle callbacks
+@app.post("/mrmsupport_bot/callback")
+async def mrmsupport_bot_callback(update: telebot.types.Update):
+   # mrm_support_bot_button_handler(update)
+   call = update.callback_query
+   mrm_support_bot_button_handler(
         call = call,
         bot = mrmsupport_bot,
         logger = logger,
@@ -185,271 +185,10 @@ def mrmsupport_bot_button(call):
         row_width = 3,
         max_buttons_per_page = 14
         )
+   return JSONResponse({"ok": True})
 # === === === mrmsupport_bot --
 
-
-# === === === mrmsupport_bot_test ++
-mrmsupport_bot_test = default_bot_init('MRMSUPPORTBOT_TEST_TOKEN')
-bots.append(mrmsupport_bot_test)
-
-
-@mrmsupport_bot_test.message_handler(commands=['start'])
-def mrmsupport_bot_test_start(message):
-    bot_start(message, mrmsupport_bot_test, logger)
-
-
-@mrmsupport_bot_test.message_handler(content_types=['contact'])
-def mrmsupport_bot_test_contact(message):
-    contact(message, mrmsupport_bot_test, logger, clientPath_test, 'mrmsupport_bot')
-
-
-# Receive compressed and uncompressed photos from user
-@mrmsupport_bot_test.message_handler(content_types=['photo', 'document'])
-def mrmsupport_bot_test_photo(message):
-    mrm_support_receive_photo(message, mrmsupport_bot_test, logger, DATA_PATH_TEST)
-
-
-@mrmsupport_bot_test.message_handler(func=lambda message: True, content_types=['text'])
-def mrmsupport_bot_test_text(message):
-    mrm_support_text(
-        message = message,
-        bot = mrmsupport_bot_test,
-        logger = logger,
-        data_path = DATA_PATH_TEST,
-        clientPath = clientPath_test,
-        row_width = 3,
-        max_buttons_per_page = 14
-        )
-
-
-@mrmsupport_bot_test.callback_query_handler(func=lambda call: True)
-def mrmsupport_bot_test_button(call):
-    mrm_support_bot_button_handler(
-        call = call,
-        bot = mrmsupport_bot_test,
-        logger = logger,
-        data_path = DATA_PATH_TEST,
-        row_width = 3,
-        max_buttons_per_page = 14
-        )
-# === === === mrmsupport_bot_test --
-
-
-# === === === gpticebot ++
-gpticebot = default_bot_init('GPTICEBOT_TOKEN')
-bots.append(gpticebot)
-
-
-@gpticebot.message_handler(commands=['reset'])
-def gpticebot_call_reset(message):
-    logger.info("gpticebot reset: "+str(message.from_user))
-    url = 'http://localhost:'+os.environ.get('GPTICEBOT_PORT')+'/reset'
-    data = {
-        "user_id": message.from_user.id,
-        "chat_id": message.chat.id,
-        "chat_type": message.chat.type
-        }
-    request_str = json.dumps(data)
-    content = requests.post(url, json=request_str)
-    gpticebot.reply_to(message, ""+str(content.json()['result']))
-
-
-@gpticebot.message_handler(commands=['start'])
-def gpticebot_call_start(message):
-    reply_text = """Приветствую, Я GPT-4 робот.
-Вы можете задавать мне любые вопросы, но помните, данные которые вы отправляете мне, однажды могут стать публичными.
-Чтобы начать диалог заново, используйте команду /reset. Пожалуйста, не забывайте использовать эту команду, поскольку длительные диалоги требуют значительных вычислительных ресурсов."""
-    gpticebot.reply_to(message, escape_characters(reply_text), parse_mode="MarkdownV2")
-    return
-
-
-@gpticebot.message_handler(commands=['add'])
-def gpticebot_call_add(message):
-    user_id = message.from_user.id
-    # Add new user. cmd in format: /add 123456789
-    if message.text.startswith('/add'):
-        url = 'http://localhost:' + str(os.environ.get('GPTICEBOT_PORT')) + '/user_add'
-        new_user_id = message.text.split()[1]
-        new_user_name = message.text.split()[2]
-        data = {
-            "user_id": user_id,
-            "new_user_id": new_user_id,
-            "new_user_name": new_user_name
-        }
-        request_str = json.dumps(data)
-        content = requests.post(url, json=request_str)
-        # gpticebot.reply_to(message, escape_characters(content.text), parse_mode="MarkdownV2")
-        result = content.json()['result']
-        if result != '':
-            gpticebot.reply_to(message, ""+str(content.json()['result']), parse_mode="MarkdownV2")
-        # return
     
-@gpticebot.message_handler(commands=['fin'])
-def gpticebot_call_fin(message):
-    user_id = message.from_user.id
-    # Financial report. cmd for 10 days in format: /fin 10
-    if message.text.startswith('/fin'):
-        url = 'http://localhost:' + \
-            os.environ.get('GPTICEBOT_PORT')+'/financial_report'
-        
-        # extract number using regular expressions
-        match = re.search(r'\d+', message.text)
-        if match:
-            count_of_days = int(match.group())
-        else:
-            count_of_days = 0
-        if message.text == '/fin':
-            count_of_days = 0
-        data = {
-            "user_id": user_id,
-            "count_of_days": count_of_days
-        }
-        request_str = json.dumps(data)
-        content = requests.post(url, json=request_str)
-        # Check type, if response is text
-        if content.headers['content-type'] == 'text/html; charset=utf-8':
-            gpticebot.reply_to(message, str(content.json()['result']), parse_mode="MarkdownV2")
-        elif content.headers['content-type'] == 'image/png':
-            # gpticebot.send_photo(message.chat.id, content.content)
-            gpticebot.send_photo(message.chat.id, content.json()['result'])
-        return
-
-
-@gpticebot.message_handler(func=lambda message: True, content_types=['text'])
-def gpticebot_call_message(message):
-    # Receive user's prompt
-    url = 'http://localhost:' + str(os.environ.get('GPTICEBOT_PORT')) + '/message'
-    data = {
-        "user_id": message.from_user.id,
-        "user_name": message.from_user.username,
-        "chat_id": message.chat.id,
-        "chat_type": message.chat.type,
-        "text": message.text
-        }
-    # logger.info('gpticebot_call_message: '+str(message.text))
-    request_str = json.dumps(data)
-    content = requests.post(url, json=request_str)
-    result = content.json()['result']
-    if result != '':
-        gpticebot.reply_to(message, ""+str(content.json()['result']))
-# === === === gpticebot --
-
-# === === === gpttechsup01bot ++
-gpttechsup01bot = default_bot_init('GPT_TECH_SUP_01_BOT_TOKEN')
-bots.append(gpttechsup01bot)
-
-
-@gpttechsup01bot.message_handler(commands=['reset'])
-def gpttechsup01bot_call_reset(message):
-    logger.info("gpttechsup01bot reset: "+str(message.from_user))
-    url = 'http://localhost:'+os.environ.get('GPT_TECH_SUP_01_BOT_PORT')+'/reset'
-    data = {
-        "user_id": message.from_user.id,
-        "chat_id": message.chat.id,
-        "chat_type": message.chat.type
-        }
-    request_str = json.dumps(data)
-    content = requests.post(url, json=request_str)
-    gpttechsup01bot.reply_to(message, ""+str(content.json()['result']))
-
-
-@gpttechsup01bot.message_handler(commands=['start'])
-def gpttechsup01bot_call_start(message):
-    reply_text = """Приветствую, Я GPT-4 робот.
-Вы можете задавать мне любые вопросы, но помните, данные которые вы отправляете мне, однажды могут стать публичными.
-Чтобы начать диалог заново, используйте команду /reset. Пожалуйста, не забывайте использовать эту команду, поскольку длительные диалоги требуют значительных вычислительных ресурсов."""
-    gpttechsup01bot.reply_to(message, escape_characters(reply_text), parse_mode="MarkdownV2")
-    return
-
-
-@gpttechsup01bot.message_handler(commands=['add'])
-def gpttechsup01bot_call_add(message):
-    user_id = message.from_user.id
-    # Add new user. cmd in format: /add 123456789
-    if message.text.startswith('/add'):
-        url = 'http://localhost:' + str(os.environ.get('GPT_TECH_SUP_01_BOT_PORT')) + '/user_add'
-        new_user_id = message.text.split()[1]
-        new_user_name = message.text.split()[2]
-        data = {
-            "user_id": user_id,
-            "new_user_id": new_user_id,
-            "new_user_name": new_user_name
-        }
-        request_str = json.dumps(data)
-        content = requests.post(url, json=request_str)
-        # gpttechsup01bot.reply_to(message, escape_characters(content.text), parse_mode="MarkdownV2")
-        result = content.json()['result']
-        if result != '':
-            gpttechsup01bot.reply_to(message, ""+str(content.json()['result']), parse_mode="MarkdownV2")
-        # return
-    
-@gpttechsup01bot.message_handler(commands=['fin'])
-def gpttechsup01bot_call_fin(message):
-    user_id = message.from_user.id
-    # Financial report. cmd for 10 days in format: /fin 10
-    if message.text.startswith('/fin'):
-        url = 'http://localhost:' + \
-            os.environ.get('GPT_TECH_SUP_01_BOT_PORT')+'/financial_report'
-        
-        # extract number using regular expressions
-        match = re.search(r'\d+', message.text)
-        if match:
-            count_of_days = int(match.group())
-        else:
-            count_of_days = 0
-        if message.text == '/fin':
-            count_of_days = 0
-        data = {
-            "user_id": user_id,
-            "count_of_days": count_of_days
-        }
-        request_str = json.dumps(data)
-        content = requests.post(url, json=request_str)
-        # Check type, if response is text
-        if content.headers['content-type'] == 'text/html; charset=utf-8':
-            gpttechsup01bot.reply_to(message, str(content.json()['result']), parse_mode="MarkdownV2")
-        elif content.headers['content-type'] == 'image/png':
-            # gpttechsup01bot.send_photo(message.chat.id, content.content)
-            gpttechsup01bot.send_photo(message.chat.id, content.json()['result'])
-        return
-
-
-@gpttechsup01bot.message_handler(func=lambda message: True, content_types=['text'])
-def gpttechsup01bot_call_message(message):
-    # Receive user's prompt
-    url = 'http://localhost:' + str(os.environ.get('GPT_TECH_SUP_01_BOT_PORT')) + '/message'
-    data = {
-        "user_id": message.from_user.id,
-        "user_name": message.from_user.username,
-        "chat_id": message.chat.id,
-        "chat_type": message.chat.type,
-        "text": message.text
-        }
-    # logger.info('gpttechsup01bot_call_message: '+str(message.text))
-    request_str = json.dumps(data)
-    content = requests.post(url, json=request_str)
-    result = content.json()['result']
-    if result != '':
-        gpttechsup01bot.reply_to(message, ""+str(content.json()['result']))
-# === === === gpttechsup01bot --
-
-def main():
-    logger.info("main: Starting server")
-    app = web.Application()
-    app.router.add_post('/{token}/', handle)
-    app.router.add_route('GET', '/test', call_test)
-    # Build ssl context
-    context = ssl.SSLContext(ssl.PROTOCOL_TLSv1_2)
-    context.load_cert_chain(WEBHOOK_SSL_CERT, WEBHOOK_SSL_PRIV)
-
-    # Start aiohttp server
-    web.run_app(
-        app,
-        host=WEBHOOK_LISTEN,
-        port=os.environ.get('DOCKER_PORT', ''),
-        ssl_context=context
-    )
-
-
 if __name__ == "__main__":
-        main()
+    import uvicorn
+    uvicorn.run(app, host=WEBHOOK_HOST, port=WEBHOOK_PORT, ssl_keyfile=WEBHOOK_SSL_PRIV, ssl_certfile=WEBHOOK_SSL_CERT)
