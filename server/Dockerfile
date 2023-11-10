@@ -7,5 +7,6 @@ COPY webhook_pkey.pem /app
 # COPY Telegram_phoneConfirmation.py /app
 # COPY iceberg.py /app
 COPY server.py /app
-ENTRYPOINT ["python"]
-CMD ["server.py"]
+# ENTRYPOINT ["python"]
+# CMD ["server.py"]
+CMD ["uvicorn", "server:app", "--host", "0.0.0.0", "--port", "8443", "--ssl-keyfile=webhook_pkey.pem", "--ssl-certfile=webhook_cert.pem"]
