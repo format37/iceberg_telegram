@@ -1,6 +1,6 @@
 version: '3.8'
 services:
-  server:
+  gpt_instructor:
     restart: always
     volumes:
       - /etc/localtime:/etc/localtime:ro
