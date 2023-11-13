@@ -234,32 +234,34 @@ class Panthera:
         # Get the current time in Unix timestamp format
 
         # response.text
+        # response_json = json.loads(response.text)
+        response_json = response.json()
+        self.logger.info(f'response_json: {response_json}')
         """
         {
-            "id":"chatcmpl-8EEabpufU95pSk2tOg29tDP2zOXgN",
-            "object":"chat.completion",
-            "created":1698403365,
-            "model":"gpt-4-0613",
+            "id":"chatcmpl-8KUuBkCFkxASIob5hY95dDq6g8w7O",
             "choices":[
                 {
-                    "index":0,"message":
-                    {
+                    "finish_reason":"stop",
+                    "index":0,
+                    "message":{
+                        "content":"Отлично, давайте начнем.\n\nВопрос 1: \nЕсли звонящий недоволен каким-либо продуктом или услугой нашей компании, какой тип звонка этот случай представляет?\n\nВопрос 2: \nЕсли звонящий назвал имя, которого нет в списке директората, что вы должны сделать?\n\nВопрос 3: \nКакова процедура, если звонящий имеет непосредственное дело с членом директората?",
                         "role":"assistant",
-                        "content":"Red is one of the primary colors, along with blue and yellow. It's the color of blood, rubies, and strawberries. Next to orange at the end of the visible light spectrum, it's typically associated with energy, danger, strength, power, determination, as well as passion, desire, and love. It has a wavelength of approximately 625–740 nanometers on the electromagnetic spectrum."
-                    },
-                    "finish_reason":"stop"
+                        "function_call":null,"tool_calls":null
+                    }
                 }
             ],
-            "usage":
-            {
-                "prompt_tokens":21,
-                "completion_tokens":81,
-                "total_tokens":102
+            "created":1699896051,
+            "model":"gpt-4-0613",
+            "object":"chat.completion",
+            "system_fingerprint":null,
+            "usage":{
+                "completion_tokens":154,
+                "prompt_tokens":1335,
+                "total_tokens":1489
             }
         }
         """
-        response_json = json.loads(response.text)
-        self.logger.info(f'response_json: {response_json}')
 
         bot_message = self.default_bot_message(
             message,
