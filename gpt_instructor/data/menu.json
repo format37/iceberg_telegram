@@ -1,103 +1,45 @@
 {
   "Default": {
-      "message": "Configuration",
+      "message": "Меню",
       "row_width": 1,
       "resize_keyboard": true,
       "buttons": [
               {
-              "text": "Model",
-              "request_contact": false
-              },
-              {
-                "text": "Language",
+                "text": "Тема",
                 "request_contact": false
               },
               {
-                "text": "Topic",
-                "request_contact": false
-              },
-              {
-                "text": "Reports",
+                "text": "Отчеты",
                 "request_contact": false
               }
           ]
   },
-  "Model": {
-    "message": "Current model: %s",
+  "Тема": {
+    "message": "Текущая тема: %s",
     "row_width": 1,
     "resize_keyboard": true,
     "buttons": [
             {
-            "text": "gpt-3.5-turbo",
+            "text": "Входящий звонок: Директорат",
             "request_contact": false
             },
             {
-              "text": "gpt-3.5-turbo-16k",
-              "request_contact": false
-            },
-            {
-              "text": "gpt-4",
-              "request_contact": false
-            },
-            {
-              "text": "Back",
+              "text": "Назад",
               "request_contact": false
             }
         ]
   },
-  "Language": {
-    "message": "Current language: %s",
+  "Отчеты": {
+    "message": "Текущая тема: %s",
     "row_width": 1,
     "resize_keyboard": true,
     "buttons": [
             {
-            "text": "English",
+            "text": "Прогресс",
             "request_contact": false
             },
             {
-              "text": "Russian",
-              "request_contact": false
-            },
-            {
-              "text": "Back",
-              "request_contact": false
-            }
-        ]
-  },
-  "Topic": {
-    "message": "Current topic: %s",
-    "row_width": 1,
-    "resize_keyboard": true,
-    "buttons": [
-            {
-            "text": "Master's instruction",
-            "request_contact": false
-            },
-            {
-              "text": "Refilling the refrigerator",
-              "request_contact": false
-            },
-            {
-              "text": "Back",
-              "request_contact": false
-            }
-        ]
-  },
-  "Reports": {
-    "message": "Current topic: %s",
-    "row_width": 1,
-    "resize_keyboard": true,
-    "buttons": [
-            {
-            "text": "Progress report",
-            "request_contact": false
-            },
-            {
-              "text": "Evaluation report",
-              "request_contact": false
-            },
-            {
-              "text": "Back",
+              "text": "Назад",
               "request_contact": false
             }
         ]
