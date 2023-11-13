@@ -94,7 +94,7 @@ async def call_message(request: Request):
 
     answer = "Система временно находится на техническом обслуживании. Приносим извенение за доставленные неудобства."
 
-    if str(message.chat.id) in granted_chats:
+    if str(message['chat']['id']) in granted_chats:
         logger.info(str(message.chat.id)+' in granted_chats')
         if message.forward_from is not None:
             logger.info('Received redirect from user id: '+str(message.forward_from.id))
