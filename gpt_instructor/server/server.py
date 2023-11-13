@@ -31,7 +31,7 @@ def keyboard_modificator(current_screen, user_session, menu, message):
             model = user_session['model']
         elif current_screen == 'Language':
             language = user_session['language']
-        elif current_screen == 'Topic' or current_screen == 'Reports':
+        elif current_screen == 'Тема' or current_screen == 'Отчеты':
             if 'topic' in user_session:
                 topic = user_session['topic']
             else:
@@ -99,13 +99,13 @@ async def call_message(request: Request):
     system_content = None
 
     # if message text is /reset
-    if message['text'] == '/reset':
+    """if message['text'] == '/reset':
         panthera.reset_chat(message['chat']['id'])
-        answer = 'Chat messages memory has been cleaned'
+        answer = 'Chat messages memory has been cleaned'"""
 
     # if message text is /start
-    elif message['text'] == '/start':
-        answer = 'Welcome to the bot'
+    if message['text'] == '/start':
+        answer = 'Добро пожаловать!\nЯ помогу вам освоить инструкцию.\nПожалуйста, выберите тему.'
 
     # elif message['text'] == '/configure': # TODO: account the non-private chats
     # elif user_session['last_cmd'] != 'start':
@@ -114,29 +114,9 @@ async def call_message(request: Request):
         
         keyboard_dict = get_keyboard(user_session, message['text'])
 
-        if message['text'] != 'Back':
-            # Model
-            if user_session['last_cmd'] == 'Model':
-                logger.info(f'Button last_cmd: Model. text is: {text}')
-                with open ('data/models.json') as f:
-                    models = json.load(f)
-                for key, value in models.items():
-                    if text == key:
-                        user_session['model'] = key
-                        keyboard_dict["message"] = f'Model has been set to {key}'
-                        break
-            # Language
-            elif user_session['last_cmd'] == 'Language':
-                logger.info(f'Button last_cmd: Language. text is: {text}')
-                with open ('data/languages.json') as f:
-                    languages = json.load(f)
-                for key, value in languages.items():
-                    if text == key:
-                        user_session['language'] = key
-                        keyboard_dict["message"] = f'Language has been set to {key}'
-                        break
+        if message['text'] != 'Назад':
             # Topic
-            elif user_session['last_cmd'] == 'Topic':
+            if user_session['last_cmd'] == 'Тема':
                 logger.info(f'Button last_cmd: Topic. text is: {text}')
                 with open ('data/topics.json') as f:
                     topics = json.load(f)
@@ -155,10 +135,10 @@ async def call_message(request: Request):
                         # Log message
                         panthera.log_message(bot_message)
 
-                        keyboard_dict["message"] = f'Topic has been set to {key}\n{assistant_message}'
+                        keyboard_dict["message"] = f'Тема: {key}\n{assistant_message}'
                         break
             # Report
-            elif user_session['last_cmd'] == 'Reports' and text == 'Progress report':
+            elif user_session['last_cmd'] == 'Отчеты' and text == 'Прогресс':
                 logger.info(f'Button last_cmd: Reports. text is: {text}')
                 # Convert to pandas DataFrame
                 topic = user_session['topic']
@@ -179,7 +159,7 @@ async def call_message(request: Request):
                 plt.xticks(df['date'])
                 # Rotate the x-axis labels for better readability
                 plt.xticks(rotation=70)
-                plt.title(f"Progress of the Topic: {topic}")
+                plt.title(f"Прогресс по теме: {topic}")
                 plt.xlabel('Date')
                 plt.ylabel('Value')
                 # Save to file with unique name
@@ -193,20 +173,7 @@ async def call_message(request: Request):
 
                 response = FileResponse(filename, media_type="image/png")
 
-                # Return the image data
-                """with open(filename, 'rb') as f:
-                    image_data = f.read()"""
                 logger.info(f'image_data filename: {filename}')
-                # Remove the file
-                # os.remove(filename)
-                # Return the image data                
-                # Encode image to base64 
-                # image_data = base64.b64encode(image_data)
-                """return JSONResponse(content={
-                    "type": "image",
-                    "body": image_data
-                    })"""
-                # return FileResponse(image_data, media_type="image/png")
                 return response
             else:
                 logger.info(f'Button has not reacted. last_cmd: {user_session["last_cmd"]}. text is: {text}')
