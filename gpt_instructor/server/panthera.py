@@ -262,7 +262,10 @@ class Panthera:
             }
         }
         """
-
+        self.logger.info(f'choices: {response_json["choices"]}')
+        self.logger.info(f'choices[0]: {response_json["choices"][0]}')
+        self.logger.info(f'choices[0][message]: {response_json["choices"][0]["message"]}')
+        self.logger.info(f'choices[0][message][content]: {response_json["choices"][0]["message"]["content"]}')
         bot_message = self.default_bot_message(
             message,
             response_json['choices'][0]['message']['content']
