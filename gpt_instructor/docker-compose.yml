@@ -13,6 +13,6 @@ services:
         max-file: "3"
     network_mode: host
     environment:
-      - TZ=America/Los_Angeles
+      - TZ=Europe/Moscow
       - LLM_URL=http://localhost:4714
       - LLM_TOKEN=your_llm_token
