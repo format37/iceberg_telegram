@@ -113,8 +113,7 @@ async def call_message(request: Request):
                 # logger.info('Replying in '+str(message.chat.id))
                 logger.info('Replying in '+str(message['chat']['id']))
         else:
-            # answer = 'forward_from is '+str(message.forward_from)
-            answer = 'forward_from is '+str(message['forward_from'])
+            answer = 'Unable to retrieve master information: forward_from is not defined.'
             logger.info(answer)
 
     return JSONResponse(content={
