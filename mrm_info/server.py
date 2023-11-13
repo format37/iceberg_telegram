@@ -95,11 +95,14 @@ async def call_message(request: Request):
     answer = "Система временно находится на техническом обслуживании. Приносим извенение за доставленные неудобства."
 
     if str(message['chat']['id']) in granted_chats:
-        logger.info(str(message.chat.id)+' in granted_chats')
-        if message.forward_from is not None:
-            logger.info('Received redirect from user id: '+str(message.forward_from.id))
+        logger.info(str(message['chat']['id'])+' in granted_chats')
+        # if message.forward_from is not None:
+        if 'forward_from' in message:
+            # logger.info('Received redirect from user id: '+str(message.forward_from.id))
+            logger.info('Received redirect from user id: '+str(message['forward_from']['id']))
             reply = '[\n'
-            results = mrmsupport_bot_user_info(message.forward_from.id, clientPath)
+            # results = mrmsupport_bot_user_info(message.forward_from.id, clientPath)
+            results = mrmsupport_bot_user_info(message['forward_from']['id'], clientPath)
             
             if len(results) == 0:
                 answer = 'User not found'
@@ -107,9 +110,11 @@ async def call_message(request: Request):
             else:
                 reply += ',\n'.join(results)
                 answer = reply + '\n]'
-                logger.info('Replying in '+str(message.chat.id))
+                # logger.info('Replying in '+str(message.chat.id))
+                logger.info('Replying in '+str(message['chat']['id']))
         else:
-            answer = 'forward_from is '+str(message.forward_from)
+            # answer = 'forward_from is '+str(message.forward_from)
+            answer = 'forward_from is '+str(message['forward_from'])
             logger.info(answer)
 
     return JSONResponse(content={
