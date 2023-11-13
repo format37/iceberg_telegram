@@ -96,10 +96,15 @@ class Panthera:
     
     def default_bot_message(self, message, text):
         current_unix_timestamp = int(time.time())
-        if 'username' in message['chat']:
+        """if 'username' in message['chat']:
             username = message['chat']['username']
         else:
-            username = 'Unknown'
+            username = 'Unknown'"""
+        username = message['from']['first_name']
+        if message['from']['first_name'] == '':
+            username = message['from']['username']
+            if message['from']['username'] == '':
+                username = 'Unknown'
         return {
         'message_id': int(message['message_id']) + 1,
         'from': {
