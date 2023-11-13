@@ -235,7 +235,7 @@ class Panthera:
 
         # response.text
         # response_json = json.loads(response.text)
-        response_json = response.json()
+        response_json = json.loads(response.json())
         self.logger.info(f'response_json: {response_json}')
         """
         {
