@@ -1,0 +1,18 @@
+version: '3.8'
+services:
+  server:
+    restart: always
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+      - ./data:/server/data
+    build: server
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "3"
+    network_mode: host
+    environment:
+      - TZ=America/Los_Angeles
+      - LLM_URL=http://localhost:4714
+      - LLM_TOKEN=your_llm_token
