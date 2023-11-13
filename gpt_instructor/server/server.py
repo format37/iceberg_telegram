@@ -102,6 +102,11 @@ async def call_message(request: Request):
     if message['text'] == '/start':
         answer = 'Добро пожаловать!\nЯ помогу вам освоить инструкцию.\nПожалуйста, выберите тему.'
         keyboard_dict = get_keyboard(user_session, message['text'])
+
+        return JSONResponse(content={
+            "type": "keyboard",
+            "body": keyboard_dict
+            })
     
     elif message_type == 'button':
         
