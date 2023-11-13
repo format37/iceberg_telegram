@@ -98,17 +98,10 @@ async def call_message(request: Request):
 
     system_content = None
 
-    # if message text is /reset
-    """if message['text'] == '/reset':
-        panthera.reset_chat(message['chat']['id'])
-        answer = 'Chat messages memory has been cleaned'"""
-
     # if message text is /start
     if message['text'] == '/start':
         answer = 'Добро пожаловать!\nЯ помогу вам освоить инструкцию.\nПожалуйста, выберите тему.'
-
-    # elif message['text'] == '/configure': # TODO: account the non-private chats
-    # elif user_session['last_cmd'] != 'start':
+        keyboard_dict = get_keyboard(user_session, message['text'])
     
     elif message_type == 'button':
         
