@@ -49,6 +49,7 @@ def mrmsupport_bot_confirmphone(phoneNumber,chatId, clientPath):
         client = Client(w, transport=Transport(session=session))
         res = client.service.phoneConfirmation(phoneNumber, chatId)
         if res and res['result']:
+            logger.info('mrmsupport_bot_confirmphone. res: '+str(res))
             return [res]
     return  [res]
 
@@ -80,7 +81,8 @@ async def call_message(request: Request, authorization: str = Header(None)):
     
     # Log the token or perform further actions
     if token:
-        logger.info(f'Token: {token}')
+        # logger.info(f'Token: {token}')
+        pass
     else:
         answer = 'Не удалось определить токен бота. Пожалуйста обратитесь к администратору.'
         return JSONResponse(content={
