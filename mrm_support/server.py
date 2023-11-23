@@ -43,31 +43,30 @@ async def call_message(request: Request):
     logger.info(message)
     """
     {
-        'message_id': 89, 
-        'from': {
-            'id': 106129214, 
-            'is_bot': False, 
-            'first_name': 'Alex', 
-            'username': 'format37', 
-            'language_code': 'en', 
-            'is_premium': True
-        }, 
-        'chat': {
-            'id': -1001533625926, 
-            'title': 'Bot factory 2', 
-            'type': 'supergroup'
-        }, 
-        'date': 1699863766, 
-        'forward_from': {
-            'id': 106129214, 
-            'is_bot': False, 
-            'first_name': 'Alex', 
-            'username': 'format37', 
-            'language_code': 'en', 
-            'is_premium': True
-        }, 
-        'forward_date': 1678700186, 
-        'text': 'hello'
+    "message_id":1069480,
+    "from":{
+        "id":1114994337,
+        "is_bot":false,
+        "first_name":"Ivan",
+        "last_name":"Tit",
+        "username":"ibrogim66",
+        "language_code":"ru"
+    },
+    "chat":{
+        "id":1114994337,
+        "first_name":"Ivan",
+        "last_name":"Tit",
+        "username":"ibrogim66",
+        "type":"private"
+    },
+    "date":1700736663,
+    "contact":{
+        "phone_number":"89124515182",
+        "first_name":"Виктор",
+        "last_name":"Бывальцев",
+        "vcard":"BEGIN:VCARD\nVERSION:3.0\nN:Бывальцев;Виктор;;;\nFN:Виктор Бывальцев\nTEL;TYPE=CELL:891-245-15182\nEND:VCARD",
+        "user_id":95221607
+        }
     }
     """
 
@@ -76,6 +75,20 @@ async def call_message(request: Request):
         'http://10.2.4.123/productionNNOV/ws/Telegram.1cws?wsdl',
         'http://10.2.4.123/productionSPB/ws/Telegram.1cws?wsdl'
     ]
+
+    # if contact in message
+    if 'contact' in message:
+        idfrom = message['from_user.id']
+        idcontact = message['contact']['user_id']
+
+        if not idcontact==idfrom:
+            # bot.reply_to(message, 'Подтвердить можно только свой номер телефона!')
+            answer = 'Подтвердить можно только свой номер телефона!'
+            return JSONResponse(content={
+                "type": "text",
+                "body": str(answer)
+            })
+
 
     answer = "Система временно находится на техническом обслуживании. Приносим извенение за доставленные неудобства."
 
