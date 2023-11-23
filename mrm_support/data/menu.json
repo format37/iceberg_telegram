@@ -1,6 +1,6 @@
 {
   "Default": {
-      "message": "Меню",
+      "message": "Выберите команду",
       "row_width": 1,
       "resize_keyboard": true,
       "buttons": [
