@@ -93,7 +93,7 @@ async def call_message(request: Request):
         })"""
     
     # Return if it is a group
-    if message.chat.type != 'private':
+    if message['chat']['type'] != 'private':
         return JSONResponse(content={
             "type": "empty",
             "body": ""
