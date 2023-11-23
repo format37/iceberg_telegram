@@ -1,5 +1,5 @@
-# sudo docker run -d --restart always --name mrm_info_bot -p 7402:7402 mrm_info_bot
-# sudo docker run -p 7402:7402  mrm_info_bot
+# create folder for data
+mkdir -p data
 # stop container
 sudo docker stop mrm_support_bot
 # remove container
@@ -11,4 +11,6 @@ sudo docker run \
     --name mrm_support_bot \
     -e MRMSUPPORTBOT_AUTH_LOGIN="login" \
     -e MRMSUPPORTBOT_AUTH_PASSWORD="password" \
+    -v $(pwd)/data:/server/data \
+    -v $(pwd)/mnt/soft:/mnt/soft \
     mrm_support_bot

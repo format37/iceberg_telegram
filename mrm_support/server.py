@@ -98,6 +98,11 @@ async def call_message(request: Request):
             "type": "empty",
             "body": ""
             })
+    
+    data_path = "./data/" + str(message['chat']['id'])
+    # Create folder if not exists
+    if not os.path.exists(data_path):
+        os.makedirs(data_path)
 
     if message['text'] == '/start':
         answer = 'Добро пожаловать!\n Я нахожусь на обслуживании.'
@@ -107,6 +112,24 @@ async def call_message(request: Request):
             "type": "keyboard",
             "body": keyboard_dict
             })"""
+        return JSONResponse(content={
+            "type": "text",
+            "body": str(answer)
+            })
+    # if message['text'] == 'Скачать приложение' and message.chat.type != 'group' and message.chat.type != 'supergroup':
+    if message['text'] == 'Скачать приложение' and message['chat']['type'] == 'private':
+        apk_link = 'http://service.icecorp.ru/mrm/apk/702.apk'
+        try:
+            apt_list_path = '/mnt/soft/apk'
+            # Find the name of the latest apk, using sorting by name descending
+            for file in sorted(os.listdir(apt_list_path), reverse=True):
+                if file.endswith(".apk"):
+                    apk_link = 'https://soft.iceberg.ru/apk/'+file
+                    break
+        except Exception as e:
+            logger.error("mrmsupport_bot_test. apk_link: "+str(e))
+        # bot.reply_to(message, 'Скачать приложение можно по ссылке:\n'+apk_link)
+        answer = 'Скачать приложение можно по ссылке:\n'+apk_link
         return JSONResponse(content={
             "type": "text",
             "body": str(answer)
