@@ -78,7 +78,7 @@ async def call_message(request: Request):
 
     # if contact in message
     if 'contact' in message:
-        idfrom = message['from_user']['id']
+        idfrom = message['from']['id']
         idcontact = message['contact']['user_id']
 
         if not idcontact==idfrom:
@@ -88,7 +88,13 @@ async def call_message(request: Request):
                 "type": "text",
                 "body": str(answer)
             })
-
+        else:
+            # bot.reply_to(message, 'Спасибо, Ваш номер телефона подтвержден!')
+            answer = 'Спасибо, Ваш номер телефона подтвержден!'
+            return JSONResponse(content={
+                "type": "text",
+                "body": str(answer)
+            })
 
     answer = "Система временно находится на техническом обслуживании. Приносим извенение за доставленные неудобства."
 
