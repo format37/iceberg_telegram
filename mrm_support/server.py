@@ -176,7 +176,7 @@ async def call_message(request: Request, authorization: str = Header(None)):
                                 method_url = 'createChatInviteLink'
                                 payload = {'chat_id': res['chat_id'],'member_limit':1}
                                 link= apihelper._make_request(token, method_url, params=payload, method='post')
-                                mrmsupport_bot_writelink(message.contact.phone_number,link['invite_link'], clientPath)
+                                mrmsupport_bot_writelink(message['contact']['phone_number'],link['invite_link'], clientPath)
                                 answer = 'Вы успешно прошли авторизацию, вот ссылка для вступления в группу ' + link['invite_link']
                 else:
                     answer = 'Ваш контакт не найден. Пожалуйста, обратитесь к администратору.'
