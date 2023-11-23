@@ -254,6 +254,14 @@ async def call_message(request: Request, authorization: str = Header(None)):
             "type": "text",
             "body": str(answer)
             })"""
+    # If message text is 'Заявки' then answer 'Функция получения заявок временно недоступна. Приносим извенение за доставленные неудобства.'
+    if message['text'] == 'Заявки':
+        answer = 'Функция получения заявок временно недоступна. Приносим извенение за доставленные неудобства.'
+        return JSONResponse(content={
+            "type": "text",
+            "body": str(answer)
+            })
+    
     # if message['text'] == 'Скачать приложение' and message.chat.type != 'group' and message.chat.type != 'supergroup':
     if message['text'] == 'Скачать приложение' and message['chat']['type'] == 'private':
         apk_link = 'http://service.icecorp.ru/mrm/apk/702.apk'
