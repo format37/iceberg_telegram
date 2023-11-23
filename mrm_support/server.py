@@ -6,6 +6,7 @@ from requests.auth import HTTPBasicAuth  # or HTTPDigestAuth, or OAuth1, etc.
 from requests import Session
 from zeep import Client
 from zeep.transports import Transport
+import json
 
 # Initialize FastAPI
 app = FastAPI()
@@ -21,6 +22,19 @@ async def call_test():
     logger.info('call_test')
     return JSONResponse(content={"status": "ok"})
 
+def get_keyboard(current_screen):
+
+    with open('data/menu.json') as f:
+        menu = json.load(f)
+
+    if current_screen in menu:
+        message = menu[current_screen]['message']
+        # keyboard_modificator(current_screen, user_session, menu, message)        
+        return menu[current_screen]
+
+    else:
+        # Default to start screen
+        return menu['Default']
 
 @app.post("/message")
 async def call_message(request: Request):
@@ -106,16 +120,27 @@ async def call_message(request: Request):
 
     if message['text'] == '/start':
         answer = 'Добро пожаловать!\n Я нахожусь на обслуживании.'
-        """ keyboard_dict = get_keyboard(user_session, message['text'])
+
+        """# Keyboard initialization
+        keyboard = types.ReplyKeyboardMarkup(row_width=1, resize_keyboard=True)
+        # Keyboard button initialization
+        button_phone = types.KeyboardButton(text="☎ Нажмите чтобы отправить Ваш контакт",request_contact=True)
+        keyboard.add(button_phone)
+        button_app = types.KeyboardButton(text="Скачать приложение")
+        keyboard.add(button_app)
+        button_bid = types.KeyboardButton(text="Заявки")"""
+
+        keyboard_dict = get_keyboard(message['text'])
 
         return JSONResponse(content={
             "type": "keyboard",
             "body": keyboard_dict
-            })"""
-        return JSONResponse(content={
+            })
+        
+        """return JSONResponse(content={
             "type": "text",
             "body": str(answer)
-            })
+            })"""
     # if message['text'] == 'Скачать приложение' and message.chat.type != 'group' and message.chat.type != 'supergroup':
     if message['text'] == 'Скачать приложение' and message['chat']['type'] == 'private':
         apk_link = 'http://service.icecorp.ru/mrm/apk/702.apk'

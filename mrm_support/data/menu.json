@@ -1,0 +1,21 @@
+{
+  "Default": {
+      "message": "Меню",
+      "row_width": 1,
+      "resize_keyboard": true,
+      "buttons": [
+              {
+                "text": "☎ Нажмите чтобы отправить Ваш контакт",
+                "request_contact": true
+              },
+              {
+                "text": "Скачать приложение",
+                "request_contact": false
+              },
+              {
+                "text": "Заявки",
+                "request_contact": false
+              }
+          ]
+  }
+}
