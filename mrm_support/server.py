@@ -22,8 +22,6 @@ async def call_test():
     return JSONResponse(content={"status": "ok"})
 
 
-
-
 @app.post("/message")
 async def call_message(request: Request):
     logger.info('call_message')
@@ -65,11 +63,6 @@ async def call_message(request: Request):
         'http://10.2.4.123/productionSPB/ws/Telegram.1cws?wsdl'
     ]
 
-    granted_chats = [
-        '-1001853379941', # MRM master info МРМ мастер, 
-        '-1001533625926' # Bot factory 2
-    ]
-
     answer = "Система временно находится на техническом обслуживании. Приносим извенение за доставленные неудобства."
 
     """if str(message['chat']['id']) in granted_chats:
@@ -98,6 +91,13 @@ async def call_message(request: Request):
         "type": "text",
         "body": str(answer)
         })"""
+    
+    # Return if it is a group
+    if message.chat.type != 'private':
+        return JSONResponse(content={
+            "type": "empty",
+            "body": ""
+            })
 
     if message['text'] == '/start':
         answer = 'Добро пожаловать!\n Я нахожусь на обслуживании.'
