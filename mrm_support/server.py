@@ -78,7 +78,7 @@ async def call_message(request: Request):
 
     # if contact in message
     if 'contact' in message:
-        idfrom = message['from_user.id']
+        idfrom = message['from_user']['id']
         idcontact = message['contact']['user_id']
 
         if not idcontact==idfrom:
