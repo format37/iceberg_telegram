@@ -37,30 +37,20 @@ def get_keyboard(current_screen):
         # Default to start screen
         return menu['Default']
     
-def partners_bot_confirmphone(phoneNumber, chatId, clientPath):
-
-    
-
+def mrmsupport_bot_confirmphone(phoneNumber,chatId, clientPath):
     login = os.environ.get('MRMSUPPORTBOT_AUTH_LOGIN', '')
     password = os.environ.get('MRMSUPPORTBOT_AUTH_PASSWORD', '')
 
     session = Session()
     session.auth = HTTPBasicAuth(login, password)
+
     
-    # clientPath = ['http://10.2.4.141/Test_Piter_MRM/ws/Telegram.1cws?wsdl']
-    results = []
-    try:
-        # Get only the right 10 symbols of the phone number
-        phoneNumber = phoneNumber.replace('+','')[-10:]
-        logger.info('phoneNumber: ' + phoneNumber)
-        logger.info('type: ' + str(type(phoneNumber)))
-        for w in clientPath:
-            client = Client(w, transport=Transport(session=session))
-            res = client.service.partnersPhoneConfirmation(phoneNumber, chatId)
-            results.append(res)
-    except Exception as e:
-        logger.error(e)
-    return results
+    for w in clientPath:
+        client = Client(w, transport=Transport(session=session))
+        res = client.service.phoneConfirmation(phoneNumber, chatId)
+        if res and res['result']:
+            return [res]
+    return  [res]
 
 def mrmsupport_bot_writelink(phoneNumber,link, clientPath):
     login = os.environ.get('MRMSUPPORTBOT_AUTH_LOGIN', '')
@@ -152,10 +142,11 @@ async def call_message(request: Request, authorization: str = Header(None)):
             answer = 'Ошибка. Пожалуйста обратитесь к администратору.'
 
             try:
-                results = partners_bot_confirmphone(message['contact']['phone_number'], message['chat']['id'], clientPath)
+                results = mrmsupport_bot_confirmphone(message['contact']['phone_number'], message['chat']['id'], clientPath)
 
                 # Check if any result is true
-                has_true_result = any(res.get('result') for res in results if res)
+                # has_true_result = any(res.get('result') for res in results if res)
+                has_true_result = any(res.get('result') if isinstance(res, dict) else False for res in results)
 
                 if has_true_result:
                     # Process each result
