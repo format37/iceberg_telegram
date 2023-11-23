@@ -43,14 +43,14 @@ def mrmsupport_bot_confirmphone(phoneNumber,chatId, clientPath):
 
     session = Session()
     session.auth = HTTPBasicAuth(login, password)
-
     
     for w in clientPath:
         client = Client(w, transport=Transport(session=session))
         res = client.service.phoneConfirmation(phoneNumber, chatId)
         if res and res['result']:
-            logger.info('mrmsupport_bot_confirmphone. res: '+str(res))
+            logger.info('mrmsupport_bot_confirmphone A. res: '+str(res))
             return [res]
+    logger.info('mrmsupport_bot_confirmphone B. res: '+str(res))
     return  [res]
 
 def mrmsupport_bot_writelink(phoneNumber,link, clientPath):
@@ -148,7 +148,13 @@ async def call_message(request: Request, authorization: str = Header(None)):
 
                 # Check if any result is true
                 # has_true_result = any(res.get('result') for res in results if res)
-                has_true_result = any(res.get('result') if isinstance(res, dict) else False for res in results)
+                # has_true_result = any(res.get('result') if isinstance(res, dict) else False for res in results)
+                has_true_result = False
+
+                for res in results:
+                    if isinstance(res, dict) and res.get('result'):
+                        has_true_result = True
+                        break
 
                 if has_true_result:
                     # Process each result
