@@ -101,13 +101,18 @@ async def call_message(request: Request):
 
     if message['text'] == '/start':
         answer = 'Добро пожаловать!\n Я нахожусь на обслуживании.'
-    """ keyboard_dict = get_keyboard(user_session, message['text'])
+        """ keyboard_dict = get_keyboard(user_session, message['text'])
 
         return JSONResponse(content={
             "type": "keyboard",
             "body": keyboard_dict
             })"""
-    return JSONResponse(content={
-        "type": "text",
-        "body": str(answer)
-        })
+        return JSONResponse(content={
+            "type": "text",
+            "body": str(answer)
+            })
+    else:
+        return JSONResponse(content={
+            "type": "empty",
+            "body": ""
+            })
