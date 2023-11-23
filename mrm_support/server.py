@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Request, HTTPException
+from fastapi import FastAPI, Request, HTTPException, Header
 from fastapi.responses import JSONResponse
 import os
 import logging
@@ -7,6 +7,7 @@ from requests import Session
 from zeep import Client
 from zeep.transports import Transport
 import json
+from telebot import apihelper
 
 # Initialize FastAPI
 app = FastAPI()
@@ -35,12 +36,70 @@ def get_keyboard(current_screen):
     else:
         # Default to start screen
         return menu['Default']
+    
+def partners_bot_confirmphone(phoneNumber, chatId, clientPath):
 
-@app.post("/message")
+    
+
+    login = os.environ.get('MRMSUPPORTBOT_AUTH_LOGIN', '')
+    password = os.environ.get('MRMSUPPORTBOT_AUTH_PASSWORD', '')
+
+    session = Session()
+    session.auth = HTTPBasicAuth(login, password)
+    
+    # clientPath = ['http://10.2.4.141/Test_Piter_MRM/ws/Telegram.1cws?wsdl']
+    results = []
+    try:
+        # Get only the right 10 symbols of the phone number
+        phoneNumber = phoneNumber.replace('+','')[-10:]
+        logger.info('phoneNumber: ' + phoneNumber)
+        logger.info('type: ' + str(type(phoneNumber)))
+        for w in clientPath:
+            client = Client(w, transport=Transport(session=session))
+            res = client.service.partnersPhoneConfirmation(phoneNumber, chatId)
+            results.append(res)
+    except Exception as e:
+        logger.error(e)
+    return results
+
+def mrmsupport_bot_writelink(phoneNumber,link, clientPath):
+    login = os.environ.get('MRMSUPPORTBOT_AUTH_LOGIN', '')
+    password = os.environ.get('MRMSUPPORTBOT_AUTH_PASSWORD', '')
+
+    session = Session()
+    session.auth = HTTPBasicAuth(login, password)
+
+    for w in clientPath:
+        client = Client(w, transport=Transport(session=session))
+        res = client.service.writeLink(phoneNumber, link)
+        if res :
+            return res
+    return  res
+
+"""@app.post("/message")
 async def call_message(request: Request):
     logger.info('call_message')
     message = await request.json()
-    logger.info(message)
+    """
+@app.post("/message")
+async def call_message(request: Request, authorization: str = Header(None)):
+    logger.info('call_message')
+    token = None
+    if authorization and authorization.startswith("Bearer "):
+        token = authorization.split(" ")[1]
+    
+    # Log the token or perform further actions
+    if token:
+        logger.info(f'Token: {token}')
+    else:
+        answer = 'Не удалось определить токен бота. Пожалуйста обратитесь к администратору.'
+        return JSONResponse(content={
+            "type": "text",
+            "body": str(answer)
+        })
+
+    message = await request.json()
+    logger.info(f'message: {message}')
     """
     {
     "message_id":1069480,
@@ -70,27 +129,56 @@ async def call_message(request: Request):
     }
     """
 
-    clientPath = [
-        'http://10.2.4.123/productionMSK/ws/Telegram.1cws?wsdl',
-        'http://10.2.4.123/productionNNOV/ws/Telegram.1cws?wsdl',
-        'http://10.2.4.123/productionSPB/ws/Telegram.1cws?wsdl'
-    ]
-
     # if contact in message
     if 'contact' in message:
         idfrom = message['from']['id']
         idcontact = message['contact']['user_id']
 
+        clientPath = [
+            'http://10.2.4.123/productionMSK/ws/Telegram.1cws?wsdl',
+            'http://10.2.4.123/productionNNOV/ws/Telegram.1cws?wsdl',
+            'http://10.2.4.123/productionSPB/ws/Telegram.1cws?wsdl'
+        ]
+
         if not idcontact==idfrom:
             # bot.reply_to(message, 'Подтвердить можно только свой номер телефона!')
-            answer = 'Подтвердить можно только свой номер телефона!'
+            answer = 'Подтвердить можно только свой номер телефона.'
             return JSONResponse(content={
                 "type": "text",
                 "body": str(answer)
             })
         else:
             # bot.reply_to(message, 'Спасибо, Ваш номер телефона подтвержден!')
-            answer = 'Спасибо, Ваш номер телефона подтвержден!'
+            answer = 'Ошибка. Пожалуйста обратитесь к администратору.'
+
+            try:
+                results = partners_bot_confirmphone(message['contact']['phone_number'], message['chat']['id'], clientPath)
+
+                # Check if any result is true
+                has_true_result = any(res.get('result') for res in results if res)
+
+                if has_true_result:
+                    # Process each result
+                    for res in results:
+                        if res and res['result']:
+                            has_true_result = True
+                            # Keyboard initialization
+                            # Send message with keyboard
+                            if res['link'] and not res['link']=='':
+                                answer = 'Вы успешно прошли авторизацию, вот ссылка для вступления в группу ' + res['link']                                
+                            else:
+                                method_url = 'createChatInviteLink'
+                                payload = {'chat_id': res['chat_id'],'member_limit':1}
+                                link= apihelper._make_request(token, method_url, params=payload, method='post')
+                                mrmsupport_bot_writelink(message.contact.phone_number,link['invite_link'], clientPath)
+                                answer = 'Вы успешно прошли авторизацию, вот ссылка для вступления в группу ' + link['invite_link']
+                else:
+                    answer = 'Ваш контакт не найден. Пожалуйста, обратитесь к администратору.'
+            except Exception as e:
+                logger.error("Error in contact handling: {}".format(str(e)))
+                answer = f'Ошибка: {e}\nПожалуйста обратитесь к администратору.'
+
+
             return JSONResponse(content={
                 "type": "text",
                 "body": str(answer)
