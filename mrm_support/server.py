@@ -149,12 +149,19 @@ async def call_message(request: Request, authorization: str = Header(None)):
                 # Check if any result is true
                 # has_true_result = any(res.get('result') for res in results if res)
                 # has_true_result = any(res.get('result') if isinstance(res, dict) else False for res in results)
-                has_true_result = False
+                """has_true_result = False
 
                 for res in results:
                     if isinstance(res, dict) and res.get('result'):
                         has_true_result = True
-                        break
+                        break"""
+
+                has_true_result = False
+
+                for res in results:
+                    if res:
+                        if res['result']:
+                            has_true_result = True
 
                 if has_true_result:
                     # Process each result
