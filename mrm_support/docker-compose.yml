@@ -1,8 +1,24 @@
 version: '3.8'
 services:
 
-  mrm_support_bot: 
+  mrm_support_bot:
     container_name: mrm_support_bot
+    restart: always
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+      - ./data:/server/data
+      - /mnt/soft:/mnt/soft
+    build: ./
+    ports:
+      - "7404:84"
+    environment:
+      - TZ=Europe/Moscow
+      - MRMSUPPORTBOT_AUTH_LOGIN=login
+      - MRMSUPPORTBOT_AUTH_PASSWORD=password
+      
+  mrm_support_bot_test:
+    container_name: mrm_support_bot_test
     # restart: always
     volumes:
       - /etc/localtime:/etc/localtime:ro
@@ -10,9 +26,9 @@ services:
       - ./data:/server/data
       - /mnt/soft:/mnt/soft
     build: ./
-    network_mode: "host"
+    ports:
+      - "7405:84"
     environment:
       - TZ=Europe/Moscow
       - MRMSUPPORTBOT_AUTH_LOGIN=login
       - MRMSUPPORTBOT_AUTH_PASSWORD=password
-      
