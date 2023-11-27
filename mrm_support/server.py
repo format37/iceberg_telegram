@@ -72,7 +72,7 @@ def contact_reaction(message, clientPath, token):
     answer = "Система временно находится на техническом обслуживании. Приносим извенение за доставленные неудобства."
     idfrom = message['from']['id']
     idcontact = message['contact']['user_id']
-    username= message['contact']['username']
+    username= message['from']['username']
 
     if not idcontact==idfrom:
         answer = 'Подтвердить можно только свой номер телефона.'
