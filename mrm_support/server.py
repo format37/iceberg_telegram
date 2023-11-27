@@ -270,7 +270,7 @@ async def call_message(request: Request, authorization: str = Header(None)):
         config = read_config(conf_path, message['from']['id'])
         
         # Load bid list
-        options = get_bid_list(message['from']['id'], clientPath, logger)
+        options = get_bid_list(message['from']['id'], clientPath)
         # TODO: rename options to bid_list
         
         # Save bid list to config
