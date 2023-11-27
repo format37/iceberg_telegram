@@ -67,11 +67,61 @@ def mrmsupport_bot_writelink(phoneNumber,link, clientPath):
             return res
     return  res
 
-"""@app.post("/message")
-async def call_message(request: Request):
-    logger.info('call_message')
-    message = await request.json()
-    """
+def contact_reaction(message):
+    answer = "Система временно находится на техническом обслуживании. Приносим извенение за доставленные неудобства."
+    idfrom = message['from']['id']
+    idcontact = message['contact']['user_id']
+
+    clientPath = [
+        'http://10.2.4.123/productionMSK/ws/Telegram.1cws?wsdl',
+        'http://10.2.4.123/productionNNOV/ws/Telegram.1cws?wsdl',
+        'http://10.2.4.123/productionSPB/ws/Telegram.1cws?wsdl'
+    ]
+
+    if not idcontact==idfrom:
+        answer = 'Подтвердить можно только свой номер телефона.'
+        """return JSONResponse(content={
+            "type": "text",
+            "body": str(answer)
+        })"""
+    else:
+        # answer = 'Ошибка. Пожалуйста обратитесь к администратору.'
+        logger.info('contact_reaction. message: '+str(message))
+
+        try:
+            results = mrmsupport_bot_confirmphone(message['contact']['phone_number'], message['chat']['id'], clientPath)
+            has_true_result = False
+            for res in results:
+                if res:
+                    if res['result']:
+                        has_true_result = True
+
+            if has_true_result:
+                # Process each result
+                for res in results:
+                    if res and res['result']:
+                        has_true_result = True
+                        if res['link'] and not res['link']=='':
+                            answer = 'Вы успешно прошли авторизацию, вот ссылка для вступления в группу ' + res['link']                                
+                        else:
+                            method_url = 'createChatInviteLink'
+                            payload = {'chat_id': res['chat_id'],'member_limit':1}
+                            link= apihelper._make_request(token, method_url, params=payload, method='post')
+                            mrmsupport_bot_writelink(message['contact']['phone_number'],link['invite_link'], clientPath)
+                            answer = 'Вы успешно прошли авторизацию, вот ссылка для вступления в группу ' + link['invite_link']
+            else:
+                answer = 'Ваш контакт не найден. Пожалуйста, обратитесь к администратору.'
+        except Exception as e:
+            logger.error("Error in contact handling: {}".format(str(e)))
+            answer = f'Ошибка: {e}\nПожалуйста обратитесь к администратору.'
+
+
+        """return JSONResponse(content={
+            "type": "text",
+            "body": str(answer)
+        })"""
+    return answer
+
 @app.post("/message")
 async def call_message(request: Request, authorization: str = Header(None)):
     logger.info('call_message')
@@ -120,105 +170,9 @@ async def call_message(request: Request, authorization: str = Header(None)):
         }
     }
     """
-
-    # if contact in message
-    if 'contact' in message:
-        idfrom = message['from']['id']
-        idcontact = message['contact']['user_id']
-
-        clientPath = [
-            'http://10.2.4.123/productionMSK/ws/Telegram.1cws?wsdl',
-            'http://10.2.4.123/productionNNOV/ws/Telegram.1cws?wsdl',
-            'http://10.2.4.123/productionSPB/ws/Telegram.1cws?wsdl'
-        ]
-
-        if not idcontact==idfrom:
-            # bot.reply_to(message, 'Подтвердить можно только свой номер телефона!')
-            answer = 'Подтвердить можно только свой номер телефона.'
-            return JSONResponse(content={
-                "type": "text",
-                "body": str(answer)
-            })
-        else:
-            # bot.reply_to(message, 'Спасибо, Ваш номер телефона подтвержден!')
-            answer = 'Ошибка. Пожалуйста обратитесь к администратору.'
-
-            try:
-                results = mrmsupport_bot_confirmphone(message['contact']['phone_number'], message['chat']['id'], clientPath)
-
-                # Check if any result is true
-                # has_true_result = any(res.get('result') for res in results if res)
-                # has_true_result = any(res.get('result') if isinstance(res, dict) else False for res in results)
-                """has_true_result = False
-
-                for res in results:
-                    if isinstance(res, dict) and res.get('result'):
-                        has_true_result = True
-                        break"""
-
-                has_true_result = False
-
-                for res in results:
-                    if res:
-                        if res['result']:
-                            has_true_result = True
-
-                if has_true_result:
-                    # Process each result
-                    for res in results:
-                        if res and res['result']:
-                            has_true_result = True
-                            # Keyboard initialization
-                            # Send message with keyboard
-                            if res['link'] and not res['link']=='':
-                                answer = 'Вы успешно прошли авторизацию, вот ссылка для вступления в группу ' + res['link']                                
-                            else:
-                                method_url = 'createChatInviteLink'
-                                payload = {'chat_id': res['chat_id'],'member_limit':1}
-                                link= apihelper._make_request(token, method_url, params=payload, method='post')
-                                mrmsupport_bot_writelink(message['contact']['phone_number'],link['invite_link'], clientPath)
-                                answer = 'Вы успешно прошли авторизацию, вот ссылка для вступления в группу ' + link['invite_link']
-                else:
-                    answer = 'Ваш контакт не найден. Пожалуйста, обратитесь к администратору.'
-            except Exception as e:
-                logger.error("Error in contact handling: {}".format(str(e)))
-                answer = f'Ошибка: {e}\nПожалуйста обратитесь к администратору.'
-
-
-            return JSONResponse(content={
-                "type": "text",
-                "body": str(answer)
-            })
-
+    
     answer = "Система временно находится на техническом обслуживании. Приносим извенение за доставленные неудобства."
 
-    """if str(message['chat']['id']) in granted_chats:
-        logger.info(str(message['chat']['id'])+' in granted_chats')
-        # if message.forward_from is not None:
-        if 'forward_from' in message:
-            # logger.info('Received redirect from user id: '+str(message.forward_from.id))
-            logger.info('Received redirect from user id: '+str(message['forward_from']['id']))
-            reply = '[\n'
-            # results = mrmsupport_bot_user_info(message.forward_from.id, clientPath)
-            results = mrmsupport_bot_user_info(message['forward_from']['id'], clientPath)
-            
-            if len(results) == 0:
-                answer = 'User not found'
-                logger.info(answer)
-            else:
-                reply += ',\n'.join(results)
-                answer = reply + '\n]'
-                # logger.info('Replying in '+str(message.chat.id))
-                logger.info('Replying in '+str(message['chat']['id']))
-        else:
-            answer = 'Unable to retrieve master information: forward_from is not defined.'
-            logger.info(answer)
-
-    return JSONResponse(content={
-        "type": "text",
-        "body": str(answer)
-        })"""
-    
     # Return if it is a group
     if message['chat']['type'] != 'private':
         return JSONResponse(content={
@@ -226,35 +180,26 @@ async def call_message(request: Request, authorization: str = Header(None)):
             "body": ""
             })
     
+    if 'contact' in message:
+        answer = contact_reaction(message)
+        return JSONResponse(content={
+            "type": "text",
+            "body": str(answer)
+        })
+    
     data_path = "./data/" + str(message['chat']['id'])
     # Create folder if not exists
     if not os.path.exists(data_path):
         os.makedirs(data_path)
 
     if message['text'] == '/start':
-        answer = 'Добро пожаловать!\n Я нахожусь на обслуживании.'
-
-        """# Keyboard initialization
-        keyboard = types.ReplyKeyboardMarkup(row_width=1, resize_keyboard=True)
-        # Keyboard button initialization
-        button_phone = types.KeyboardButton(text="☎ Нажмите чтобы отправить Ваш контакт",request_contact=True)
-        keyboard.add(button_phone)
-        button_app = types.KeyboardButton(text="Скачать приложение")
-        keyboard.add(button_app)
-        button_bid = types.KeyboardButton(text="Заявки")"""
-
         keyboard_dict = get_keyboard(message['text'])
 
         return JSONResponse(content={
             "type": "keyboard",
             "body": keyboard_dict
             })
-        
-        """return JSONResponse(content={
-            "type": "text",
-            "body": str(answer)
-            })"""
-    # If message text is 'Заявки' then answer 'Функция получения заявок временно недоступна. Приносим извенение за доставленные неудобства.'
+
     if message['text'] == 'Заявки':
         answer = 'Функция получения заявок временно недоступна. Приносим извенение за доставленные неудобства.'
         return JSONResponse(content={
@@ -262,7 +207,6 @@ async def call_message(request: Request, authorization: str = Header(None)):
             "body": str(answer)
             })
     
-    # if message['text'] == 'Скачать приложение' and message.chat.type != 'group' and message.chat.type != 'supergroup':
     if message['text'] == 'Скачать приложение' and message['chat']['type'] == 'private':
         apk_link = 'http://service.icecorp.ru/mrm/apk/702.apk'
         try:
@@ -274,7 +218,6 @@ async def call_message(request: Request, authorization: str = Header(None)):
                     break
         except Exception as e:
             logger.error("mrmsupport_bot_test. apk_link: "+str(e))
-        # bot.reply_to(message, 'Скачать приложение можно по ссылке:\n'+apk_link)
         answer = 'Скачать приложение можно по ссылке:\n'+apk_link
         return JSONResponse(content={
             "type": "text",
