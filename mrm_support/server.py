@@ -8,6 +8,7 @@ from zeep import Client
 from zeep.transports import Transport
 import json
 from telebot import apihelper
+from math import ceil
 
 # Initialize FastAPI
 app = FastAPI()
@@ -67,25 +68,14 @@ def mrmsupport_bot_writelink(phoneNumber,link, clientPath):
             return res
     return  res
 
-def contact_reaction(message):
+def contact_reaction(message, clientPath):
     answer = "Система временно находится на техническом обслуживании. Приносим извенение за доставленные неудобства."
     idfrom = message['from']['id']
     idcontact = message['contact']['user_id']
 
-    clientPath = [
-        'http://10.2.4.123/productionMSK/ws/Telegram.1cws?wsdl',
-        'http://10.2.4.123/productionNNOV/ws/Telegram.1cws?wsdl',
-        'http://10.2.4.123/productionSPB/ws/Telegram.1cws?wsdl'
-    ]
-
     if not idcontact==idfrom:
         answer = 'Подтвердить можно только свой номер телефона.'
-        """return JSONResponse(content={
-            "type": "text",
-            "body": str(answer)
-        })"""
     else:
-        # answer = 'Ошибка. Пожалуйста обратитесь к администратору.'
         logger.info('contact_reaction. message: '+str(message))
 
         try:
@@ -115,12 +105,69 @@ def contact_reaction(message):
             logger.error("Error in contact handling: {}".format(str(e)))
             answer = f'Ошибка: {e}\nПожалуйста обратитесь к администратору.'
 
-
-        """return JSONResponse(content={
-            "type": "text",
-            "body": str(answer)
-        })"""
     return answer
+
+def get_bid_list(user_id, clientPath):
+    user        = os.environ.get('MRMSUPPORTBOT_AUTH_LOGIN')
+    password    = os.environ.get('MRMSUPPORTBOT_AUTH_PASSWORD')
+
+    session = Session()
+    session.auth = HTTPBasicAuth(user, password)
+
+    client_list = []
+    for client in clientPath:
+        client_list.append(Client(client, transport=Transport(session=session)))
+
+    bid_list = []
+    for client in client_list:
+        try:
+            resultCreateRequestLK = client.service.TelegramBidList(user_id)
+            for bid in resultCreateRequestLK['Bids']:
+                if bid['status'] == 'Закрыта' or bid['status'] == 'Готова':
+                    continue
+                bid_structure = {
+                    'id': bid['id'],
+                    'status': bid['status'],
+                    'address': {
+                        'city': str(bid['address']['city'])
+                    }
+                }
+                # logger.info('bid structure: '+str(bid_structure))
+                # logger.info('city: '+str(bid['address']['city']))
+                bid_list.append(bid_structure)
+                # bid_list.append(bid['id'])
+                # bid['address']['city']
+        except Exception as e:
+            logger.error('err: '+str(e))
+    
+    return bid_list
+
+def load_default_config(conf_path):
+    with open(conf_path+'config.json', 'r') as f:
+        config = json.load(f)
+    return config
+
+def reinit_config(default_config, user_config):
+    # reinit user config
+    for key in default_config.keys():
+        if key not in user_config.keys():
+            user_config[key] = default_config[key]
+    return user_config
+
+def read_config(conf_path, user_id):
+    # if user.json conf not in user_conf folder, create it
+    # default config file: config.json
+    if not os.path.exists(conf_path+str(user_id)+'.json'):
+        config = load_default_config(conf_path)
+    else:
+        with open(conf_path+str(user_id)+'.json', 'r') as f:
+            config = json.load(f)
+            config = reinit_config(load_default_config(conf_path), config)
+    return config
+
+def save_config(conf_path, config, user_id):
+    with open(conf_path+str(user_id)+'.json', 'w') as f:
+        json.dump(config, f)
 
 @app.post("/message")
 async def call_message(request: Request, authorization: str = Header(None)):
@@ -129,9 +176,7 @@ async def call_message(request: Request, authorization: str = Header(None)):
     if authorization and authorization.startswith("Bearer "):
         token = authorization.split(" ")[1]
     
-    # Log the token or perform further actions
     if token:
-        # logger.info(f'Token: {token}')
         pass
     else:
         answer = 'Не удалось определить токен бота. Пожалуйста обратитесь к администратору.'
@@ -170,8 +215,6 @@ async def call_message(request: Request, authorization: str = Header(None)):
         }
     }
     """
-    
-    answer = "Система временно находится на техническом обслуживании. Приносим извенение за доставленные неудобства."
 
     # Return if it is a group
     if message['chat']['type'] != 'private':
@@ -180,8 +223,16 @@ async def call_message(request: Request, authorization: str = Header(None)):
             "body": ""
             })
     
+    answer = "Система временно находится на техническом обслуживании. Приносим извенение за доставленные неудобства."
+
+    clientPath = [
+        'http://10.2.4.123/productionMSK/ws/Telegram.1cws?wsdl',
+        'http://10.2.4.123/productionNNOV/ws/Telegram.1cws?wsdl',
+        'http://10.2.4.123/productionSPB/ws/Telegram.1cws?wsdl'
+    ]
+    
     if 'contact' in message:
-        answer = contact_reaction(message)
+        answer = contact_reaction(message, clientPath)
         return JSONResponse(content={
             "type": "text",
             "body": str(answer)
@@ -202,6 +253,110 @@ async def call_message(request: Request, authorization: str = Header(None)):
 
     if message['text'] == 'Заявки':
         answer = 'Функция получения заявок временно недоступна. Приносим извенение за доставленные неудобства.'
+        conf_path = data_path+'user_conf/'
+        
+        # Create folder if not exists
+        if not os.path.exists(conf_path):
+            os.makedirs(conf_path)
+        
+        config = read_config(conf_path, message['from_user']['id'])
+        
+        # Load bid list
+        options = get_bid_list(message.from_user.id, clientPath, logger)
+        # TODO: rename options to bid_list
+        
+        # Save bid list to config
+        config['bid_list'] = options
+
+        if len(options) == 0:
+            answer = 'Список заявок пуст'
+            return JSONResponse(content={
+                "type": "text",
+                "body": str(answer)
+                })
+        
+        current_page = 1
+        logger.info("mrmsupport_bot_test. bidlist. current_page: "+str(current_page))
+        max_buttons_per_page = 14
+        # Calculate the total number of pages
+        total_pages = ceil(len(options) / max_buttons_per_page)
+        # Calculate the start and end index of the current page
+        start_index = (current_page - 1) * max_buttons_per_page
+        end_index = min(start_index + max_buttons_per_page, len(options))
+        
+        """
+        {
+            "Default": {
+                "message": "Выберите команду",
+                "row_width": 2,
+                "resize_keyboard": true,
+                "buttons": [
+                        {
+                            "text": "☎ Нажмите чтобы отправить Ваш контакт",
+                            "request_contact": true
+                        },
+                        {
+                            "text": "Скачать приложение",
+                            "request_contact": false
+                        },
+                        {
+                            "text": "Заявки",
+                            "request_contact": false
+                        }
+                    ]
+            }
+        }
+        """
+
+        # Create the list of buttons for the current page
+        buttons = []
+        for i in range(start_index, end_index):
+            # button = types.InlineKeyboardButton(options[i]['id'], callback_data='bid:'+options[i]['id'])
+            button = {
+                "text": options[i]['id'],
+                "request_contact": False
+            }
+            buttons.append(button)
+
+        # Create the list of navigation buttons
+        navigation_buttons = []
+        if current_page > 1:
+            # navigation_buttons.append(types.InlineKeyboardButton('<', callback_data='btn:<'))
+            navigation_buttons.append({
+                "text": "<",
+                "request_contact": False
+            })
+        if current_page < total_pages:
+            # navigation_buttons.append(types.InlineKeyboardButton('>', callback_data='btn:>'))
+            navigation_buttons.append({
+                "text": ">",
+                "request_contact": False
+            })
+        # Combine the buttons into a keyboard markup
+        """keyboard = types.InlineKeyboardMarkup(row_width=row_width)
+        keyboard.add(*buttons)
+        keyboard.add(*navigation_buttons)"""
+        keyboard_dict = {
+            "message": "Выберите заявку",
+            "row_width": 2,
+            "resize_keyboard": True,
+            "buttons": buttons
+        }
+        keyboard_dict['buttons'].append(navigation_buttons)
+
+        config['last_cmd'] = 'bid_list'
+        logger.info("mrmsupport_bot_test. b. last_cmd: "+str(config['last_cmd']))
+        config['bid_list_page'] = current_page
+        save_config(conf_path, config, message.from_user.id)
+
+        # Send the message with the keyboard
+        return JSONResponse(content={
+            "type": "keyboard",
+            "body": keyboard_dict
+            })
+        
+        # TODO: implement exception handling
+
         return JSONResponse(content={
             "type": "text",
             "body": str(answer)
