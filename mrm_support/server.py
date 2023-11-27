@@ -258,7 +258,7 @@ async def call_message(request: Request, authorization: str = Header(None)):
             "type": "text",
             "body": str(answer)
             })"""
-        conf_path = data_path+'user_conf/'
+        conf_path = data_path+'/user_conf/'
         
         # Create folder if not exists
         if not os.path.exists(conf_path):
