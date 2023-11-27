@@ -257,10 +257,10 @@ async def call_message(request: Request, authorization: str = Header(None)):
     if message['text'] == 'Заявки':
         answer = 'Функция получения заявок временно недоступна. Приносим извенение за доставленные неудобства.'
         # Return answer
-        return JSONResponse(content={
+        """return JSONResponse(content={
             "type": "text",
             "body": str(answer)
-            })
+            })"""
         conf_path = data_path+'/user_conf/'
         
         # Create folder if not exists
