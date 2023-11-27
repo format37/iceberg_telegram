@@ -289,7 +289,7 @@ async def call_message(request: Request, authorization: str = Header(None)):
                 })
         
         current_page = 1
-        logger.info("mrmsupport_bot_test. bidlist. current_page: "+str(current_page))
+        logger.info("mrmsupport_bot. bidlist. current_page: "+str(current_page))
         max_buttons_per_page = 14
         # Calculate the total number of pages
         total_pages = ceil(len(options) / max_buttons_per_page)
@@ -330,7 +330,7 @@ async def call_message(request: Request, authorization: str = Header(None)):
                 "request_contact": False
             }
             buttons.append(button)
-
+        logger.info("mrmsupport_bot. a. buttons: "+str(buttons))
         # Create the list of navigation buttons
         navigation_buttons = []
         if current_page > 1:
@@ -355,13 +355,16 @@ async def call_message(request: Request, authorization: str = Header(None)):
             "resize_keyboard": True,
             "buttons": buttons
         }
-        keyboard_dict['buttons'].append(navigation_buttons)
+        if len(navigation_buttons) > 0:
+            keyboard_dict['buttons'].append(navigation_buttons)        
 
         config['last_cmd'] = 'bid_list'
         logger.info("mrmsupport_bot_test. b. last_cmd: "+str(config['last_cmd']))
         config['bid_list_page'] = current_page
         save_config(conf_path, config, message['from']['id'])
-
+        
+        logger.info("mrmsupport_bot. b. keyboard_dict: "+str(keyboard_dict))
+        
         # Send the message with the keyboard
         return JSONResponse(content={
             "type": "keyboard",
