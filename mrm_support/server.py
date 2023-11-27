@@ -167,10 +167,11 @@ def read_config(conf_path, user_id):
     else:
         with open(conf_path+str(user_id)+'.json', 'r') as f:
             config = json.load(f)
-            config = reinit_config(load_default_config(conf_path), config)
+            config = reinit_config(load_default_config(), config)
     return config
 
 def save_config(conf_path, config, user_id):
+    logger.info(f'save_config: {conf_path+str(user_id)+".json"}')
     with open(conf_path+str(user_id)+'.json', 'w') as f:
         json.dump(config, f)
 
