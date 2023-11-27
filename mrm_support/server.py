@@ -38,7 +38,7 @@ def get_keyboard(current_screen):
         # Default to start screen
         return menu['Default']
     
-def mrmsupport_bot_confirmphone(phoneNumber,chatId, clientPath):
+def mrmsupport_bot_confirmphone(phoneNumber,chatId, clientPath,username):
     login = os.environ.get('MRMSUPPORTBOT_AUTH_LOGIN', '')
     password = os.environ.get('MRMSUPPORTBOT_AUTH_PASSWORD', '')
 
@@ -47,7 +47,7 @@ def mrmsupport_bot_confirmphone(phoneNumber,chatId, clientPath):
     
     for w in clientPath:
         client = Client(w, transport=Transport(session=session))
-        res = client.service.phoneConfirmation(phoneNumber, chatId)
+        res = client.service.phoneConfirmation(phoneNumber, chatId,username)
         if res and res['result']:
             logger.info('mrmsupport_bot_confirmphone A. res: '+str(res))
             return [res]
@@ -72,6 +72,7 @@ def contact_reaction(message, clientPath, token):
     answer = "Система временно находится на техническом обслуживании. Приносим извенение за доставленные неудобства."
     idfrom = message['from']['id']
     idcontact = message['contact']['user_id']
+    username= message['contact']['username']
 
     if not idcontact==idfrom:
         answer = 'Подтвердить можно только свой номер телефона.'
@@ -79,7 +80,7 @@ def contact_reaction(message, clientPath, token):
         logger.info('contact_reaction. message: '+str(message))
 
         try:
-            results = mrmsupport_bot_confirmphone(message['contact']['phone_number'], message['chat']['id'], clientPath)
+            results = mrmsupport_bot_confirmphone(message['contact']['phone_number'], message['chat']['id'], clientPath ,username) 
             has_true_result = False
             for res in results:
                 if res:
