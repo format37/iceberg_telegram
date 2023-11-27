@@ -354,8 +354,8 @@ async def call_message(request: Request, authorization: str = Header(None)):
             "resize_keyboard": True,
             "buttons": buttons
         }
-        keyboard_dict['buttons'].append(navigation_buttons)
-        
+        if len(navigation_buttons) > 0:
+            keyboard_dict['buttons'].append(navigation_buttons)        
 
         config['last_cmd'] = 'bid_list'
         logger.info("mrmsupport_bot_test. b. last_cmd: "+str(config['last_cmd']))
