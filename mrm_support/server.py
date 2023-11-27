@@ -264,10 +264,10 @@ async def call_message(request: Request, authorization: str = Header(None)):
         if not os.path.exists(conf_path):
             os.makedirs(conf_path)
         
-        config = read_config(conf_path, message['from_user']['id'])
+        config = read_config(conf_path, message['from']['id'])
         
         # Load bid list
-        options = get_bid_list(message.from_user.id, clientPath, logger)
+        options = get_bid_list(message['from']['id'], clientPath, logger)
         # TODO: rename options to bid_list
         
         # Save bid list to config
@@ -352,7 +352,7 @@ async def call_message(request: Request, authorization: str = Header(None)):
         config['last_cmd'] = 'bid_list'
         logger.info("mrmsupport_bot_test. b. last_cmd: "+str(config['last_cmd']))
         config['bid_list_page'] = current_page
-        save_config(conf_path, config, message.from_user.id)
+        save_config(conf_path, config, message['from']['id'])
 
         # Send the message with the keyboard
         return JSONResponse(content={
