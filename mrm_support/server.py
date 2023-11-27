@@ -158,9 +158,9 @@ def reinit_config(default_config, user_config):
 
 def read_config(conf_path, user_id):
     # if user.json conf not in user_conf folder, create it
-    if not os.path.exists(conf_path):
+    """if not os.path.exists(conf_path):
         logger.info(f'read_config: Creating folder {conf_path}')
-        os.makedirs(conf_path)
+        os.makedirs(conf_path)"""
     # default config file: config.json
     if not os.path.exists(conf_path+str(user_id)+'.json'):
         config = load_default_config()
@@ -244,10 +244,11 @@ async def call_message(request: Request, authorization: str = Header(None)):
             "body": str(answer)
         })
     
-    data_path = "./data/" + str(message['chat']['id'])
+    # data_path = "./data/" + str(message['chat']['id'])
+    data_path = "./data/"
     # Create folder if not exists
-    if not os.path.exists(data_path):
-        os.makedirs(data_path)
+    """if not os.path.exists(data_path):
+        os.makedirs(data_path)"""
 
     if message['text'] == '/start':
         keyboard_dict = get_keyboard(message['text'])
@@ -267,8 +268,8 @@ async def call_message(request: Request, authorization: str = Header(None)):
         conf_path = data_path+'/user_conf/'
         
         # Create folder if not exists
-        if not os.path.exists(conf_path):
-            os.makedirs(conf_path)
+        """if not os.path.exists(conf_path):
+            os.makedirs(conf_path)"""
         
         config = read_config(conf_path, message['from']['id'])
         
