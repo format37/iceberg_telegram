@@ -143,6 +143,9 @@ def get_bid_list(user_id, clientPath):
     return bid_list
 
 def load_default_config(conf_path):
+    # Create folder if not exists
+    if not os.path.exists(conf_path):
+        os.makedirs(conf_path)
     with open(conf_path+'config.json', 'r') as f:
         config = json.load(f)
     return config
