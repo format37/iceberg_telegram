@@ -122,6 +122,7 @@ def get_bid_list(user_id, clientPath):
     for client in client_list:
         try:
             resultCreateRequestLK = client.service.TelegramBidList(user_id)
+            logger.info(f'get_bid_list {user_id} resultCreateRequestLK bids count: {len(resultCreateRequestLK["Bids"])}')
             for bid in resultCreateRequestLK['Bids']:
                 if bid['status'] == 'Закрыта' or bid['status'] == 'Готова':
                     continue
@@ -140,6 +141,7 @@ def get_bid_list(user_id, clientPath):
         except Exception as e:
             logger.error('err: '+str(e))
     
+    logger.info(f'get_bid_list {user_id} bid_list count: {len(bid_list)}')
     return bid_list
 
 def load_default_config():
