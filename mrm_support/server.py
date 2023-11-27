@@ -68,7 +68,7 @@ def mrmsupport_bot_writelink(phoneNumber,link, clientPath):
             return res
     return  res
 
-def contact_reaction(message, clientPath):
+def contact_reaction(message, clientPath, token):
     answer = "Система временно находится на техническом обслуживании. Приносим извенение за доставленные неудобства."
     idfrom = message['from']['id']
     idcontact = message['contact']['user_id']
@@ -235,7 +235,7 @@ async def call_message(request: Request, authorization: str = Header(None)):
     ]
     
     if 'contact' in message:
-        answer = contact_reaction(message, clientPath)
+        answer = contact_reaction(message, clientPath, token)
         return JSONResponse(content={
             "type": "text",
             "body": str(answer)
@@ -257,10 +257,10 @@ async def call_message(request: Request, authorization: str = Header(None)):
     if message['text'] == 'Заявки':
         answer = 'Функция получения заявок временно недоступна. Приносим извенение за доставленные неудобства.'
         # Return answer
-        """return JSONResponse(content={
+        return JSONResponse(content={
             "type": "text",
             "body": str(answer)
-            })"""
+            })
         conf_path = data_path+'/user_conf/'
         
         # Create folder if not exists
