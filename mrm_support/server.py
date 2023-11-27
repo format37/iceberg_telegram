@@ -145,6 +145,7 @@ def get_bid_list(user_id, clientPath):
 def load_default_config(conf_path):
     # Create folder if not exists
     if not os.path.exists(conf_path):
+        logger.info(f'load_default_config: Creating folder {conf_path}')
         os.makedirs(conf_path)
     with open(conf_path+'config.json', 'r') as f:
         config = json.load(f)
@@ -159,6 +160,9 @@ def reinit_config(default_config, user_config):
 
 def read_config(conf_path, user_id):
     # if user.json conf not in user_conf folder, create it
+    if not os.path.exists(conf_path):
+        logger.info(f'read_config: Creating folder {conf_path}')
+        os.makedirs(conf_path)
     # default config file: config.json
     if not os.path.exists(conf_path+str(user_id)+'.json'):
         config = load_default_config(conf_path)
