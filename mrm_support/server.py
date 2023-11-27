@@ -245,7 +245,7 @@ async def call_message(request: Request, authorization: str = Header(None)):
         })
     
     # data_path = "./data/" + str(message['chat']['id'])
-    data_path = "./data/"
+    # data_path = "./data"
     # Create folder if not exists
     """if not os.path.exists(data_path):
         os.makedirs(data_path)"""
@@ -265,7 +265,7 @@ async def call_message(request: Request, authorization: str = Header(None)):
             "type": "text",
             "body": str(answer)
             })"""
-        conf_path = data_path+'/user_conf/'
+        conf_path = './data/user_conf/'
         
         # Create folder if not exists
         """if not os.path.exists(conf_path):
