@@ -289,7 +289,8 @@ async def call_message(request: Request, authorization: str = Header(None)):
         
         current_page = 1
         logger.info("mrmsupport_bot. bidlist. current_page: "+str(current_page))
-        max_buttons_per_page = 14
+        # max_buttons_per_page = 14
+        max_buttons_per_page = 4
         # Calculate the total number of pages
         total_pages = ceil(len(bid_list) / max_buttons_per_page)
         # Calculate the start and end index of the current page
@@ -367,6 +368,7 @@ async def call_message(request: Request, authorization: str = Header(None)):
         # Send the message with the keyboard
         return JSONResponse(content={
             "type": "keyboard",
+            "keyboard_type": "inline",
             "body": keyboard_dict
             })
         
