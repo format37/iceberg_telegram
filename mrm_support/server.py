@@ -193,10 +193,89 @@ async def call_callback(request: Request, authorization: str = Header(None)):
     call = await request.json()
     logger.info(f'call: {call}')
 
+    # Return if it is a group
+    if call['message']['chat']['type'] != 'private':
+        return JSONResponse(content={
+            "type": "empty",
+            "body": ""
+            })
+    
+    conf_path = './data/user_conf/'
+    config = read_config(conf_path, call['message']['chat']['id'])
+
+    # Define the maximum number of buttons per page
+    max_buttons_per_page = 4
+    options = config['bid_list']
+    current_page = int(config['bid_list_page'])
+    total_pages = ceil(len(options) / max_buttons_per_page)
+
+    if call['data'] == 'btn:<':
+        current_page -= 1
+        if current_page < 1:
+            current_page = 1
+    elif call['data'] == 'btn:>':
+        current_page += 1
+        if current_page > total_pages:
+            current_page = total_pages
+    # TODO: implement another elifs
+
+    # Calculate the start and end index of the current page
+    start_index = (current_page - 1) * max_buttons_per_page
+    end_index = min(start_index + max_buttons_per_page, len(options))
+    buttons = []
+    bid_buttons = []
+    for i in range(start_index, end_index):
+        # button = types.InlineKeyboardButton(bid_list[i]['id'], callback_data='bid:'+bid_list[i]['id'])
+        button = {
+            "text": options[i]['id'],
+            "callback_data": 'bid:'+options[i]['id']
+        }
+        bid_buttons.append(button)
+    buttons.append(bid_buttons)
+    # logger.info("mrmsupport_bot. a. buttons: "+str(buttons))
+    # Create the list of navigation buttons
+    navigation_buttons = []
+    if current_page > 1:
+        # navigation_buttons.append(types.InlineKeyboardButton('<', callback_data='btn:<'))
+        navigation_buttons.append({
+            "text": "<",
+            "callback_data": "btn:<"
+        })
+    if current_page < total_pages:
+        # navigation_buttons.append(types.InlineKeyboardButton('>', callback_data='btn:>'))
+        navigation_buttons.append({
+            "text": ">",
+            "callback_data": "btn:>"
+        })
+    buttons.append(navigation_buttons)
+    # Combine the buttons into a keyboard markup
+    """keyboard = types.InlineKeyboardMarkup(row_width=row_width)
+    # keyboard.add(*buttons)
+    # keyboard.add(*navigation_buttons)"""
+    keyboard_dict = {
+        "message": "Выберите заявку",
+        "row_width": 2,
+        "resize_keyboard": True,
+        "buttons": buttons
+    }
+
+    config['bid_list_page'] = current_page
+    save_config(conf_path, config, call['message']['chat']['id'])
+
+    answer = 'Список заявок ['+str(current_page)+'/'+str(total_pages)+']:'
+
+    # Send the message with the keyboard
     return JSONResponse(content={
+        "type": "keyboard",
+        "keyboard_type": "inline",
+        "body": keyboard_dict,
+        "answer": answer
+        })    
+
+    """return JSONResponse(content={
         "type": "empty",
         "body": ""
-    })
+    })"""
 
 @app.post("/message")
 async def call_message(request: Request, authorization: str = Header(None)):
