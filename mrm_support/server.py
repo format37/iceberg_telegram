@@ -275,13 +275,12 @@ async def call_message(request: Request, authorization: str = Header(None)):
         config = read_config(conf_path, message['from']['id'])
         
         # Load bid list
-        options = get_bid_list(message['from']['id'], clientPath)
-        # TODO: rename options to bid_list
+        bid_list = get_bid_list(message['from']['id'], clientPath)
         
         # Save bid list to config
-        config['bid_list'] = options
+        config['bid_list'] = bid_list
 
-        if len(options) == 0:
+        if len(bid_list) == 0:
             answer = 'Список заявок пуст'
             return JSONResponse(content={
                 "type": "text",
@@ -292,10 +291,10 @@ async def call_message(request: Request, authorization: str = Header(None)):
         logger.info("mrmsupport_bot. bidlist. current_page: "+str(current_page))
         max_buttons_per_page = 14
         # Calculate the total number of pages
-        total_pages = ceil(len(options) / max_buttons_per_page)
+        total_pages = ceil(len(bid_list) / max_buttons_per_page)
         # Calculate the start and end index of the current page
         start_index = (current_page - 1) * max_buttons_per_page
-        end_index = min(start_index + max_buttons_per_page, len(options))
+        end_index = min(start_index + max_buttons_per_page, len(bid_list))
         
         """
         {
@@ -324,9 +323,9 @@ async def call_message(request: Request, authorization: str = Header(None)):
         # Create the list of buttons for the current page
         buttons = []
         for i in range(start_index, end_index):
-            # button = types.InlineKeyboardButton(options[i]['id'], callback_data='bid:'+options[i]['id'])
+            # button = types.InlineKeyboardButton(bid_list[i]['id'], callback_data='bid:'+bid_list[i]['id'])
             button = {
-                "text": options[i]['id'],
+                "text": bid_list[i]['id'],
                 "request_contact": False
             }
             buttons.append(button)
