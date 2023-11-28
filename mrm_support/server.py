@@ -328,7 +328,7 @@ async def call_message(request: Request, authorization: str = Header(None)):
             # button = types.InlineKeyboardButton(bid_list[i]['id'], callback_data='bid:'+bid_list[i]['id'])
             button = {
                 "text": bid_list[i]['id'],
-                "request_contact": False
+                "callback_data": 'bid:'+bid_list[i]['id']
             }
             bid_buttons.append(button)
         buttons.append(bid_buttons)
@@ -339,13 +339,13 @@ async def call_message(request: Request, authorization: str = Header(None)):
             # navigation_buttons.append(types.InlineKeyboardButton('<', callback_data='btn:<'))
             navigation_buttons.append({
                 "text": "<",
-                "request_contact": False
+                "callback_data": "btn:<"
             })
         if current_page < total_pages:
             # navigation_buttons.append(types.InlineKeyboardButton('>', callback_data='btn:>'))
             navigation_buttons.append({
                 "text": ">",
-                "request_contact": False
+                "callback_data": "btn:>"
             })
         buttons.append(navigation_buttons)
         # Combine the buttons into a keyboard markup
