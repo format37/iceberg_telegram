@@ -176,9 +176,31 @@ def save_config(conf_path, config, user_id):
     with open(conf_path+str(user_id)+'.json', 'w') as f:
         json.dump(config, f)
 
+@app.post("/callback")
+async def call_callback(request: Request, authorization: str = Header(None)):
+    logger.info('post: callback')
+    token = None
+    if authorization and authorization.startswith("Bearer "):
+        token = authorization.split(" ")[1]
+    if token:
+        pass
+    else:
+        answer = 'Не удалось определить токен бота. Пожалуйста обратитесь к администратору.'
+        return JSONResponse(content={
+            "type": "text",
+            "body": str(answer)
+        })
+    call = await request.json()
+    logger.info(f'call: {call}')
+
+    return JSONResponse(content={
+        "type": "empty",
+        "body": ""
+    })
+
 @app.post("/message")
 async def call_message(request: Request, authorization: str = Header(None)):
-    logger.info('call_message')
+    logger.info('post: message')
     token = None
     if authorization and authorization.startswith("Bearer "):
         token = authorization.split(" ")[1]
