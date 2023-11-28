@@ -323,14 +323,16 @@ async def call_message(request: Request, authorization: str = Header(None)):
 
         # Create the list of buttons for the current page
         buttons = []
+        bid_buttons = []
         for i in range(start_index, end_index):
             # button = types.InlineKeyboardButton(bid_list[i]['id'], callback_data='bid:'+bid_list[i]['id'])
             button = {
                 "text": bid_list[i]['id'],
                 "request_contact": False
             }
-            buttons.append(button)
-        logger.info("mrmsupport_bot. a. buttons: "+str(buttons))
+            bid_buttons.append(button)
+        buttons.append(bid_buttons)
+        # logger.info("mrmsupport_bot. a. buttons: "+str(buttons))
         # Create the list of navigation buttons
         navigation_buttons = []
         if current_page > 1:
@@ -345,18 +347,19 @@ async def call_message(request: Request, authorization: str = Header(None)):
                 "text": ">",
                 "request_contact": False
             })
+        buttons.append(navigation_buttons)
         # Combine the buttons into a keyboard markup
         """keyboard = types.InlineKeyboardMarkup(row_width=row_width)
-        keyboard.add(*buttons)
-        keyboard.add(*navigation_buttons)"""
+        # keyboard.add(*buttons)
+        # keyboard.add(*navigation_buttons)"""
         keyboard_dict = {
             "message": "Выберите заявку",
             "row_width": 2,
             "resize_keyboard": True,
             "buttons": buttons
         }
-        if len(navigation_buttons) > 0:
-            keyboard_dict['buttons'].append(navigation_buttons)        
+        """if len(navigation_buttons) > 0:
+            keyboard_dict['buttons'].append(navigation_buttons)       """ 
 
         config['last_cmd'] = 'bid_list'
         logger.info("mrmsupport_bot_test. b. last_cmd: "+str(config['last_cmd']))
