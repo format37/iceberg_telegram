@@ -223,11 +223,18 @@ async def call_callback(request: Request, authorization: str = Header(None)):
         }
         bid_buttons.append(button)
         buttons.append(bid_buttons)
+        keyboard_message = 'Заявка: '+option
+        keyboard_dict = {
+            "message": keyboard_message,
+            "row_width": 1,
+            "resize_keyboard": True,
+            "buttons": buttons
+        }
         # Send the message with the keyboard
         return JSONResponse(content={
             "type": "keyboard",
             "keyboard_type": "inline",
-            "body": buttons
+            "body": keyboard_dict
             })
 
     elif call.data.startswith('upload_photo:'):
