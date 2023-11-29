@@ -380,7 +380,19 @@ async def call_message(request: Request, authorization: str = Header(None)):
             "body": str(answer)
         })
     
-    if message['text'] == '/start':
+    # If message contains photo
+    elif 'document' in message:
+        logger.info("document in message")
+        document = message['document']
+        if document['mime_type'].startswith('image/'):
+            # Document is a photo
+            file_id = document['file_id']
+            logger.info("mrmsupport_bot_test. file_id: "+str(file_id))            
+            # file_info = bot.get_file(file_id)
+            # downloaded_file = bot.download_file(file_info.file_path)            
+            # process_image(downloaded_file)
+    
+    elif message['text'] == '/start':
         keyboard_dict = get_keyboard(message['text'])
 
         return JSONResponse(content={
@@ -388,7 +400,7 @@ async def call_message(request: Request, authorization: str = Header(None)):
             "body": keyboard_dict
             })
 
-    if message['text'] == 'Заявки':
+    elif message['text'] == 'Заявки':
         answer = 'Функция получения заявок временно недоступна. Приносим извенение за доставленные неудобства.'
         # Return this when debugging
         """return JSONResponse(content={
@@ -447,9 +459,6 @@ async def call_message(request: Request, authorization: str = Header(None)):
             "type": "text",
             "body": str(answer)
             })
-    # If message contains photo
-    elif 'photo' in message:
-        logger.info("photo in message")
     else:
         
         return JSONResponse(content={
