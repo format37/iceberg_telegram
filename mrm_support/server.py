@@ -24,6 +24,7 @@ async def call_test():
     logger.info('call_test')
     return JSONResponse(content={"status": "ok"})
 
+
 def get_keyboard(current_screen):
 
     with open('data/menu.json') as f:
@@ -38,6 +39,7 @@ def get_keyboard(current_screen):
         # Default to start screen
         return menu['Default']
     
+
 def mrmsupport_bot_confirmphone(phoneNumber,chatId, clientPath,username):
     login = os.environ.get('MRMSUPPORTBOT_AUTH_LOGIN', '')
     password = os.environ.get('MRMSUPPORTBOT_AUTH_PASSWORD', '')
@@ -54,6 +56,7 @@ def mrmsupport_bot_confirmphone(phoneNumber,chatId, clientPath,username):
     logger.info('mrmsupport_bot_confirmphone B. res: '+str(res))
     return  [res]
 
+
 def mrmsupport_bot_writelink(phoneNumber,link, clientPath):
     login = os.environ.get('MRMSUPPORTBOT_AUTH_LOGIN', '')
     password = os.environ.get('MRMSUPPORTBOT_AUTH_PASSWORD', '')
@@ -67,6 +70,7 @@ def mrmsupport_bot_writelink(phoneNumber,link, clientPath):
         if res :
             return res
     return  res
+
 
 def contact_reaction(message, clientPath, token):
     answer = "Система временно находится на техническом обслуживании. Приносим извенение за доставленные неудобства."
@@ -108,6 +112,7 @@ def contact_reaction(message, clientPath, token):
 
     return answer
 
+
 def get_bid_list(user_id, clientPath):
     user        = os.environ.get('MRMSUPPORTBOT_AUTH_LOGIN')
     password    = os.environ.get('MRMSUPPORTBOT_AUTH_PASSWORD')
@@ -145,10 +150,12 @@ def get_bid_list(user_id, clientPath):
     logger.info(f'get_bid_list {user_id} bid_list count: {len(bid_list)}')
     return bid_list
 
+
 def load_default_config():
     with open('data/user_conf/config.json', 'r') as f:
         config = json.load(f)
     return config
+
 
 def reinit_config(default_config, user_config):
     # reinit user config
@@ -156,6 +163,7 @@ def reinit_config(default_config, user_config):
         if key not in user_config.keys():
             user_config[key] = default_config[key]
     return user_config
+
 
 def read_config(conf_path, user_id):
     # default config file: config.json
@@ -167,10 +175,12 @@ def read_config(conf_path, user_id):
             config = reinit_config(load_default_config(), config)
     return config
 
+
 def save_config(conf_path, config, user_id):
     logger.info(f'save_config: {conf_path+str(user_id)+".json"}')
     with open(conf_path+str(user_id)+'.json', 'w') as f:
         json.dump(config, f)
+
 
 @app.post("/callback")
 async def call_callback(request: Request, authorization: str = Header(None)):
@@ -246,7 +256,6 @@ async def call_callback(request: Request, authorization: str = Header(None)):
             "type": "text",
             "body": str(answer)
         })
-        
 
 
 def get_bid_keyboard(config, call_data):
@@ -371,12 +380,6 @@ async def call_message(request: Request, authorization: str = Header(None)):
             "body": str(answer)
         })
     
-    # data_path = "./data/" + str(message['chat']['id'])
-    # data_path = "./data"
-    # Create folder if not exists
-    """if not os.path.exists(data_path):
-        os.makedirs(data_path)"""
-
     if message['text'] == '/start':
         keyboard_dict = get_keyboard(message['text'])
 
@@ -387,16 +390,13 @@ async def call_message(request: Request, authorization: str = Header(None)):
 
     if message['text'] == 'Заявки':
         answer = 'Функция получения заявок временно недоступна. Приносим извенение за доставленные неудобства.'
-        # Return answer
+        # Return this when debugging
         """return JSONResponse(content={
             "type": "text",
             "body": str(answer)
             })"""
-        conf_path = './data/user_conf/'
         
-        # Create folder if not exists
-        """if not os.path.exists(conf_path):
-            os.makedirs(conf_path)"""
+        conf_path = './data/user_conf/'
         
         config = read_config(conf_path, message['from']['id'])
         
@@ -414,7 +414,6 @@ async def call_message(request: Request, authorization: str = Header(None)):
                 })
         
         config['bid_list_page'] = 1
-        ### FROM THERE 0
         keyboard_dict, current_page = get_bid_keyboard(config, '')
 
         config['last_cmd'] = 'bid_list'
@@ -431,15 +430,8 @@ async def call_message(request: Request, authorization: str = Header(None)):
             "keyboard_type": "inline",
             "body": keyboard_dict
             })
-        
-        # TODO: implement exception handling
-
-        return JSONResponse(content={
-            "type": "text",
-            "body": str(answer)
-            })
     
-    if message['text'] == 'Скачать приложение' and message['chat']['type'] == 'private':
+    elif message['text'] == 'Скачать приложение' and message['chat']['type'] == 'private':
         apk_link = 'http://service.icecorp.ru/mrm/apk/702.apk'
         try:
             apt_list_path = '/mnt/soft/apk'
@@ -455,7 +447,11 @@ async def call_message(request: Request, authorization: str = Header(None)):
             "type": "text",
             "body": str(answer)
             })
+    # If message contains photo
+    elif 'photo' in message:
+        logger.info("photo in message")
     else:
+        
         return JSONResponse(content={
             "type": "empty",
             "body": ""
