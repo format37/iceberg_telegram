@@ -252,8 +252,10 @@ async def call_callback(request: Request, authorization: str = Header(None)):
     """keyboard = types.InlineKeyboardMarkup(row_width=row_width)
     # keyboard.add(*buttons)
     # keyboard.add(*navigation_buttons)"""
+    
+    message = 'Список заявок ['+str(current_page)+'/'+str(total_pages)+']:'
     keyboard_dict = {
-        "message": "Выберите заявку",
+        "message": message,
         "row_width": 2,
         "resize_keyboard": True,
         "buttons": buttons
@@ -262,14 +264,11 @@ async def call_callback(request: Request, authorization: str = Header(None)):
     config['bid_list_page'] = current_page
     save_config(conf_path, config, call['message']['chat']['id'])
 
-    answer = 'Список заявок ['+str(current_page)+'/'+str(total_pages)+']:'
-
     # Send the message with the keyboard
     return JSONResponse(content={
         "type": "keyboard",
         "keyboard_type": "inline",
-        "body": keyboard_dict,
-        "answer": answer
+        "body": keyboard_dict
         })    
 
     """return JSONResponse(content={
@@ -453,8 +452,9 @@ async def call_message(request: Request, authorization: str = Header(None)):
         """keyboard = types.InlineKeyboardMarkup(row_width=row_width)
         # keyboard.add(*buttons)
         # keyboard.add(*navigation_buttons)"""
+        message = 'Список заявок ['+str(current_page)+'/'+str(total_pages)+']:'
         keyboard_dict = {
-            "message": "Выберите заявку",
+            "message": message,
             "row_width": 2,
             "resize_keyboard": True,
             "buttons": buttons
