@@ -214,7 +214,7 @@ async def call_callback(request: Request, authorization: str = Header(None)):
     elif call['data'].startswith('bid:'):
         option = call['data'].split(':')[1]
         config['last_cmd'] = 'bid:'+option
-        save_config(conf_path, config, call['message']['chat']['id'])        
+        save_config(conf_path, config, call['message']['chat']['id'])
         buttons = []
         bid_buttons = []
         button = {
@@ -237,9 +237,9 @@ async def call_callback(request: Request, authorization: str = Header(None)):
             "body": keyboard_dict
             })
 
-    elif call.data.startswith('upload_photo:'):
-        config['last_cmd'] = call.data
-        save_config(conf_path, config, call.from_user.id)
+    elif call['data'].startswith('upload_photo:'):
+        config['last_cmd'] = call['data']
+        save_config(conf_path, config, call['message']['chat']['id'])
         logger.info("mrmsupport_bot_test. u. last_cmd: "+str(config['last_cmd']))
         answer = 'Пожалуйста, загрузите фото без сжатия'
         return JSONResponse(content={
