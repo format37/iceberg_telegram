@@ -211,10 +211,10 @@ async def call_callback(request: Request, authorization: str = Header(None)):
             "body": keyboard_dict
             })
     
-    elif call.data.startswith('bid:'):
+    elif call['data'].startswith('bid:'):
         option = call['data'].split(':')[1]
         config['last_cmd'] = 'bid:'+option
-        save_config(conf_path, config, call.from_user.id)        
+        save_config(conf_path, config, call['message']['chat']['id'])        
         buttons = []
         bid_buttons = []
         button = {
