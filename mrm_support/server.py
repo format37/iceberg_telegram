@@ -158,10 +158,6 @@ def reinit_config(default_config, user_config):
     return user_config
 
 def read_config(conf_path, user_id):
-    # if user.json conf not in user_conf folder, create it
-    """if not os.path.exists(conf_path):
-        logger.info(f'read_config: Creating folder {conf_path}')
-        os.makedirs(conf_path)"""
     # default config file: config.json
     if not os.path.exists(conf_path+str(user_id)+'.json'):
         config = load_default_config()
@@ -203,85 +199,40 @@ async def call_callback(request: Request, authorization: str = Header(None)):
     conf_path = './data/user_conf/'
     config = read_config(conf_path, call['message']['chat']['id'])
 
+    if call['data'] in ['btn:<','btn:>']:
+        keyboard_dict, current_page = get_bid_keyboard(config, call['data'])
+        config['bid_list_page'] = current_page
+        save_config(conf_path, config, call['message']['chat']['id'])
 
-    # if call['data'] == 'btn:<':
-    # TODO: implement another elifs for bid and photo upload
-
-    # FROM THERE 1
-    keyboard_dict, current_page = get_bid_keyboard(config, call['data'])
-
-    config['bid_list_page'] = current_page
-    save_config(conf_path, config, call['message']['chat']['id'])
-
-    # Send the message with the keyboard
-    return JSONResponse(content={
-        "type": "keyboard",
-        "keyboard_type": "inline",
-        "body": keyboard_dict
-        })
-
-def get_bid_keyboard_v0():
-    # current_page = 1
-
-    conf_path = './data/user_conf/'
-    config = read_config(conf_path, call['message']['chat']['id'])
-
-    # Define the maximum number of buttons per page
-    max_buttons_per_page = 4
-    options = config['bid_list']
-    current_page = int(config['bid_list_page'])
-
-    logger.info("mrmsupport_bot. bidlist. current_page: "+str(current_page))
-    # max_buttons_per_page = 14
-    # max_buttons_per_page = 4
-    # Calculate the total number of pages
-    total_pages = ceil(len(bid_list) / max_buttons_per_page)
-    # Calculate the start and end index of the current page
-    start_index = (current_page - 1) * max_buttons_per_page
-    end_index = min(start_index + max_buttons_per_page, len(bid_list))
-
-    # Create the list of buttons for the current page
-    buttons = []
-    bid_buttons = []
-    for i in range(start_index, end_index):
-        # button = types.InlineKeyboardButton(bid_list[i]['id'], callback_data='bid:'+bid_list[i]['id'])
+        # Send the message with the keyboard
+        return JSONResponse(content={
+            "type": "keyboard",
+            "keyboard_type": "inline",
+            "body": keyboard_dict
+            })
+    
+    elif call.data.startswith('bid:'):
+        option = call['data'].split(':')[1]
+        config['last_cmd'] = 'bid:'+option
+        save_config(conf_path, config, call.from_user.id)        
+        buttons = []
+        bid_buttons = []
         button = {
-            "text": bid_list[i]['id'],
-            "callback_data": 'bid:'+bid_list[i]['id']
+            "text": 'Загрузить фото',
+            "callback_data": f'upload_photo:{option}'
         }
         bid_buttons.append(button)
-    buttons.append(bid_buttons)
-    # logger.info("mrmsupport_bot. a. buttons: "+str(buttons))
-    # Create the list of navigation buttons
-    navigation_buttons = []
-    if current_page > 1:
-        # navigation_buttons.append(types.InlineKeyboardButton('<', callback_data='btn:<'))
-        navigation_buttons.append({
-            "text": "<",
-            "callback_data": "btn:<"
-        })
-    if current_page < total_pages:
-        # navigation_buttons.append(types.InlineKeyboardButton('>', callback_data='btn:>'))
-        navigation_buttons.append({
-            "text": ">",
-            "callback_data": "btn:>"
-        })
-    buttons.append(navigation_buttons)
-    # Combine the buttons into a keyboard markup
-    """keyboard = types.InlineKeyboardMarkup(row_width=row_width)
-    # keyboard.add(*buttons)
-    # keyboard.add(*navigation_buttons)"""
-    keyboard_message = 'Список заявок ['+str(current_page)+'/'+str(total_pages)+']:'
-    keyboard_dict = {
-        "message": keyboard_message,
-        "row_width": 2,
-        "resize_keyboard": True,
-        "buttons": buttons
-    }
-    """if len(navigation_buttons) > 0:
-        keyboard_dict['buttons'].append(navigation_buttons)       """ 
-    
-    return keyboard_dict
+        buttons.append(bid_buttons)
+        # Send the message with the keyboard
+        return JSONResponse(content={
+            "type": "keyboard",
+            "keyboard_type": "inline",
+            "body": buttons
+            })
+
+    elif call.data.startswith('upload_photo:'):
+        pass
+    # TODO: implement another elifs for bid and photo upload
 
 
 def get_bid_keyboard(config, call_data):
