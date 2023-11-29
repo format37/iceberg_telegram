@@ -238,8 +238,15 @@ async def call_callback(request: Request, authorization: str = Header(None)):
             })
 
     elif call.data.startswith('upload_photo:'):
-        pass
-    # TODO: implement another elifs for bid and photo upload
+        config['last_cmd'] = call.data
+        save_config(conf_path, config, call.from_user.id)
+        logger.info("mrmsupport_bot_test. u. last_cmd: "+str(config['last_cmd']))
+        answer = 'Пожалуйста, загрузите фото без сжатия'
+        return JSONResponse(content={
+            "type": "text",
+            "body": str(answer)
+        })
+        
 
 
 def get_bid_keyboard(config, call_data):
