@@ -452,9 +452,9 @@ async def call_message(request: Request, authorization: str = Header(None)):
         """keyboard = types.InlineKeyboardMarkup(row_width=row_width)
         # keyboard.add(*buttons)
         # keyboard.add(*navigation_buttons)"""
-        message = 'Список заявок ['+str(current_page)+'/'+str(total_pages)+']:'
+        keyboard_message = 'Список заявок ['+str(current_page)+'/'+str(total_pages)+']:'
         keyboard_dict = {
-            "message": message,
+            "message": keyboard_message,
             "row_width": 2,
             "resize_keyboard": True,
             "buttons": buttons
