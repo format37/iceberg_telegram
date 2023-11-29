@@ -465,6 +465,7 @@ async def call_message(request: Request, authorization: str = Header(None)):
         config['last_cmd'] = 'bid_list'
         logger.info("mrmsupport_bot_test. b. last_cmd: "+str(config['last_cmd']))
         config['bid_list_page'] = current_page
+        logger.info(f'Saving config from message: {message}')
         save_config(conf_path, config, message['from']['id'])
         
         logger.info("mrmsupport_bot. b. keyboard_dict: "+str(keyboard_dict))
