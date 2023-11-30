@@ -369,6 +369,9 @@ async def call_message(request: Request, authorization: str = Header(None)):
     
     answer = "Система временно находится на техническом обслуживании. Приносим извенение за доставленные неудобства."
 
+    conf_path = './data/user_conf/'
+    config = read_config(conf_path, message['from']['id'])
+
     clientPath = [
         'http://10.2.4.123/productionMSK/ws/Telegram.1cws?wsdl',
         'http://10.2.4.123/productionNNOV/ws/Telegram.1cws?wsdl',
