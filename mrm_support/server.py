@@ -8,7 +8,9 @@ from zeep import Client
 from zeep.transports import Transport
 import json
 from telebot import apihelper
+import telebot
 from math import ceil
+import uuid
 
 # Initialize FastAPI
 app = FastAPI()
@@ -387,10 +389,93 @@ async def call_message(request: Request, authorization: str = Header(None)):
         if document['mime_type'].startswith('image/'):
             # Document is a photo
             file_id = document['file_id']
-            logger.info("mrmsupport_bot_test. file_id: "+str(file_id))            
-            # file_info = bot.get_file(file_id)
-            # downloaded_file = bot.download_file(file_info.file_path)            
-            # process_image(downloaded_file)
+            logger.info("mrmsupport_bot. file_id: "+str(file_id))
+
+            if \
+                config['last_cmd'].startswith('upload_photo:') or \
+                config['last_cmd'].startswith('bid:'):
+
+                logger.info("mrmsupport_bot. a. last_cmd: "+str(config['last_cmd']))
+
+                # Create a folder if not exists
+                conf_path = './data/user_conf/'
+                if not os.path.exists(conf_path+'photos'):
+                    os.makedirs(conf_path+'photos')
+                user_id = str(message['from']['id'])
+                # create user id folder if not exists
+                if not os.path.exists(conf_path+'photos/'+user_id):
+                    os.makedirs(conf_path+'photos/'+user_id)
+                # Define the bid folder
+                bid_id = config['last_cmd'].split(':')[1]
+                bid_folder = conf_path+'photos/'+user_id+'/'+bid_id
+                photo_loaded = False
+                """ if message.photo is not None:
+                    pass""" # Move to another if
+                
+                """
+{
+
+    "message_id":715,
+    "from":{
+        "id":106129214,
+        "is_bot":False,
+        "first_name":"Alex",
+        "username":"format37",
+        "language_code":"en",
+        "is_premium":True
+    },
+    "chat":{
+        "id":106129214,
+        "first_name":"Alex",
+        "username":"format37",
+        "type":"private"
+    },
+    "date":1701332432,
+    "document":{
+        "file_name":"photo_2023-11-29_13-49-22.jpg",
+        "mime_type":"image/jpeg",
+        "thumbnail":{
+            "file_id":"AAMCAgADGQEAAgLLZWhF0HhA6HUdj446cgyrkE3ffIsAApI5AAJjKUBLMxY9piupkwUBAAdtAAMzBA",
+            "file_unique_id":"AQADkjkAAmMpQEty",
+            "file_size":8539,
+            "width":272,
+            "height":185
+        },
+        "thumb":{
+            "file_id":"AAMCAgADGQEAAgLLZWhF0HhA6HUdj446cgyrkE3ffIsAApI5AAJjKUBLMxY9piupkwUBAAdtAAMzBA",
+            "file_unique_id":"AQADkjkAAmMpQEty",
+            "file_size":8539,
+            "width":272,
+            "height":185
+        },
+        "file_id":"BQACAgIAAxkBAAICy2VoRdB4QOh1HY-OOnIMq5BN33yLAAKSOQACYylASzMWPaYrqZMFMwQ",
+        "file_unique_id":"AgADkjkAAmMpQEs",
+        "file_size":7620
+    }
+
+}
+                """
+                bot = telebot.TeleBot(token)
+                # if message['document'] is not None:
+                logger.info("mrmsupport_bot_test. document: "+str(message.document))
+                file_id = message['document']['file_id']
+                logger.info("mrmsupport_bot_test. file_id: "+str(file_id))
+                file_info = bot.get_file(file_id)
+                downloaded_file = bot.download_file(file_info.file_path)
+                # Replace file_id to uid
+                file_id = str(uuid.uuid4())
+                # Save the file, get the file extension
+                file_path = bid_folder+'/'+file_id+'.'+file_info.file_path.split('.')[-1]
+                with open(file_path, 'wb') as new_file:
+                    new_file.write(downloaded_file)
+                    photo_loaded = True
+                    logger.info("Download successfull. file_path: "+str(file_path))
+
+            # Send a message to the user
+            if photo_loaded:
+                bot.reply_to(message, 'Успешно загружено фото для заявки: '+config['last_cmd'].split(':')[1])
+            else:
+                bot.reply_to(message, 'Не удалось загрузить фото для заявки: '+config['last_cmd'].split(':')[1])
     
     elif message['text'] == '/start':
         keyboard_dict = get_keyboard(message['text'])
