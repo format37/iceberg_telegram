@@ -480,9 +480,19 @@ async def call_message(request: Request, authorization: str = Header(None)):
 
             # Send a message to the user
             if photo_loaded:
-                bot.reply_to(message, 'Успешно загружено фото для заявки: '+config['last_cmd'].split(':')[1])
+                # bot.reply_to(message, 'Успешно загружено фото для заявки: '+config['last_cmd'].split(':')[1])
+                answer = 'Успешно загружено фото для заявки: '+config['last_cmd'].split(':')[1]
+                return JSONResponse(content={
+                    "type": "text",
+                    "body": str(answer)
+                })
             else:
-                bot.reply_to(message, 'Не удалось загрузить фото для заявки: '+config['last_cmd'].split(':')[1])
+                # bot.reply_to(message, 'Не удалось загрузить фото для заявки: '+config['last_cmd'].split(':')[1])
+                answer = 'Не удалось загрузить фото для заявки: '+config['last_cmd'].split(':')[1]
+                return JSONResponse(content={
+                    "type": "text",
+                    "body": str(answer)
+                })
     
     elif message['text'] == '/start':
         keyboard_dict = get_keyboard(message['text'])
