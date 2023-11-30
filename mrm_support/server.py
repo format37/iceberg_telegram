@@ -371,6 +371,7 @@ async def call_message(request: Request, authorization: str = Header(None)):
 
     conf_path = './data/user_conf/'
     config = read_config(conf_path, message['from']['id'])
+    photo_path = '/mnt/photos/'
 
     clientPath = [
         'http://10.2.4.123/productionMSK/ws/Telegram.1cws?wsdl',
@@ -395,7 +396,7 @@ async def call_message(request: Request, authorization: str = Header(None)):
                 file_id = photo[-1]['file_id']
                 logger.info("mrmsupport_bot. file_id: "+str(file_id))
 
-                if \
+                """if \
                     config['last_cmd'].startswith('upload_photo:') or \
                     config['last_cmd'].startswith('bid:'):
 
@@ -412,9 +413,9 @@ async def call_message(request: Request, authorization: str = Header(None)):
                     # Define the bid folder
                     bid_id = config['last_cmd'].split(':')[1]
                     bid_folder = conf_path+'photos/'+user_id+'/'+bid_id
-                    photo_loaded = False
-                    """ if message.photo is not None:
-                        pass"""
+                    photo_loaded = False"""
+                """ if message.photo is not None:
+                    pass"""
         elif 'document' in message:
             logger.info("document in message")
             document = message['document']
@@ -423,7 +424,7 @@ async def call_message(request: Request, authorization: str = Header(None)):
                 file_id = document['file_id']
                 logger.info("mrmsupport_bot. file_id: "+str(file_id))
 
-                if \
+                """if \
                     config['last_cmd'].startswith('upload_photo:') or \
                     config['last_cmd'].startswith('bid:'):
 
@@ -440,7 +441,7 @@ async def call_message(request: Request, authorization: str = Header(None)):
                     # Define the bid folder
                     bid_id = config['last_cmd'].split(':')[1]
                     bid_folder = conf_path+'photos/'+user_id+'/'+bid_id
-                    photo_loaded = False
+                    photo_loaded = False"""
                 """ if message.photo is not None:
                     pass""" # Move to another if
                 
@@ -451,6 +452,15 @@ async def call_message(request: Request, authorization: str = Header(None)):
         downloaded_file = bot.download_file(file_info.file_path)
         # Replace file_id to uid
         file_id = str(uuid.uuid4())
+        
+        bid_id = config['last_cmd'].split(':')[1]
+        bid_folder = os.path.join(photo_path, str(message['from']['id']), bid_id)
+        # Create a folder if not exists
+        if not os.path.exists(bid_folder):
+            os.makedirs(bid_folder)
+            logger.info("bid_folder created: "+str(bid_folder))
+        photo_loaded = False
+
         # Save the file, get the file extension
         file_path = bid_folder+'/'+file_id+'.'+file_info.file_path.split('.')[-1]
         # Create folder if not exists
