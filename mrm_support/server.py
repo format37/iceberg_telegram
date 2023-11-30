@@ -460,7 +460,7 @@ async def call_message(request: Request, authorization: str = Header(None)):
                 """
                 bot = telebot.TeleBot(token)
                 # if message['document'] is not None:
-                logger.info("mrmsupport_bot_test. document: "+str(message.document))
+                # logger.info("mrmsupport_bot_test. document: "+str(message['document']))
                 file_id = message['document']['file_id']
                 logger.info("mrmsupport_bot_test. file_id: "+str(file_id))
                 file_info = bot.get_file(file_id)
