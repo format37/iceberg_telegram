@@ -463,11 +463,12 @@ async def call_message(request: Request, authorization: str = Header(None)):
         photo_loaded = False
 
         # Save the file, get the file extension
-        file_path = bid_folder+'/'+file_id+'.'+file_info.file_path.split('.')[-1]
+        # file_path = bid_folder+'/'+file_id+'.'+file_info.file_path.split('.')[-1]
+        file_path = os.path.join(bid_folder, file_id+'.'+file_info.file_path.split('.')[-1])
         # Create folder if not exists
-        if not os.path.exists(bid_folder):
+        """if not os.path.exists(bid_folder):
             os.makedirs(bid_folder)
-            logger.info("bid_folder created: "+str(bid_folder))
+            logger.info("bid_folder created: "+str(bid_folder))"""
         with open(file_path, 'wb') as new_file:
             new_file.write(downloaded_file)
             photo_loaded = True
