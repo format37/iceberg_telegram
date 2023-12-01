@@ -7,8 +7,9 @@ services:
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - /etc/timezone:/etc/timezone:ro
-      - ./data:/server/data
-      - /mnt/photos:/mnt/photos
+      - ${PWD}/../data:/server/data
+      # - ./data:/server/data
+      # - /mnt/photos:/mnt/photos
       - /mnt/soft:/mnt/soft
     build: ./
     ports:
@@ -24,8 +25,9 @@ services:
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - /etc/timezone:/etc/timezone:ro
-      - ./data:/server/data
-      - /mnt/photos:/mnt/photos
+      - ${PWD}/../data:/server/data
+      # - ./data:/server/data
+      # - /mnt/photos:/mnt/photos
       - /mnt/soft:/mnt/soft
     build: ./
     ports:

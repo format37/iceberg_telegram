@@ -371,7 +371,7 @@ async def call_message(request: Request, authorization: str = Header(None)):
 
     conf_path = './data/user_conf/'
     config = read_config(conf_path, message['from']['id'])
-    photo_path = '/mnt/photos/'
+    data_path = './data/'
 
     clientPath = [
         'http://10.2.4.123/productionMSK/ws/Telegram.1cws?wsdl',
@@ -454,7 +454,8 @@ async def call_message(request: Request, authorization: str = Header(None)):
         file_id = str(uuid.uuid4())
         
         bid_id = config['last_cmd'].split(':')[1]
-        bid_folder = os.path.join(photo_path, str(message['from']['id']), bid_id)
+        # bid_folder = data_path+'photos/'+user_id+'/'+config['last_cmd'].split(':')[1]
+        bid_folder = os.path.join(data_path, str(message['from']['id']), bid_id)
         # Create a folder if not exists
         if not os.path.exists(bid_folder):
             os.makedirs(bid_folder)
