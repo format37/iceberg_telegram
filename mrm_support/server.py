@@ -455,7 +455,7 @@ async def call_message(request: Request, authorization: str = Header(None)):
         
         bid_id = config['last_cmd'].split(':')[1]
         # bid_folder = data_path+'photos/'+user_id+'/'+config['last_cmd'].split(':')[1]
-        bid_folder = os.path.join(data_path, str(message['from']['id']), bid_id)
+        bid_folder = os.path.join(data_path, 'photos', str(message['from']['id']), bid_id)
         # Create a folder if not exists
         if not os.path.exists(bid_folder):
             os.makedirs(bid_folder)
