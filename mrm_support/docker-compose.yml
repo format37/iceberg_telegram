@@ -7,7 +7,7 @@ services:
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - /etc/timezone:/etc/timezone:ro
-      - ${PWD}/../data:/server/data
+      - /home/yurasov/projects/iceberg_telegram/data/:/server/data
       # - ./data:/server/data
       # - /mnt/photos:/mnt/photos
       - /mnt/soft:/mnt/soft
@@ -25,7 +25,7 @@ services:
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - /etc/timezone:/etc/timezone:ro
-      - ${PWD}/../data:/server/data
+      - /home/yurasov/projects/iceberg_telegram/data:/server/data
       # - ./data:/server/data
       # - /mnt/photos:/mnt/photos
       - /mnt/soft:/mnt/soft
