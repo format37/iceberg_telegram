@@ -95,7 +95,7 @@ async def call_message(request: Request):
 
     answer = "Система временно находится на техническом обслуживании. Приносим извенение за доставленные неудобства."
 
-    if str(message['chat']['id']) in granted_chats and 'forward_from' in message:
+    if str(message['chat']['id']) in granted_chats and 'forward_origin' in message:
         logger.info(str(message['chat']['id'])+' in granted_chats')
         # if message.forward_from is not None:
         if 'forward_from' in message:
@@ -114,7 +114,7 @@ async def call_message(request: Request):
                 # logger.info('Replying in '+str(message.chat.id))
                 logger.info('Replying in '+str(message['chat']['id']))
         else:
-            answer = 'Unable to retrieve master information: forward_from is not defined.'
+            answer = 'Unable to retrieve the hidden user id'
             logger.info(answer)
     else:
         return JSONResponse(content={
