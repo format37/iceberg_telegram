@@ -95,7 +95,7 @@ async def call_message(request: Request):
 
     answer = "Система временно находится на техническом обслуживании. Приносим извенение за доставленные неудобства."
 
-    if str(message['chat']['id']) in granted_chats:
+    if str(message['chat']['id']) in granted_chats and 'forward_from' in message:
         logger.info(str(message['chat']['id'])+' in granted_chats')
         # if message.forward_from is not None:
         if 'forward_from' in message:
