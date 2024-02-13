@@ -115,6 +115,8 @@ async def call_message(request: Request):
         else:
             answer = 'Unable to retrieve master information: forward_from is not defined.'
             logger.info(answer)
+    else:
+        logger.info(str(message['chat'])+' id not in granted_chats')
 
     return JSONResponse(content={
         "type": "text",
