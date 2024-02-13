@@ -89,8 +89,8 @@ async def call_message(request: Request):
 
     granted_chats = [
         '-1001853379941', # MRM master info МРМ мастер, 
-        '-1001533625926', # Bot factory 2
-        '-1002094333974' # botchat (test)
+        '-1002094333974', # botchat (test)
+        '-1002087087929' # TehPodMRM Comments
     ]
 
     answer = "Система временно находится на техническом обслуживании. Приносим извенение за доставленные неудобства."
