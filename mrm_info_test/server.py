@@ -228,7 +228,7 @@ Please, use your knowledge database to provide your thoughts on the issue,
 recommendations for technical support team, and answer to user.
 Provide your answer as JSON structure: "thoughts", "tech_recommendations", "answer_for_user"."""
         # TODO: Add user technical information to the message_text
-        
+        message_text = message_text.replace('\n', ' ')
         chat_agent = ChatAgent(retriever)
         response = chat_agent.agent.run(
             input=message_text, 
