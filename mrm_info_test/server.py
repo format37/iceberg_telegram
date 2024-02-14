@@ -7,6 +7,32 @@ from requests import Session
 from zeep import Client
 from zeep.transports import Transport
 
+import json
+import requests
+# import time
+import glob
+import json
+from pydantic import BaseModel, Field
+from langchain.agents import Tool, initialize_agent
+from langchain_openai import ChatOpenAI, OpenAIEmbeddings
+from langchain_community.document_loaders import TextLoader, DirectoryLoader
+from langchain.text_splitter import RecursiveCharacterTextSplitter
+from langchain_community.vectorstores import DocArrayInMemorySearch
+from langchain_community.tools import StructuredTool
+from langchain.schema import HumanMessage, SystemMessage, AIMessage
+# from langchain_community.tools import DuckDuckGoSearchRun
+from langchain_community.tools import DuckDuckGoSearchResults
+from langchain.tools import WikipediaQueryRun
+from langchain_community.utilities import WikipediaAPIWrapper
+from langchain.chains import RetrievalQA
+from langchain.tools import Tool
+# from langchain.schema import TextOutput
+from langchain_experimental.utilities import PythonREPL
+import time as py_time
+from pathlib import Path
+import tiktoken
+
+
 # Initialize FastAPI
 app = FastAPI()
 
@@ -14,6 +40,90 @@ app = FastAPI()
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
+
+class TextOutput(BaseModel):
+    text: str = Field(description="Text output")
+
+class BotActionType(BaseModel):
+    val: str = Field(description="Tool parameter value")
+
+class ChatAgent:
+    def __init__(self, retriever):
+        # Initialize logging
+        logging.basicConfig(level=logging.INFO)
+        self.logger = logging.getLogger(__name__)
+        self.logger.setLevel(logging.INFO)
+        # self.config = bot_instance.config
+        self.config = {
+            # 'model': 'gpt-4-0125-preview',
+            'model': 'gpt-3.5-turbo',
+            'temperature': 0.7,
+        }
+        self.retriever = retriever
+        # self.bot_instance = bot_instance  # Passing the Bot instance to the ChatAgent
+        # self.logger.info(f"ChatAgent function: {self.bot_instance.bot_action_come}")
+        self.agent = self.initialize_agent()
+        
+
+    def initialize_agent(self):
+        llm = ChatOpenAI(
+            openai_api_key=os.environ.get('OPENAI_API_KEY', ''),
+            model=self.config['model'],
+            temperature=self.config['temperature'],
+        )
+        # llm = Ollama(model="llama2")
+        # llm = Ollama(model="mistral")
+        tools = []
+        # python_repl = PythonREPL()
+        # Non direct return
+        """repl_tool = Tool(
+            name="python_repl",
+            description="A Python shell. Use this to execute python commands. Input should be a valid python command. If you want to see the output of a value, you should print it out with `print(...)`.",
+            func=python_repl.run,
+            return_direct=False,
+        )
+        tools.append(repl_tool)"""
+        """tools = [self.create_structured_tool(func, name, description, return_direct)
+                 for func, name, description, return_direct in [
+                        (self.bot_instance.web_browser_tool, "Web browsing",
+                            "Provide a link to request", True)
+                      ]
+                 ]"""
+        # embeddings = OpenAIEmbeddings(openai_api_key=os.environ.get('OPENAI_API_KEY', ''))
+        # web_browsing_tool = SimulatedWebBrowsingTool(llm, embeddings)
+        # tools.append(web_browsing_tool)
+        # tools.append(DuckDuckGoSearchRun())
+        # tools.append(DuckDuckGoSearchResults())
+        # wikipedia = WikipediaQueryRun(api_wrapper=WikipediaAPIWrapper())
+        # tools.append(wikipedia)
+        """tools.append(
+            Tool(
+                args_schema=DocumentInput,
+                name='Knowledge base',
+                description="Providing a game information from the knowledge base",
+                func=RetrievalQA.from_chain_type(llm=llm, retriever=self.retriever),
+            )
+        )"""
+        return initialize_agent(
+            tools,
+            llm,
+            agent='chat-conversational-react-description',
+            verbose=True,
+            handle_parsing_errors=True
+        )
+    
+
+
+    @staticmethod
+    def create_structured_tool(func, name, description, return_direct):
+        print(f"create_structured_tool name: {name} func: {func}")
+        return StructuredTool.from_function(
+            func=func,
+            name=name,
+            description=description,
+            args_schema=BotActionType,
+            return_direct=return_direct,
+        )
 
 
 @app.get("/test")
@@ -104,6 +214,9 @@ async def call_message(request: Request):
             reply = '[\n'
             # results = mrmsupport_bot_user_info(message.forward_from.id, clientPath)
             results = mrmsupport_bot_user_info(message['forward_from']['id'], clientPath)
+
+            # Retreive the Langchain LLM opinion
+            chat_agent = ChatAgent(None, self)
             
             if len(results) == 0:
                 answer = 'User not found'
