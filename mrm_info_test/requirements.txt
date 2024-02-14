@@ -1,0 +1,6 @@
+fastapi==0.103.2
+uvicorn==0.23.2
+requests==2.31.0
+# pandas==2.1.2
+# matplotlib==3.8.1
+zeep==4.1.0
