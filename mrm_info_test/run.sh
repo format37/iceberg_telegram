@@ -10,4 +10,4 @@ sudo docker run \
     --name mrm_info_bot_test \
     -e MRMSUPPORTBOT_AUTH_LOGIN="login" \
     -e MRMSUPPORTBOT_AUTH_PASSWORD="password" \
-    mrm_info_bot_test
+    mrm_info_bot
