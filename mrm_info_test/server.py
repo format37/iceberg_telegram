@@ -215,8 +215,23 @@ async def call_message(request: Request):
             # results = mrmsupport_bot_user_info(message.forward_from.id, clientPath)
             results = mrmsupport_bot_user_info(message['forward_from']['id'], clientPath)
 
-            # Retreive the Langchain LLM opinion
-            chat_agent = ChatAgent(None, self)
+            # Get the Langchain LLM opinion
+            chat_history = []
+            retriever = None
+            
+            message_text = f"""Received a message from mobile application user:
+"{message['text']}"
+Please, use your knowledge database to provide your thoughts on the issue,
+recommendations for technical support team, and answer to user.
+Provide your answer as JSON structure: "thoughts", "tech_recommendations", "answer_for_user"."""
+            # TODO: Add user technical information to the message_text
+            
+            chat_agent = ChatAgent(retriever)
+            response = chat_agent.agent.run(
+                input=message_text, 
+                chat_history=chat_history
+            )
+            results.append(response)
             
             if len(results) == 0:
                 answer = 'User not found'
