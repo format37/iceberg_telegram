@@ -207,6 +207,7 @@ async def call_message(request: Request):
 
     if str(message['chat']['id']) in granted_chats and 'forward_origin' in message:
         logger.info(str(message['chat']['id'])+' in granted_chats')
+        results = []
         # if message.forward_from is not None:
         if 'forward_from' in message:
             # logger.info('Received redirect from user id: '+str(message.forward_from.id))
@@ -214,36 +215,38 @@ async def call_message(request: Request):
             reply = '[\n'
             # results = mrmsupport_bot_user_info(message.forward_from.id, clientPath)
             results = mrmsupport_bot_user_info(message['forward_from']['id'], clientPath)
+        else:
+            results.append('User not found')
 
-            # Get the Langchain LLM opinion
-            chat_history = []
-            retriever = None
-            
-            message_text = f"""Received a message from mobile application user:
+        # Get the Langchain LLM opinion
+        chat_history = []
+        retriever = None
+        
+        message_text = f"""Received a message from mobile application user:
 "{message['text']}"
 Please, use your knowledge database to provide your thoughts on the issue,
 recommendations for technical support team, and answer to user.
 Provide your answer as JSON structure: "thoughts", "tech_recommendations", "answer_for_user"."""
-            # TODO: Add user technical information to the message_text
-            
-            chat_agent = ChatAgent(retriever)
-            response = chat_agent.agent.run(
-                input=message_text, 
-                chat_history=chat_history
-            )
-            results.append(response)
-            
-            if len(results) == 0:
-                answer = 'User not found'
-                logger.info(answer)
-            else:
-                reply += ',\n'.join(results)
-                answer = reply + '\n]'
-                # logger.info('Replying in '+str(message.chat.id))
-                logger.info('Replying in '+str(message['chat']['id']))
-        else:
-            answer = 'Unable to retrieve the hidden user id'
+        # TODO: Add user technical information to the message_text
+        
+        chat_agent = ChatAgent(retriever)
+        response = chat_agent.agent.run(
+            input=message_text, 
+            chat_history=chat_history
+        )
+        results.append(response)
+        
+        """if len(results) == 0:
+            answer = 'User not found'
             logger.info(answer)
+        else:"""
+        reply += ',\n'.join(results)
+        answer = reply + '\n]'
+        # logger.info('Replying in '+str(message.chat.id))
+        logger.info('Replying in '+str(message['chat']['id']))
+        """else:
+            answer = 'Unable to retrieve the hidden user id'
+            logger.info(answer)"""
     else:
         return JSONResponse(content={
                 "type": "empty",
