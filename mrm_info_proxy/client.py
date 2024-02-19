@@ -1,8 +1,9 @@
 import requests
 import json
+# import sys
 
 # Server base URL
-base_url = "http://localhost:8000"  # Adjust as necessary
+base_url = "http://service.icecorp.ru:7403"  # Adjust as necessary
 
 # Testing the /test endpoint
 def test_endpoint():
@@ -32,8 +33,15 @@ if __name__ == "__main__":
     test_endpoint()
     
     # Example token and user_id for user_info endpoint
-    example_token = "your_token_here"
-    example_user_id = "123456"
+    # Take token from parameter client.py token
+    """if len(sys.argv) < 2:
+        print("Usage: python client.py <token>")
+        sys.exit(1)
+    example_token = sys.argv[1]"""
+    # Read from file
+    with open('token.txt', 'r') as file:
+        example_token = file.read().replace('\n', '')
+    example_user_id = "117036340"
     
     # Call user_info endpoint with the example token and user_id
     user_info_endpoint(example_token, example_user_id)
