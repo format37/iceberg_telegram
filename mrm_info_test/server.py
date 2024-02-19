@@ -71,8 +71,6 @@ class ChatAgent:
             model=self.config['model'],
             temperature=self.config['temperature'],
         )
-        # llm = Ollama(model="llama2")
-        # llm = Ollama(model="mistral")
         tools = []
         # python_repl = PythonREPL()
         # Non direct return
@@ -132,28 +130,6 @@ async def call_test():
     return JSONResponse(content={"status": "ok"})
 
 
-"""def mrmsupport_bot_user_info(user_id, clientPath):
-    login = os.environ.get('MRMSUPPORTBOT_AUTH_LOGIN', '')
-    password = os.environ.get('MRMSUPPORTBOT_AUTH_PASSWORD', '')
-
-    session = Session()
-    session.auth = HTTPBasicAuth(login, password)
-
-    results = []
-    for w in clientPath:
-        client = Client(w, transport=Transport(session=session))
-        logger.info('Calling user_info from: ' + str(w))
-        try:
-            res = client.service.user_info(user_id, '')
-            logger.info('user_info result: ' + str(res))
-            # code		= res.result.code
-            # message		= res.result.message
-            if res and res['result']:
-                results.append(str(res))
-        except Exception as e:
-            logger.error(str(w) + ' user_info error: ' + str(e))
-    logger.info('user_info results count: ' + str(len(results)))
-    return results"""
 def mrmsupport_bot_user_info(user_id):
     # Server base URL
     base_url = "http://service.icecorp.ru:7403"
@@ -165,6 +141,7 @@ def mrmsupport_bot_user_info(user_id):
         'user_id': user_id
     }
     response = requests.post(url, headers=headers, data=json.dumps(data))
+    logger.info(f"User Info Endpoint Response: {response}")
     if response.status_code == 200:
         return response.json()
     else:
@@ -205,12 +182,6 @@ async def call_message(request: Request):
         'text': 'hello'
     }
     """
-
-    """clientPath = [
-        'http://10.2.4.123/productionMSK/ws/Telegram.1cws?wsdl',
-        'http://10.2.4.123/productionNNOV/ws/Telegram.1cws?wsdl',
-        'http://10.2.4.123/productionSPB/ws/Telegram.1cws?wsdl'
-    ]"""
 
     granted_chats = [
         '-1001853379941', # MRM master info МРМ мастер, 
