@@ -157,6 +157,7 @@ class DocumentProcessor:
 
     def process_documents(self):
         context_path = self.context_path
+        logger.info(f"Processing documents from {context_path}")
         loader = DirectoryLoader(context_path, glob="*", loader_cls=TextLoader)
         docs = loader.load()
         api_key = os.environ.get('OPENAI_API_KEY', '')
@@ -223,15 +224,15 @@ async def call_message(request: Request):
         # Get the Langchain LLM opinion
         chat_history = []
         # retriever = None
-        document_processor = DocumentProcessor(context_path='data/')
+        document_processor = DocumentProcessor(context_path='/server/data/')
         retriever = document_processor.process_documents()
         
-        message_text = f"""Получено сообщение от пользователя мобильного приложения: "{message['text']}"
+        message_text = f"""Получен запрос на техническую поддержку от пользователя мобильного приложения: "{message['text']}"
 Техническая информация о пользователе:\n"""
         message_text += str(results) if len(results) > 0 else "Не предоставлена" # Tech info from 1C
         message_text += """\n
 Пожалуйста, обратитесь к вашей базе знаний и предоставьте ответ на Русском языке в формате JSON в строгом соответствии с шаблоном: 
-{"Description":"", "Tech_recommendations":"", "Answer_to_user":""}"""
+{"Возможные причины":"Описание возможных причин", "Ответ пользователю":"Ответ который получит пользователь", "Комментарий разработчику":"Комментарий который получат разработчики. Пустая строка если комментарий не нужен."}"""
         message_text = message_text.replace('\n', ' ')
         chat_agent = ChatAgent(retriever)
         response = chat_agent.agent.run(
