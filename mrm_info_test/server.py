@@ -213,8 +213,8 @@ async def call_message(request: Request):
 Техническая информация о пользователе:\n"""
         message_text += str(results) if len(results) > 0 else "Не предоставлена" # Tech info from 1C
         message_text += """\n
-Пожалуйста, обратитесь к вашей базе знаний и предоставьте ответ в формате JSON с ключами: 
-"Description", "Recommendation", "Answer"."""
+Пожалуйста, обратитесь к вашей базе знаний и предоставьте ответ в формате JSON: 
+{"Описание":"", "Технические рекоммендации":"", "Ответ пользователю":""}"""
         message_text = message_text.replace('\n', ' ')
         chat_agent = ChatAgent(retriever)
         response = chat_agent.agent.run(
