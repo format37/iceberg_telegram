@@ -221,13 +221,20 @@ Provide your answer as JSON structure: "thoughts", "tech_recommendations", "answ
             input=message_text, 
             chat_history=chat_history
         )
+        # logger.info(f"ChatAgent response: {response}")
         results.append(response)
         
         """if len(results) == 0:
             answer = 'User not found'
             logger.info(answer)
         else:"""
-        reply += ',\n'.join(results)
+        
+        # reply += ',\n'.join(results)
+        # Before joining the results, convert each item to a string if it's not already one
+        results_as_strings = [json.dumps(item) if isinstance(item, dict) else str(item) for item in results]
+        # Now you can safely join the string representations of your results
+        reply += ',\n'.join(results_as_strings)  # This line replaces line 230 in your code
+        
         answer = reply + '\n]'
         # logger.info('Replying in '+str(message.chat.id))
         logger.info('Replying in '+str(message['chat']['id']))
