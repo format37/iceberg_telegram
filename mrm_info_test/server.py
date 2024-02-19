@@ -47,6 +47,9 @@ class TextOutput(BaseModel):
 class BotActionType(BaseModel):
     val: str = Field(description="Tool parameter value")
 
+class DocumentInput(BaseModel):
+    question: str = Field()
+
 class ChatAgent:
     def __init__(self, retriever):
         # Initialize logging
@@ -94,14 +97,14 @@ class ChatAgent:
         # tools.append(DuckDuckGoSearchResults())
         # wikipedia = WikipediaQueryRun(api_wrapper=WikipediaAPIWrapper())
         # tools.append(wikipedia)
-        """tools.append(
+        tools.append(
             Tool(
                 args_schema=DocumentInput,
                 name='Knowledge base',
                 description="Providing a game information from the knowledge base",
                 func=RetrievalQA.from_chain_type(llm=llm, retriever=self.retriever),
             )
-        )"""
+        )
         return initialize_agent(
             tools,
             llm,
@@ -146,6 +149,22 @@ def mrmsupport_bot_user_info(user_id):
         return response.json()
     else:
         return []
+    
+
+class DocumentProcessor:
+    def __init__(self, context_path):
+        self.context_path = context_path
+
+    def process_documents(self):
+        context_path = self.context_path
+        loader = DirectoryLoader(context_path, glob="json", loader_cls=TextLoader)
+        docs = loader.load()
+        api_key = os.environ.get('OPENAI_API_KEY', '')
+        embeddings = OpenAIEmbeddings(openai_api_key=api_key)
+        text_splitter = RecursiveCharacterTextSplitter()
+        documents = text_splitter.split_documents(docs)
+        vector = DocArrayInMemorySearch.from_documents(documents, embeddings)
+        return vector.as_retriever()
 
 
 @app.post("/message")
@@ -194,27 +213,25 @@ async def call_message(request: Request):
     if str(message['chat']['id']) in granted_chats and 'forward_origin' in message:
         logger.info(str(message['chat']['id'])+' in granted_chats')
         results = []
-        # if message.forward_from is not None:
         if 'forward_from' in message:
-            # logger.info('Received redirect from user id: '+str(message.forward_from.id))
             logger.info('Received redirect from user id: '+str(message['forward_from']['id']))
             reply = '[\n'
-            # results = mrmsupport_bot_user_info(message.forward_from.id, clientPath)
-            # results = mrmsupport_bot_user_info(message['forward_from']['id'], clientPath)
             results = mrmsupport_bot_user_info(message['forward_from']['id'])
         else:
             results.append('User not found')
 
         # Get the Langchain LLM opinion
         chat_history = []
-        retriever = None
+        # retriever = None
+        document_processor = DocumentProcessor(context_path='data/')
+        retriever = document_processor.process_documents()
         
         message_text = f"""Получено сообщение от пользователя мобильного приложения: "{message['text']}"
 Техническая информация о пользователе:\n"""
         message_text += str(results) if len(results) > 0 else "Не предоставлена" # Tech info from 1C
         message_text += """\n
-Пожалуйста, обратитесь к вашей базе знаний и предоставьте ответ в формате JSON: 
-{"Описание":"", "Технические рекоммендации":"", "Ответ пользователю":""}"""
+Пожалуйста, обратитесь к вашей базе знаний и предоставьте ответ на Русском языке в формате JSON в строгом соответствии с шаблоном: 
+{"Description":"", "Tech_recommendations":"", "Answer_to_user":""}"""
         message_text = message_text.replace('\n', ' ')
         chat_agent = ChatAgent(retriever)
         response = chat_agent.agent.run(
