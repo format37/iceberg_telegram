@@ -211,11 +211,10 @@ async def call_message(request: Request):
         
         message_text = f"""Получено сообщение от пользователя мобильного приложения: "{message['text']}"
 Техническая информация о пользователе:\n"""
-        message_text += str(results) if len(results) > 0 else "Не предоставлена"
+        message_text += str(results) if len(results) > 0 else "Не предоставлена" # Tech info from 1C
         message_text += """\n
-Пожалуйста, обратитесь к вашей базе знаний и предоставьте свои мысли по этому вопросу в формате JSON с ключами: 
-"Описание ситуации и возможные причины", "Технические рекомендации", "Ответ пользователю"."""
-        # TODO: Add user technical information to the message_text
+Пожалуйста, обратитесь к вашей базе знаний и предоставьте ответ в формате JSON с ключами: 
+"Description", "Recommendation", "Answer"."""
         message_text = message_text.replace('\n', ' ')
         chat_agent = ChatAgent(retriever)
         response = chat_agent.agent.run(
