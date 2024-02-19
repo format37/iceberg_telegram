@@ -23,10 +23,10 @@ async def call_test():
 
 @app.post("/user_info")
 async def call_user_info(request: Request):
-    logger.info(f'call_user_info. data: {data}')
+    logger.info(f'call_user_info. request: {request}')
     results = []
     try:
-        data = await request.json()    
+        data = await request.json()
         token = data.get('token', '')
         if token != os.environ.get('MRMSUPPORTBOT_TOKEN', ''):
             # raise HTTPException(status_code=401, detail="Invalid token")
