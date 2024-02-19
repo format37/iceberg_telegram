@@ -132,7 +132,7 @@ async def call_test():
     return JSONResponse(content={"status": "ok"})
 
 
-def mrmsupport_bot_user_info(user_id, clientPath):
+"""def mrmsupport_bot_user_info(user_id, clientPath):
     login = os.environ.get('MRMSUPPORTBOT_AUTH_LOGIN', '')
     password = os.environ.get('MRMSUPPORTBOT_AUTH_PASSWORD', '')
 
@@ -153,7 +153,22 @@ def mrmsupport_bot_user_info(user_id, clientPath):
         except Exception as e:
             logger.error(str(w) + ' user_info error: ' + str(e))
     logger.info('user_info results count: ' + str(len(results)))
-    return results
+    return results"""
+def mrmsupport_bot_user_info(user_id):
+    # Server base URL
+    base_url = "http://service.icecorp.ru:7403"
+    url = f"{base_url}/user_info"
+    headers = {'Content-Type': 'application/json'}
+    token = os.environ.get('MRMSUPPORTBOT_TOKEN', '')
+    data = {
+        'token': token,
+        'user_id': user_id
+    }
+    response = requests.post(url, headers=headers, data=json.dumps(data))
+    if response.status_code == 200:
+        return response.json()
+    else:
+        return []
 
 
 @app.post("/message")
@@ -191,11 +206,11 @@ async def call_message(request: Request):
     }
     """
 
-    clientPath = [
+    """clientPath = [
         'http://10.2.4.123/productionMSK/ws/Telegram.1cws?wsdl',
         'http://10.2.4.123/productionNNOV/ws/Telegram.1cws?wsdl',
         'http://10.2.4.123/productionSPB/ws/Telegram.1cws?wsdl'
-    ]
+    ]"""
 
     granted_chats = [
         '-1001853379941', # MRM master info МРМ мастер, 
@@ -214,7 +229,8 @@ async def call_message(request: Request):
             logger.info('Received redirect from user id: '+str(message['forward_from']['id']))
             reply = '[\n'
             # results = mrmsupport_bot_user_info(message.forward_from.id, clientPath)
-            results = mrmsupport_bot_user_info(message['forward_from']['id'], clientPath)
+            # results = mrmsupport_bot_user_info(message['forward_from']['id'], clientPath)
+
         else:
             results.append('User not found')
 
