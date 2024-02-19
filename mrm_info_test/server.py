@@ -157,7 +157,7 @@ class DocumentProcessor:
 
     def process_documents(self):
         context_path = self.context_path
-        loader = DirectoryLoader(context_path, glob="json", loader_cls=TextLoader)
+        loader = DirectoryLoader(context_path, glob="*", loader_cls=TextLoader)
         docs = loader.load()
         api_key = os.environ.get('OPENAI_API_KEY', '')
         embeddings = OpenAIEmbeddings(openai_api_key=api_key)
