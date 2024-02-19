@@ -160,10 +160,12 @@ class DocumentProcessor:
         logger.info(f"Processing documents from {context_path}")
         loader = DirectoryLoader(context_path, glob="*", loader_cls=TextLoader)
         docs = loader.load()
+        logger.info(f"Loaded {len(docs)} documents")
         api_key = os.environ.get('OPENAI_API_KEY', '')
         embeddings = OpenAIEmbeddings(openai_api_key=api_key)
         text_splitter = RecursiveCharacterTextSplitter()
         documents = text_splitter.split_documents(docs)
+        logger.info(f"Split {len(documents)} documents")
         vector = DocArrayInMemorySearch.from_documents(documents, embeddings)
         return vector.as_retriever()
 
