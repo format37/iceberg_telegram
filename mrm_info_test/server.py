@@ -201,7 +201,7 @@ async def call_message(request: Request):
             reply = '[\n'
             # results = mrmsupport_bot_user_info(message.forward_from.id, clientPath)
             # results = mrmsupport_bot_user_info(message['forward_from']['id'], clientPath)
-
+            results = mrmsupport_bot_user_info(message['forward_from']['id'])
         else:
             results.append('User not found')
 
