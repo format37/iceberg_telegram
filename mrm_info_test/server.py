@@ -209,11 +209,12 @@ async def call_message(request: Request):
         chat_history = []
         retriever = None
         
-        message_text = f"""Received a message from mobile application user:
-"{message['text']}"
-Please, use your knowledge database to provide your thoughts on the issue,
-recommendations for technical support team, and answer to user.
-Provide your answer as JSON structure: "thoughts", "tech_recommendations", "answer_for_user"."""
+        message_text = f"""Получено сообщение от пользователя мобильного приложения: "{message['text']}"
+Техническая информация о пользователе:\n"""
+        message_text += str(results) if len(results) > 0 else "Не предоставлена"
+        message_text += """\n
+Пожалуйста, обратитесь к вашей базе знаний и предоставьте свои мысли по этому вопросу в формате JSON с ключами: 
+"Описание ситуации и возможные причины", "Технические рекомендации", "Ответ пользователю"."""
         # TODO: Add user technical information to the message_text
         message_text = message_text.replace('\n', ' ')
         chat_agent = ChatAgent(retriever)
