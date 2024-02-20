@@ -1,0 +1,1570 @@
+{
+ "name": "TehPodMRM Comments",
+ "type": "private_supergroup",
+ "id": 2087087929,
+ "messages": [
+  {
+   "id": 1,
+   "type": "service",
+   "date": "2024-02-09T11:21:29",
+   "date_unixtime": "1707463289",
+   "actor": "TehPodMRM Comments",
+   "actor_id": "channel2087087929",
+   "action": "create_channel",
+   "title": "TehPodMRM Comments",
+   "text": "",
+   "text_entities": []
+  },
+  {
+   "id": 2,
+   "type": "service",
+   "date": "2024-02-09T11:28:22",
+   "date_unixtime": "1707463702",
+   "actor": "TehPodMRM Comments",
+   "actor_id": "channel2087087929",
+   "action": "edit_group_photo",
+   "photo": "photos/photo_1@09-02-2024_11-28-22.jpg",
+   "width": 640,
+   "height": 640,
+   "text": "",
+   "text_entities": []
+  },
+  {
+   "id": 3,
+   "type": "message",
+   "date": "2024-02-09T11:52:30",
+   "date_unixtime": "1707465150",
+   "from": "TehPodMRM",
+   "from_id": "channel2072814622",
+   "forwarded_from": "TehPodMRM",
+   "saved_from": "TehPodMRM",
+   "text": "Никитина Н.А. личное посещение, не грузятся фото(примечание проблема в перегрузке UI) на 1 заявке по 20-40 фото после чего телефон начинает виснуть требуется доработать UI оптимизировать список сделать его кэшируемым(причина слабые характеристики телефона + неоптимизированный под большое кол-во фото экран)",
+   "text_entities": [
+    {
+     "type": "plain",
+     "text": "Никитина Н.А. личное посещение, не грузятся фото(примечание проблема в перегрузке UI) на 1 заявке по 20-40 фото после чего телефон начинает виснуть требуется доработать UI оптимизировать список сделать его кэшируемым(причина слабые характеристики телефона + неоптимизированный под большое кол-во фото экран)"
+    }
+   ]
+  },
+  {
+   "id": 4,
+   "type": "message",
+   "date": "2024-02-09T12:14:40",
+   "date_unixtime": "1707466480",
+   "from": "Олег Головин",
+   "from_id": "user529607903",
+   "reply_to_message_id": 3,
+   "text": "Предположительно не отрабатывает стандартный сборщик мусора так как баг проявляется только на 2-3 заявке требуется добавить ручную сборку мусора в виде bitmap.release();",
+   "text_entities": [
+    {
+     "type": "plain",
+     "text": "Предположительно не отрабатывает стандартный сборщик мусора так как баг проявляется только на 2-3 заявке требуется добавить ручную сборку мусора в виде bitmap.release();"
+    }
+   ]
+  },
+  {
+   "id": 5,
+   "type": "message",
+   "date": "2024-02-09T12:15:48",
+   "date_unixtime": "1707466548",
+   "edited": "2024-02-09T12:24:05",
+   "edited_unixtime": "1707467045",
+   "from": "Олег Головин",
+   "from_id": "user529607903",
+   "reply_to_message_id": 3,
+   "text": "так же нужно добавить счетчик длительности для декодирования, отключать его в случае, если декодирование работает дольше 1 секунды автоматически, для того что бы у конечного пользователя не создавалось ощущения что повисло приложение.",
+   "text_entities": [
+    {
+     "type": "plain",
+     "text": "так же нужно добавить счетчик длительности для декодирования, отключать его в случае, если декодирование работает дольше 1 секунды автоматически, для того что бы у конечного пользователя не создавалось ощущения что повисло приложение."
+    }
+   ]
+  },
+  {
+   "id": 6,
+   "type": "message",
+   "date": "2024-02-09T12:17:17",
+   "date_unixtime": "1707466637",
+   "from": "Олег Головин",
+   "from_id": "user529607903",
+   "reply_to_message_id": 3,
+   "text": "Это все актуально на телефонах с очень низкой производительностью, любой модели. Воспроизвести на тестовых устройствах, не представляется возможным, так как по сути является недостатком работы железа конечного пользователя.",
+   "text_entities": [
+    {
+     "type": "plain",
+     "text": "Это все актуально на телефонах с очень низкой производительностью, любой модели. Воспроизвести на тестовых устройствах, не представляется возможным, так как по сути является недостатком работы железа конечного пользователя."
+    }
+   ]
+  },
+  {
+   "id": 7,
+   "type": "message",
+   "date": "2024-02-09T12:20:20",
+   "date_unixtime": "1707466820",
+   "from": "TehPodMRM",
+   "from_id": "channel2072814622",
+   "forwarded_from": "Сергей Полунин",
+   "saved_from": "TehPodMRM",
+   "text": "Приложение постоянно схлопывается, и пишет нет заявок, крайне неудобно работать с заявками.",
+   "text_entities": [
+    {
+     "type": "plain",
+     "text": "Приложение постоянно схлопывается, и пишет нет заявок, крайне неудобно работать с заявками."
+    }
+   ]
+  },
+  {
+   "id": 8,
+   "type": "message",
+   "date": "2024-02-09T12:21:42",
+   "date_unixtime": "1707466902",
+   "from": "Олег Головин",
+   "from_id": "user529607903",
+   "reply_to_message_id": 7,
+   "text": [
+    "[\n{\n    'result': True,\n    'database': 'Srvr=\"msk-srv1c01\";Ref=\"1C_service\";',\n    'affilate': 'МСК',\n    'name': 'Иваненко Н.М.',\n    'phone': '",
+    {
+     "type": "phone",
+     "text": "9057962811"
+    },
+    "',\n    'division': 'ХД',\n    'team': '3хл',\n    'app_version': '805',\n    'os_version': '14',\n    'backend': '",
+    {
+     "type": "link",
+     "text": "https://mpk.iceberg.ru:61443/MasterService/"
+    },
+    "',\n    'last_query_dt': '09.02.2024 10:07:36',\n    'device_id': 'c43d04bf95fad0c2',\n    'add_date': '30.01.2024 10:45:16',\n    'remove_date': '01.01.0001 0:00:00',\n    'fire_date': '01.01.0001 0:00:00',\n    'error': None,\n    'team_master': 'Да',\n    'device_model': 'samsung a34xdxx SM-A346E'\n}\n]"
+   ],
+   "text_entities": [
+    {
+     "type": "plain",
+     "text": "[\n{\n    'result': True,\n    'database': 'Srvr=\"msk-srv1c01\";Ref=\"1C_service\";',\n    'affilate': 'МСК',\n    'name': 'Иваненко Н.М.',\n    'phone': '"
+    },
+    {
+     "type": "phone",
+     "text": "9057962811"
+    },
+    {
+     "type": "plain",
+     "text": "',\n    'division': 'ХД',\n    'team': '3хл',\n    'app_version': '805',\n    'os_version': '14',\n    'backend': '"
+    },
+    {
+     "type": "link",
+     "text": "https://mpk.iceberg.ru:61443/MasterService/"
+    },
+    {
+     "type": "plain",
+     "text": "',\n    'last_query_dt': '09.02.2024 10:07:36',\n    'device_id': 'c43d04bf95fad0c2',\n    'add_date': '30.01.2024 10:45:16',\n    'remove_date': '01.01.0001 0:00:00',\n    'fire_date': '01.01.0001 0:00:00',\n    'error': None,\n    'team_master': 'Да',\n    'device_model': 'samsung a34xdxx SM-A346E'\n}\n]"
+    }
+   ]
+  },
+  {
+   "id": 9,
+   "type": "message",
+   "date": "2024-02-09T12:22:31",
+   "date_unixtime": "1707466951",
+   "from": "TehPodMRM",
+   "from_id": "channel2072814622",
+   "forwarded_from": "Никита Иваненко",
+   "saved_from": "TehPodMRM",
+   "text": "Тоже самое",
+   "text_entities": [
+    {
+     "type": "plain",
+     "text": "Тоже самое"
+    }
+   ]
+  },
+  {
+   "id": 10,
+   "type": "message",
+   "date": "2024-02-09T12:22:37",
+   "date_unixtime": "1707466957",
+   "from": "Олег Головин",
+   "from_id": "user529607903",
+   "reply_to_message_id": 9,
+   "text": "Комментарий: Обращение под вопросом т.к. четко не описал проблему.",
+   "text_entities": [
+    {
+     "type": "plain",
+     "text": "Комментарий: Обращение под вопросом т.к. четко не описал проблему."
+    }
+   ]
+  },
+  {
+   "id": 11,
+   "type": "message",
+   "date": "2024-02-09T12:23:42",
+   "date_unixtime": "1707467022",
+   "from": "Олег Головин",
+   "from_id": "user529607903",
+   "reply_to_message_id": 3,
+   "text": "Временное решение, сброс кэша + остановка приложения.",
+   "text_entities": [
+    {
+     "type": "plain",
+     "text": "Временное решение, сброс кэша + остановка приложения."
+    }
+   ]
+  },
+  {
+   "id": 12,
+   "type": "message",
+   "date": "2024-02-09T12:26:09",
+   "date_unixtime": "1707467169",
+   "edited": "2024-02-09T12:26:43",
+   "edited_unixtime": "1707467203",
+   "from": "Олег Головин",
+   "from_id": "user529607903",
+   "reply_to_message_id": 3,
+   "text": "После перегрузки памяти, так же может влиять на другие функции, например закрытие заявок, список заявок, вход в заявку и т.д.",
+   "text_entities": [
+    {
+     "type": "plain",
+     "text": "После перегрузки памяти, так же может влиять на другие функции, например закрытие заявок, список заявок, вход в заявку и т.д."
+    }
+   ]
+  },
+  {
+   "id": 13,
+   "type": "message",
+   "date": "2024-02-09T12:58:43",
+   "date_unixtime": "1707469123",
+   "from": "TehPodMRM",
+   "from_id": "channel2072814622",
+   "forwarded_from": "Валерий",
+   "saved_from": "TehPodMRM",
+   "text": "Шихерт Валерий Валентинович",
+   "text_entities": [
+    {
+     "type": "plain",
+     "text": "Шихерт Валерий Валентинович"
+    }
+   ]
+  },
+  {
+   "id": 14,
+   "type": "message",
+   "date": "2024-02-09T13:00:22",
+   "date_unixtime": "1707469222",
+   "from": "Олег Головин",
+   "from_id": "user529607903",
+   "reply_to_message_id": 13,
+   "text": "При обращении предоставлен скриншот, по которому видно что версия старая, так же пользователь сам подтвердил это в чате. Рекомендовано обновиться до текущей версии.",
+   "text_entities": [
+    {
+     "type": "plain",
+     "text": "При обращении предоставлен скриншот, по которому видно что версия старая, так же пользователь сам подтвердил это в чате. Рекомендовано обновиться до текущей версии."
+    }
+   ]
+  },
+  {
+   "id": 15,
+   "type": "message",
+   "date": "2024-02-09T13:04:20",
+   "date_unixtime": "1707469460",
+   "from": "Олег Головин",
+   "from_id": "user529607903",
+   "reply_to_message_id": 7,
+   "text": "Ответ от пользователя о частоте возникновения проблема и точных симптомах не поступил.",
+   "text_entities": [
+    {
+     "type": "plain",
+     "text": "Ответ от пользователя о частоте возникновения проблема и точных симптомах не поступил."
+    }
+   ]
+  },
+  {
+   "id": 16,
+   "type": "message",
+   "date": "2024-02-09T14:15:42",
+   "date_unixtime": "1707473742",
+   "from": "Олег Головин",
+   "from_id": "user529607903",
+   "reply_to_message_id": 13,
+   "text": "Суть обращения: Не пишется комментарий.  И не только в этой заявке.",
+   "text_entities": [
+    {
+     "type": "plain",
+     "text": "Суть обращения: Не пишется комментарий.  И не только в этой заявке."
+    }
+   ]
+  },
+  {
+   "id": 17,
+   "type": "message",
+   "date": "2024-02-09T16:20:25",
+   "date_unixtime": "1707481225",
+   "from": "TehPodMRM",
+   "from_id": "channel2072814622",
+   "forwarded_from": "Глеб",
+   "saved_from": "TehPodMRM",
+   "text": "Добрый день, а в чем сложность починить комментарии к заявкам? Ещё 30 января писал",
+   "text_entities": [
+    {
+     "type": "plain",
+     "text": "Добрый день, а в чем сложность починить комментарии к заявкам? Ещё 30 января писал"
+    }
+   ]
+  },
+  {
+   "id": 18,
+   "type": "message",
+   "date": "2024-02-09T16:21:12",
+   "date_unixtime": "1707481272",
+   "from": "Олег Головин",
+   "from_id": "user529607903",
+   "reply_to_message_id": 17,
+   "photo": "photos/photo_2@09-02-2024_16-21-12.jpg",
+   "width": 474,
+   "height": 725,
+   "text": "",
+   "text_entities": []
+  },
+  {
+   "id": 19,
+   "type": "message",
+   "date": "2024-02-09T16:22:52",
+   "date_unixtime": "1707481372",
+   "from": "Олег Головин",
+   "from_id": "user529607903",
+   "reply_to_message_id": 17,
+   "text": "Возможные причины \n1. лагает интернет\n2. Глючит кэш (sqlite xiaomi)\nПосле переустановки комментарии частично стали работать.",
+   "text_entities": [
+    {
+     "type": "plain",
+     "text": "Возможные причины \n1. лагает интернет\n2. Глючит кэш (sqlite xiaomi)\nПосле переустановки комментарии частично стали работать."
+    }
+   ]
+  },
+  {
+   "id": 20,
+   "type": "message",
+   "date": "2024-02-09T16:25:07",
+   "date_unixtime": "1707481507",
+   "from": "Олег Головин",
+   "from_id": "user529607903",
+   "reply_to_message_id": 17,
+   "text": "Глеб, [09.02.2024 15:22]\nОни то отправляются, то нет, что бы увидеть то, что я написал, приходится заново заходить в заявку и перепроверять, отправилось сообщение или нет\n\nГлеб, [09.02.2024 15:24]\nСейчас отправляются, 5 минут назад ни чего не отправлялось, хотя кэш чистил и останавливал до этого\n\nГлеб, [09.02.2024 15:24]\nИ то приходится пере заходить в заявку, что бы увидеть",
+   "text_entities": [
+    {
+     "type": "plain",
+     "text": "Глеб, [09.02.2024 15:22]\nОни то отправляются, то нет, что бы увидеть то, что я написал, приходится заново заходить в заявку и перепроверять, отправилось сообщение или нет\n\nГлеб, [09.02.2024 15:24]\nСейчас отправляются, 5 минут назад ни чего не отправлялось, хотя кэш чистил и останавливал до этого\n\nГлеб, [09.02.2024 15:24]\nИ то приходится пере заходить в заявку, что бы увидеть"
+    }
+   ]
+  },
+  {
+   "id": 21,
+   "type": "message",
+   "date": "2024-02-09T16:31:48",
+   "date_unixtime": "1707481908",
+   "from": "Олег Головин",
+   "from_id": "user529607903",
+   "reply_to_message_id": 17,
+   "text": "Предложено: Попробуйте не выходя из комментариев проматывать  вверх комментарии до тех пор пока не появиться рычажок обновления , если поможет сообщите.",
+   "text_entities": [
+    {
+     "type": "plain",
+     "text": "Предложено: Попробуйте не выходя из комментариев проматывать  вверх комментарии до тех пор пока не появиться рычажок обновления , если поможет сообщите."
+    }
+   ]
+  },
+  {
+   "id": 22,
+   "type": "message",
+   "date": "2024-02-09T17:06:13",
+   "date_unixtime": "1707483973",
+   "from": "Олег Головин",
+   "from_id": "user529607903",
+   "reply_to_message_id": 17,
+   "text": [
+    "'result': True,\n    'database': 'Srvr=\"msk-srv1c01\";Ref=\"1c_service_spb\";',\n    'affilate': 'СПБ',\n    'name': 'Свистунов Г.В.',\n    'phone': '",
+    {
+     "type": "phone",
+     "text": "9110175395"
+    },
+    "',\n    'division': 'СМ',\n    'team': '1см',\n    'app_version': '808',\n    'os_version': '13',\n    'backend': '",
+    {
+     "type": "link",
+     "text": "https://mrm.iceberg.ru:59443/MasterService/"
+    },
+    "',\n    'last_query_dt': '09.02.2024 15:09:35',\n    'device_id': 'c99627d63507dec5',\n    'add_date': '04.08.2021 15:22:24',\n    'remove_date': '01.01.0001 0:00:00',\n    'fire_date': '01.01.0001 0:00:00',\n    'error': None,\n    'team_master': 'Нет',\n    'device_model': 'Xiaomi sweet_ru M2101K6G'"
+   ],
+   "text_entities": [
+    {
+     "type": "plain",
+     "text": "'result': True,\n    'database': 'Srvr=\"msk-srv1c01\";Ref=\"1c_service_spb\";',\n    'affilate': 'СПБ',\n    'name': 'Свистунов Г.В.',\n    'phone': '"
+    },
+    {
+     "type": "phone",
+     "text": "9110175395"
+    },
+    {
+     "type": "plain",
+     "text": "',\n    'division': 'СМ',\n    'team': '1см',\n    'app_version': '808',\n    'os_version': '13',\n    'backend': '"
+    },
+    {
+     "type": "link",
+     "text": "https://mrm.iceberg.ru:59443/MasterService/"
+    },
+    {
+     "type": "plain",
+     "text": "',\n    'last_query_dt': '09.02.2024 15:09:35',\n    'device_id': 'c99627d63507dec5',\n    'add_date': '04.08.2021 15:22:24',\n    'remove_date': '01.01.0001 0:00:00',\n    'fire_date': '01.01.0001 0:00:00',\n    'error': None,\n    'team_master': 'Нет',\n    'device_model': 'Xiaomi sweet_ru M2101K6G'"
+    }
+   ]
+  },
+  {
+   "id": 23,
+   "type": "message",
+   "date": "2024-02-09T17:22:00",
+   "date_unixtime": "1707484920",
+   "from": "TehPodMRM",
+   "from_id": "channel2072814622",
+   "forwarded_from": "Илья Гундоров",
+   "saved_from": "TehPodMRM",
+   "file": "(File not included. Change data exporting settings to download.)",
+   "thumbnail": "(File not included. Change data exporting settings to download.)",
+   "media_type": "video_file",
+   "mime_type": "video/mp4",
+   "duration_seconds": 23,
+   "width": 590,
+   "height": 1280,
+   "text": "",
+   "text_entities": []
+  },
+  {
+   "id": 24,
+   "type": "message",
+   "date": "2024-02-09T17:23:54",
+   "date_unixtime": "1707485034",
+   "from": "Олег Головин",
+   "from_id": "user529607903",
+   "reply_to_message_id": 23,
+   "text": "Мастер Бирюков,  Связался с Гундоровым, прошло в течении звонка. Причины не выяснены.",
+   "text_entities": [
+    {
+     "type": "plain",
+     "text": "Мастер Бирюков,  Связался с Гундоровым, прошло в течении звонка. Причины не выяснены."
+    }
+   ]
+  },
+  {
+   "id": 25,
+   "type": "message",
+   "date": "2024-02-10T16:07:50",
+   "date_unixtime": "1707566870",
+   "from": "TehPodMRM",
+   "from_id": "channel2072814622",
+   "forwarded_from": "Александр",
+   "saved_from": "TehPodMRM",
+   "photo": "photos/photo_3@10-02-2024_16-07-50.jpg",
+   "width": 606,
+   "height": 1280,
+   "text": "Скидки ,бах,и исчезли...",
+   "text_entities": [
+    {
+     "type": "plain",
+     "text": "Скидки ,бах,и исчезли..."
+    }
+   ]
+  },
+  {
+   "id": 26,
+   "type": "message",
+   "date": "2024-02-10T21:32:22",
+   "date_unixtime": "1707586342",
+   "from": "Олег Головин",
+   "from_id": "user529607903",
+   "reply_to_message_id": 25,
+   "text": "Вроде само заработал о,закрыл заказ...",
+   "text_entities": [
+    {
+     "type": "plain",
+     "text": "Вроде само заработал о,закрыл заказ..."
+    }
+   ]
+  },
+  {
+   "id": 27,
+   "type": "message",
+   "date": "2024-02-12T09:39:22",
+   "date_unixtime": "1707716362",
+   "from": "TehPodMRM",
+   "from_id": "channel2072814622",
+   "forwarded_from": "Ложкин В. В",
+   "saved_from": "TehPodMRM",
+   "text": "Приложение за ночь посадило аккумулятор почти в 0 со 100%.",
+   "text_entities": [
+    {
+     "type": "plain",
+     "text": "Приложение за ночь посадило аккумулятор почти в 0 со 100%."
+    }
+   ]
+  },
+  {
+   "id": 28,
+   "type": "message",
+   "date": "2024-02-12T09:39:52",
+   "date_unixtime": "1707716392",
+   "from": "Олег Головин",
+   "from_id": "user529607903",
+   "reply_to_message_id": 27,
+   "text": "Откройте настройки электропитания, там есть подробный отчет о расходе батареи, будьте добры если не затруднит сделайте скриншоты, за ночь будет несколько скриншотов, они нужны для анализа проблемы.",
+   "text_entities": [
+    {
+     "type": "plain",
+     "text": "Откройте настройки электропитания, там есть подробный отчет о расходе батареи, будьте добры если не затруднит сделайте скриншоты, за ночь будет несколько скриншотов, они нужны для анализа проблемы."
+    }
+   ]
+  },
+  {
+   "id": 29,
+   "type": "message",
+   "date": "2024-02-12T09:40:52",
+   "date_unixtime": "1707716452",
+   "from": "Олег Головин",
+   "from_id": "user529607903",
+   "reply_to_message_id": 27,
+   "text": [
+    "'result': True,\n    'database': 'Srvr=\"msk-srv1c01\";Ref=\"1C_service\";',\n    'affilate': 'МСК',\n    'name': 'Ложкин В.В.',\n    'phone': '",
+    {
+     "type": "phone",
+     "text": "9968635390"
+    },
+    "',\n    'division': 'ХД',\n    'team': '2хл',\n    'app_version': '805',\n    'os_version': '9',\n    'backend': '",
+    {
+     "type": "link",
+     "text": "https://mrm.iceberg.ru:59443/MasterService/"
+    },
+    "',\n    'last_query_dt': '12.02.2024 8:18:44',\n    'device_id': 'da4a630042e300df',\n    'add_date': '01.01.0001 0:00:00',\n    'remove_date': '01.01.0001 0:00:00',\n    'fire_date': '01.01.0001 0:00:00',\n    'error': None,\n    'team_master': 'Да',\n    'device_model': 'samsung dreamltexx SM-G950F'"
+   ],
+   "text_entities": [
+    {
+     "type": "plain",
+     "text": "'result': True,\n    'database': 'Srvr=\"msk-srv1c01\";Ref=\"1C_service\";',\n    'affilate': 'МСК',\n    'name': 'Ложкин В.В.',\n    'phone': '"
+    },
+    {
+     "type": "phone",
+     "text": "9968635390"
+    },
+    {
+     "type": "plain",
+     "text": "',\n    'division': 'ХД',\n    'team': '2хл',\n    'app_version': '805',\n    'os_version': '9',\n    'backend': '"
+    },
+    {
+     "type": "link",
+     "text": "https://mrm.iceberg.ru:59443/MasterService/"
+    },
+    {
+     "type": "plain",
+     "text": "',\n    'last_query_dt': '12.02.2024 8:18:44',\n    'device_id': 'da4a630042e300df',\n    'add_date': '01.01.0001 0:00:00',\n    'remove_date': '01.01.0001 0:00:00',\n    'fire_date': '01.01.0001 0:00:00',\n    'error': None,\n    'team_master': 'Да',\n    'device_model': 'samsung dreamltexx SM-G950F'"
+    }
+   ]
+  },
+  {
+   "id": 30,
+   "type": "message",
+   "date": "2024-02-12T09:42:09",
+   "date_unixtime": "1707716529",
+   "from": "TehPodMRM",
+   "from_id": "channel2072814622",
+   "forwarded_from": "Никита Смирнов",
+   "saved_from": "TehPodMRM",
+   "text": "Доброе утро! Пл0588145 не добавить фото. В другие заявки получается, а в эту нет",
+   "text_entities": [
+    {
+     "type": "plain",
+     "text": "Доброе утро! Пл0588145 не добавить фото. В другие заявки получается, а в эту нет"
+    }
+   ]
+  },
+  {
+   "id": 31,
+   "type": "message",
+   "date": "2024-02-12T09:43:12",
+   "date_unixtime": "1707716592",
+   "from": "Олег Головин",
+   "from_id": "user529607903",
+   "reply_to_message_id": 30,
+   "text": [
+    "'result': True,\n    'database': 'Srvr=\"msk-srv1c01\";Ref=\"1c_service_spb\";',\n    'affilate': 'СПБ',\n    'name': 'Смирнов Н. А.',\n    'phone': '",
+    {
+     "type": "phone",
+     "text": "9301202417"
+    },
+    "',\n    'division': 'СМ',\n    'team': '2см',\n    'app_version': '806',\n    'os_version': '11',\n    'backend': '",
+    {
+     "type": "link",
+     "text": "https://mrm.iceberg.ru:59443/MasterService/"
+    },
+    "',\n    'last_query_dt': '12.02.2024 8:39:20',\n    'device_id': '13cd338dfa34fd7b',\n    'add_date': '11.02.2024 7:42:19',\n    'remove_date': '01.01.0001 0:00:00',\n    'fire_date': '01.01.0001 0:00:00',\n    'error': None,\n    'team_master': 'Нет',\n    'device_model': 'samsung a50ser SM-A505FM'"
+   ],
+   "text_entities": [
+    {
+     "type": "plain",
+     "text": "'result': True,\n    'database': 'Srvr=\"msk-srv1c01\";Ref=\"1c_service_spb\";',\n    'affilate': 'СПБ',\n    'name': 'Смирнов Н. А.',\n    'phone': '"
+    },
+    {
+     "type": "phone",
+     "text": "9301202417"
+    },
+    {
+     "type": "plain",
+     "text": "',\n    'division': 'СМ',\n    'team': '2см',\n    'app_version': '806',\n    'os_version': '11',\n    'backend': '"
+    },
+    {
+     "type": "link",
+     "text": "https://mrm.iceberg.ru:59443/MasterService/"
+    },
+    {
+     "type": "plain",
+     "text": "',\n    'last_query_dt': '12.02.2024 8:39:20',\n    'device_id': '13cd338dfa34fd7b',\n    'add_date': '11.02.2024 7:42:19',\n    'remove_date': '01.01.0001 0:00:00',\n    'fire_date': '01.01.0001 0:00:00',\n    'error': None,\n    'team_master': 'Нет',\n    'device_model': 'samsung a50ser SM-A505FM'"
+    }
+   ]
+  },
+  {
+   "id": 32,
+   "type": "message",
+   "date": "2024-02-12T09:43:30",
+   "date_unixtime": "1707716610",
+   "from": "Олег Головин",
+   "from_id": "user529607903",
+   "reply_to_message_id": 30,
+   "text": "Дубль фото.",
+   "text_entities": [
+    {
+     "type": "plain",
+     "text": "Дубль фото."
+    }
+   ]
+  },
+  {
+   "id": 33,
+   "type": "message",
+   "date": "2024-02-12T09:44:38",
+   "date_unixtime": "1707716678",
+   "from": "Олег Головин",
+   "from_id": "user529607903",
+   "reply_to_message_id": 30,
+   "text": "после чистки кэша в котором весит дубль должно заработать",
+   "text_entities": [
+    {
+     "type": "plain",
+     "text": "после чистки кэша в котором весит дубль должно заработать"
+    }
+   ]
+  },
+  {
+   "id": 34,
+   "type": "message",
+   "date": "2024-02-12T09:46:20",
+   "date_unixtime": "1707716780",
+   "from": "TehPodMRM",
+   "from_id": "channel2072814622",
+   "forwarded_from": "TehPodMRM",
+   "saved_from": "TehPodMRM",
+   "text": "Цветков Сергей, личное посещение не видно фото которые уже есть в заявке",
+   "text_entities": [
+    {
+     "type": "plain",
+     "text": "Цветков Сергей, личное посещение не видно фото которые уже есть в заявке"
+    }
+   ]
+  },
+  {
+   "id": 35,
+   "type": "message",
+   "date": "2024-02-12T09:47:00",
+   "date_unixtime": "1707716820",
+   "from": "Олег Головин",
+   "from_id": "user529607903",
+   "reply_to_message_id": 34,
+   "text": "Телефон Xiaomi, лог снять не удалось т.к. при включении режима разработчика, все заработало само.",
+   "text_entities": [
+    {
+     "type": "plain",
+     "text": "Телефон Xiaomi, лог снять не удалось т.к. при включении режима разработчика, все заработало само."
+    }
+   ]
+  },
+  {
+   "id": 36,
+   "type": "message",
+   "date": "2024-02-12T12:04:44",
+   "date_unixtime": "1707725084",
+   "from": "TehPodMRM",
+   "from_id": "channel2072814622",
+   "forwarded_from": "Урывский СМ",
+   "saved_from": "TehPodMRM",
+   "text": "У меня тоже заряд батареи, по статистике, больше всего приложение \"офис мастера\", съедает",
+   "text_entities": [
+    {
+     "type": "plain",
+     "text": "У меня тоже заряд батареи, по статистике, больше всего приложение \"офис мастера\", съедает"
+    }
+   ]
+  },
+  {
+   "id": 37,
+   "type": "message",
+   "date": "2024-02-12T12:05:01",
+   "date_unixtime": "1707725101",
+   "from": "Олег Головин",
+   "from_id": "user529607903",
+   "reply_to_message_id": 36,
+   "text": "Предоставьте скриншоты будьте добры, для того чтобы мы могли зафиксировать, что это происходит в фоне и в какие конкретные моменты ,чтобы это исправить, так как при работе экрана это к сожалению естественный процесс, который никак нельзя побороть.",
+   "text_entities": [
+    {
+     "type": "plain",
+     "text": "Предоставьте скриншоты будьте добры, для того чтобы мы могли зафиксировать, что это происходит в фоне и в какие конкретные моменты ,чтобы это исправить, так как при работе экрана это к сожалению естественный процесс, который никак нельзя побороть."
+    }
+   ]
+  },
+  {
+   "id": 38,
+   "type": "message",
+   "date": "2024-02-12T14:45:27",
+   "date_unixtime": "1707734727",
+   "edited": "2024-02-12T14:52:17",
+   "edited_unixtime": "1707735137",
+   "from": "TehPodMRM",
+   "from_id": "channel2072814622",
+   "forwarded_from": "Ilushik",
+   "saved_from": "TehPodMRM",
+   "text": "Не грузит фото из галереи! Решите проблему. Кэш чистил с бубном бегал. \nСкриншоты из галереи грузит.",
+   "text_entities": [
+    {
+     "type": "plain",
+     "text": "Не грузит фото из галереи! Решите проблему. Кэш чистил с бубном бегал. \nСкриншоты из галереи грузит."
+    }
+   ]
+  },
+  {
+   "id": 39,
+   "type": "message",
+   "date": "2024-02-12T14:52:23",
+   "date_unixtime": "1707735143",
+   "from": "Иван Титов",
+   "from_id": "user1114994337",
+   "reply_to_message_id": 38,
+   "text": [
+    "[\n{\n    'result': True,\n    'database': 'Srvr=\"msk-srv1c01\";Ref=\"1c_service_spb\";',\n    'affilate': 'СПБ',\n    'name': 'Галин И.А.',\n    'phone': '",
+    {
+     "type": "phone",
+     "text": "9533617002"
+    },
+    "',\n    'division': 'СМ',\n    'team': '2см',\n    'app_version': '806',\n    'os_version': '11',\n    'backend': '",
+    {
+     "type": "link",
+     "text": "https://mrm.iceberg.ru:59443/MasterService/"
+    },
+    "',\n    'last_query_dt': '12.02.2024 13:49:25',\n    'device_id': '754acf7439896442',\n    'add_date': '06.05.2023 10:46:53',\n    'remove_date': '01.01.0001 0:00:00',\n    'fire_date': '01.01.0001 0:00:00',\n    'error': None,\n    'team_master': 'Да',\n    'device_model': 'Xiaomi merlinnfc_ru M2003J15SC'\n}\n]"
+   ],
+   "text_entities": [
+    {
+     "type": "plain",
+     "text": "[\n{\n    'result': True,\n    'database': 'Srvr=\"msk-srv1c01\";Ref=\"1c_service_spb\";',\n    'affilate': 'СПБ',\n    'name': 'Галин И.А.',\n    'phone': '"
+    },
+    {
+     "type": "phone",
+     "text": "9533617002"
+    },
+    {
+     "type": "plain",
+     "text": "',\n    'division': 'СМ',\n    'team': '2см',\n    'app_version': '806',\n    'os_version': '11',\n    'backend': '"
+    },
+    {
+     "type": "link",
+     "text": "https://mrm.iceberg.ru:59443/MasterService/"
+    },
+    {
+     "type": "plain",
+     "text": "',\n    'last_query_dt': '12.02.2024 13:49:25',\n    'device_id': '754acf7439896442',\n    'add_date': '06.05.2023 10:46:53',\n    'remove_date': '01.01.0001 0:00:00',\n    'fire_date': '01.01.0001 0:00:00',\n    'error': None,\n    'team_master': 'Да',\n    'device_model': 'Xiaomi merlinnfc_ru M2003J15SC'\n}\n]"
+    }
+   ]
+  },
+  {
+   "id": 40,
+   "type": "message",
+   "date": "2024-02-12T14:52:52",
+   "date_unixtime": "1707735172",
+   "from": "Олег Головин",
+   "from_id": "user529607903",
+   "reply_to_message_id": 38,
+   "text": "дубли фото",
+   "text_entities": [
+    {
+     "type": "plain",
+     "text": "дубли фото"
+    }
+   ]
+  },
+  {
+   "id": 41,
+   "type": "message",
+   "date": "2024-02-12T17:23:17",
+   "date_unixtime": "1707744197",
+   "from": "TehPodMRM",
+   "from_id": "channel2072814622",
+   "forwarded_from": "TehPodMRM",
+   "saved_from": "TehPodMRM",
+   "text": "Мастер Елисеев А.Н.    не прикрепляются фото ни через камеру ни через галерею.   Самунг А51   806 версия",
+   "text_entities": [
+    {
+     "type": "plain",
+     "text": "Мастер Елисеев А.Н.    не прикрепляются фото ни через камеру ни через галерею.   Самунг А51   806 версия"
+    }
+   ]
+  },
+  {
+   "id": 43,
+   "type": "message",
+   "date": "2024-02-12T17:44:27",
+   "date_unixtime": "1707745467",
+   "from": "Олег Головин",
+   "from_id": "user529607903",
+   "reply_to_message_id": 41,
+   "photo": "photos/photo_4@12-02-2024_17-44-27.jpg",
+   "width": 1069,
+   "height": 655,
+   "text": "",
+   "text_entities": []
+  },
+  {
+   "id": 44,
+   "type": "message",
+   "date": "2024-02-12T17:45:11",
+   "date_unixtime": "1707745511",
+   "edited": "2024-02-12T17:46:27",
+   "edited_unixtime": "1707745587",
+   "from": "Олег Головин",
+   "from_id": "user529607903",
+   "reply_to_message_id": 41,
+   "text": "Скорее всего дубли, так как добавление фото явно работает.",
+   "text_entities": [
+    {
+     "type": "plain",
+     "text": "Скорее всего дубли, так как добавление фото явно работает."
+    }
+   ]
+  },
+  {
+   "id": 46,
+   "type": "message",
+   "date": "2024-02-12T17:58:48",
+   "date_unixtime": "1707746328",
+   "from": "Иван Титов",
+   "from_id": "user1114994337",
+   "reply_to_message_id": 41,
+   "text": "Порекомендовал обновиться до бэты.  должен сообщить результат",
+   "text_entities": [
+    {
+     "type": "plain",
+     "text": "Порекомендовал обновиться до бэты.  должен сообщить результат"
+    }
+   ]
+  },
+  {
+   "id": 47,
+   "type": "service",
+   "date": "2024-02-13T15:32:04",
+   "date_unixtime": "1707823924",
+   "actor": "TehPodMRM Comments",
+   "actor_id": "channel2087087929",
+   "action": "invite_members",
+   "members": [
+    "mrmbot"
+   ],
+   "text": "",
+   "text_entities": []
+  },
+  {
+   "id": 48,
+   "type": "message",
+   "date": "2024-02-13T16:48:01",
+   "date_unixtime": "1707828481",
+   "from": "TehPodMRM",
+   "from_id": "channel2072814622",
+   "forwarded_from": "49333 Чичекин",
+   "saved_from": "TehPodMRM",
+   "text": "Гарантийная заявка 76534.все фотографии пропали. И новые не прикрепляются. Может не надо никакие улучшения в приложении делать? Как сделаете всё съезжает. Лучше танки в вот погоняйте",
+   "text_entities": [
+    {
+     "type": "plain",
+     "text": "Гарантийная заявка 76534.все фотографии пропали. И новые не прикрепляются. Может не надо никакие улучшения в приложении делать? Как сделаете всё съезжает. Лучше танки в вот погоняйте"
+    }
+   ]
+  },
+  {
+   "id": 49,
+   "type": "message",
+   "date": "2024-02-13T16:48:40",
+   "date_unixtime": "1707828520",
+   "from": "Олег Головин",
+   "from_id": "user529607903",
+   "reply_to_message_id": 48,
+   "text": "Выполните следующие действия:\n1. Зайдите в меню приложения, там где у вас \"Заявки\", \"Детали\" и т.д., найдите пункт \"О приложении\", в открывшемся окне найдите кнопку \"Очистить кэш\", воспользуйтесь ей.\n2. Зайдите в настройки телефона, в меню найдите приложения, внутри данной опции, найдите  \"Офис мастера\", и там нажмите кнопку остановить/закрыть.",
+   "text_entities": [
+    {
+     "type": "plain",
+     "text": "Выполните следующие действия:\n1. Зайдите в меню приложения, там где у вас \"Заявки\", \"Детали\" и т.д., найдите пункт \"О приложении\", в открывшемся окне найдите кнопку \"Очистить кэш\", воспользуйтесь ей.\n2. Зайдите в настройки телефона, в меню найдите приложения, внутри данной опции, найдите  \"Офис мастера\", и там нажмите кнопку остановить/закрыть."
+    }
+   ]
+  },
+  {
+   "id": 50,
+   "type": "message",
+   "date": "2024-02-13T16:49:13",
+   "date_unixtime": "1707828553",
+   "from": "Олег Головин",
+   "from_id": "user529607903",
+   "reply_to_message_id": 48,
+   "text": [
+    "'result': True,\n    'database': 'Srvr=\"msk-srv1c01\";Ref=\"1C_service\";',\n    'affilate': 'МСК',\n    'name': 'Чичекин М.В.',\n    'phone': '",
+    {
+     "type": "phone",
+     "text": "9653346179"
+    },
+    "',\n    'division': 'ХД',\n    'team': '2хл',\n    'app_version': '806',\n    'os_version': '10',\n    'backend': '",
+    {
+     "type": "link",
+     "text": "https://mrm.iceberg.ru:53443/MasterService/"
+    },
+    "',\n    'last_query_dt': '13.02.2024 15:35:36',\n    'device_id': '3341f631f105ac87',\n    'add_date': '03.12.2022 14:35:27',\n    'remove_date': '01.01.0001 0:00:00',\n    'fire_date': '01.01.0001 0:00:00',\n    'error': None,\n    'team_master': 'Нет',\n    'device_model': 'Xiaomi angelican_ru M2006C3MNG'"
+   ],
+   "text_entities": [
+    {
+     "type": "plain",
+     "text": "'result': True,\n    'database': 'Srvr=\"msk-srv1c01\";Ref=\"1C_service\";',\n    'affilate': 'МСК',\n    'name': 'Чичекин М.В.',\n    'phone': '"
+    },
+    {
+     "type": "phone",
+     "text": "9653346179"
+    },
+    {
+     "type": "plain",
+     "text": "',\n    'division': 'ХД',\n    'team': '2хл',\n    'app_version': '806',\n    'os_version': '10',\n    'backend': '"
+    },
+    {
+     "type": "link",
+     "text": "https://mrm.iceberg.ru:53443/MasterService/"
+    },
+    {
+     "type": "plain",
+     "text": "',\n    'last_query_dt': '13.02.2024 15:35:36',\n    'device_id': '3341f631f105ac87',\n    'add_date': '03.12.2022 14:35:27',\n    'remove_date': '01.01.0001 0:00:00',\n    'fire_date': '01.01.0001 0:00:00',\n    'error': None,\n    'team_master': 'Нет',\n    'device_model': 'Xiaomi angelican_ru M2006C3MNG'"
+    }
+   ]
+  },
+  {
+   "id": 51,
+   "type": "message",
+   "date": "2024-02-14T09:16:37",
+   "date_unixtime": "1707887797",
+   "from": "TehPodMRM",
+   "from_id": "channel2072814622",
+   "forwarded_from": "Kost",
+   "saved_from": "TehPodMRM",
+   "photo": "photos/photo_5@14-02-2024_09-16-37.jpg",
+   "width": 573,
+   "height": 1280,
+   "text": "",
+   "text_entities": []
+  },
+  {
+   "id": 52,
+   "type": "message",
+   "date": "2024-02-14T09:16:39",
+   "date_unixtime": "1707887799",
+   "from": "mrmbot",
+   "from_id": "user5726206972",
+   "reply_to_message_id": 51,
+   "text": [
+    "[\n{\n    'result': True,\n    'database': 'Srvr=\"msk-srv1c01\";Ref=\"1C_service\";',\n    'affilate': 'МСК',\n    'name': 'Ценев К.М.',\n    'phone': '",
+    {
+     "type": "phone",
+     "text": "9169035066"
+    },
+    "',\n    'division': 'МБС',\n    'team': '1мбс',\n    'app_version': '806',\n    'os_version': '14',\n    'backend': '",
+    {
+     "type": "link",
+     "text": "https://mrm.iceberg.ru:53443/MasterService/"
+    },
+    "',\n    'last_query_dt': '14.02.2024 8:12:33',\n    'device_id': 'c28d55e6dfa3349a',\n    'add_date': '10.09.2023 22:17:50',\n    'remove_date': '01.01.0001 0:00:00',\n    'fire_date': '01.01.0001 0:00:00',\n    'error': None,\n    'team_master': 'Нет',\n    'device_model': 'realme RMX3301T2 RMX3301'\n}\n]"
+   ],
+   "text_entities": [
+    {
+     "type": "plain",
+     "text": "[\n{\n    'result': True,\n    'database': 'Srvr=\"msk-srv1c01\";Ref=\"1C_service\";',\n    'affilate': 'МСК',\n    'name': 'Ценев К.М.',\n    'phone': '"
+    },
+    {
+     "type": "phone",
+     "text": "9169035066"
+    },
+    {
+     "type": "plain",
+     "text": "',\n    'division': 'МБС',\n    'team': '1мбс',\n    'app_version': '806',\n    'os_version': '14',\n    'backend': '"
+    },
+    {
+     "type": "link",
+     "text": "https://mrm.iceberg.ru:53443/MasterService/"
+    },
+    {
+     "type": "plain",
+     "text": "',\n    'last_query_dt': '14.02.2024 8:12:33',\n    'device_id': 'c28d55e6dfa3349a',\n    'add_date': '10.09.2023 22:17:50',\n    'remove_date': '01.01.0001 0:00:00',\n    'fire_date': '01.01.0001 0:00:00',\n    'error': None,\n    'team_master': 'Нет',\n    'device_model': 'realme RMX3301T2 RMX3301'\n}\n]"
+    }
+   ]
+  },
+  {
+   "id": 53,
+   "type": "message",
+   "date": "2024-02-14T13:59:35",
+   "date_unixtime": "1707904775",
+   "from": "TehPodMRM",
+   "from_id": "channel2072814622",
+   "forwarded_from": "Альберт",
+   "saved_from": "TehPodMRM",
+   "photo": "photos/photo_6@14-02-2024_13-59-35.jpg",
+   "width": 576,
+   "height": 1280,
+   "text": "Не подгружаются фотографии",
+   "text_entities": [
+    {
+     "type": "plain",
+     "text": "Не подгружаются фотографии"
+    }
+   ]
+  },
+  {
+   "id": 54,
+   "type": "message",
+   "date": "2024-02-14T13:59:37",
+   "date_unixtime": "1707904777",
+   "from": "mrmbot",
+   "from_id": "user5726206972",
+   "reply_to_message_id": 53,
+   "text": [
+    "[\n{\n    'result': True,\n    'database': 'Srvr=\"msk-srv1c01\";Ref=\"1C_service\";',\n    'affilate': 'МСК',\n    'name': 'Корюкин А.В.',\n    'phone': '",
+    {
+     "type": "phone",
+     "text": "9688115845"
+    },
+    "',\n    'division': 'УСТ',\n    'team': '1уст',\n    'app_version': '806',\n    'os_version': '12',\n    'backend': '",
+    {
+     "type": "link",
+     "text": "https://mrm.iceberg.ru:53443/MasterService/"
+    },
+    "',\n    'last_query_dt': '14.02.2024 12:41:47',\n    'device_id': '6e70484809483907',\n    'add_date': '19.02.2023 22:16:09',\n    'remove_date': '01.01.0001 0:00:00',\n    'fire_date': '01.01.0001 0:00:00',\n    'error': None,\n    'team_master': 'Нет',\n    'device_model': 'samsung a12nsser SM-A125F'\n}\n]"
+   ],
+   "text_entities": [
+    {
+     "type": "plain",
+     "text": "[\n{\n    'result': True,\n    'database': 'Srvr=\"msk-srv1c01\";Ref=\"1C_service\";',\n    'affilate': 'МСК',\n    'name': 'Корюкин А.В.',\n    'phone': '"
+    },
+    {
+     "type": "phone",
+     "text": "9688115845"
+    },
+    {
+     "type": "plain",
+     "text": "',\n    'division': 'УСТ',\n    'team': '1уст',\n    'app_version': '806',\n    'os_version': '12',\n    'backend': '"
+    },
+    {
+     "type": "link",
+     "text": "https://mrm.iceberg.ru:53443/MasterService/"
+    },
+    {
+     "type": "plain",
+     "text": "',\n    'last_query_dt': '14.02.2024 12:41:47',\n    'device_id': '6e70484809483907',\n    'add_date': '19.02.2023 22:16:09',\n    'remove_date': '01.01.0001 0:00:00',\n    'fire_date': '01.01.0001 0:00:00',\n    'error': None,\n    'team_master': 'Нет',\n    'device_model': 'samsung a12nsser SM-A125F'\n}\n]"
+    }
+   ]
+  },
+  {
+   "id": 55,
+   "type": "message",
+   "date": "2024-02-14T14:10:22",
+   "date_unixtime": "1707905422",
+   "from": "Олег Головин",
+   "from_id": "user529607903",
+   "reply_to_message_id": 53,
+   "text": "Фотографии присутствуют в приложении / фоновый сервис работает, возможные причины проблемы 1. интернет проблемы с большими пакетами 2. проблемы с железом телефона",
+   "text_entities": [
+    {
+     "type": "plain",
+     "text": "Фотографии присутствуют в приложении / фоновый сервис работает, возможные причины проблемы 1. интернет проблемы с большими пакетами 2. проблемы с железом телефона"
+    }
+   ]
+  },
+  {
+   "id": 56,
+   "type": "message",
+   "date": "2024-02-14T14:30:31",
+   "date_unixtime": "1707906631",
+   "from": "Олег Головин",
+   "from_id": "user529607903",
+   "reply_to_message_id": 53,
+   "text": "Установлено, причина включенный энергосберегающий режим из за которого перестает работать служба.",
+   "text_entities": [
+    {
+     "type": "plain",
+     "text": "Установлено, причина включенный энергосберегающий режим из за которого перестает работать служба."
+    }
+   ]
+  },
+  {
+   "id": 57,
+   "type": "message",
+   "date": "2024-02-14T14:30:35",
+   "date_unixtime": "1707906635",
+   "from": "Олег Головин",
+   "from_id": "user529607903",
+   "reply_to_message_id": 53,
+   "photo": "photos/photo_7@14-02-2024_14-30-35.jpg",
+   "width": 884,
+   "height": 734,
+   "text": "",
+   "text_entities": []
+  },
+  {
+   "id": 58,
+   "type": "message",
+   "date": "2024-02-14T14:32:07",
+   "date_unixtime": "1707906727",
+   "from": "Олег Головин",
+   "from_id": "user529607903",
+   "reply_to_message_id": 53,
+   "photo": "photos/photo_8@14-02-2024_14-32-07.jpg",
+   "width": 492,
+   "height": 360,
+   "text": "",
+   "text_entities": []
+  },
+  {
+   "id": 59,
+   "type": "message",
+   "date": "2024-02-15T15:46:30",
+   "date_unixtime": "1707997590",
+   "from": "TehPodMRM",
+   "from_id": "channel2072814622",
+   "forwarded_from": "Андерсон",
+   "saved_from": "TehPodMRM",
+   "text": "Зачем приходит два уведомления на один заказ?",
+   "text_entities": [
+    {
+     "type": "plain",
+     "text": "Зачем приходит два уведомления на один заказ?"
+    }
+   ]
+  },
+  {
+   "id": 60,
+   "type": "message",
+   "date": "2024-02-15T15:46:31",
+   "date_unixtime": "1707997591",
+   "from": "mrmbot",
+   "from_id": "user5726206972",
+   "reply_to_message_id": 59,
+   "text": [
+    "[\n{\n    'result': True,\n    'database': 'Srvr=\"msk-srv1c01\";Ref=\"1c_service_spb\";',\n    'affilate': 'СПБ',\n    'name': 'Андерсон И.У.',\n    'phone': '",
+    {
+     "type": "phone",
+     "text": "9112318845"
+    },
+    "',\n    'division': 'ТВ',\n    'team': '1тв',\n    'app_version': '806',\n    'os_version': '13',\n    'backend': '",
+    {
+     "type": "link",
+     "text": "https://mpk.iceberg.ru:61443/MasterService/"
+    },
+    "',\n    'last_query_dt': '15.02.2024 14:34:55',\n    'device_id': 'ac656d74a33fb0c6',\n    'add_date': '15.04.2021 9:22:31',\n    'remove_date': '01.01.0001 0:00:00',\n    'fire_date': '01.01.0001 0:00:00',\n    'error': None,\n    'team_master': 'Да',\n    'device_model': 'samsung a51nsser SM-A515F'\n}\n]"
+   ],
+   "text_entities": [
+    {
+     "type": "plain",
+     "text": "[\n{\n    'result': True,\n    'database': 'Srvr=\"msk-srv1c01\";Ref=\"1c_service_spb\";',\n    'affilate': 'СПБ',\n    'name': 'Андерсон И.У.',\n    'phone': '"
+    },
+    {
+     "type": "phone",
+     "text": "9112318845"
+    },
+    {
+     "type": "plain",
+     "text": "',\n    'division': 'ТВ',\n    'team': '1тв',\n    'app_version': '806',\n    'os_version': '13',\n    'backend': '"
+    },
+    {
+     "type": "link",
+     "text": "https://mpk.iceberg.ru:61443/MasterService/"
+    },
+    {
+     "type": "plain",
+     "text": "',\n    'last_query_dt': '15.02.2024 14:34:55',\n    'device_id': 'ac656d74a33fb0c6',\n    'add_date': '15.04.2021 9:22:31',\n    'remove_date': '01.01.0001 0:00:00',\n    'fire_date': '01.01.0001 0:00:00',\n    'error': None,\n    'team_master': 'Да',\n    'device_model': 'samsung a51nsser SM-A515F'\n}\n]"
+    }
+   ]
+  },
+  {
+   "id": 61,
+   "type": "message",
+   "date": "2024-02-15T15:46:37",
+   "date_unixtime": "1707997597",
+   "from": "Олег Головин",
+   "from_id": "user529607903",
+   "reply_to_message_id": 59,
+   "photo": "photos/photo_9@15-02-2024_15-46-37.jpg",
+   "width": 1280,
+   "height": 220,
+   "text": "",
+   "text_entities": []
+  },
+  {
+   "id": 62,
+   "type": "message",
+   "date": "2024-02-16T11:57:02",
+   "date_unixtime": "1708070222",
+   "from": "TehPodMRM",
+   "from_id": "channel2072814622",
+   "forwarded_from": "Никита Иваненко",
+   "saved_from": "TehPodMRM",
+   "text": "Обновился...\nТеперь после уведомления вибрация не короткая а очень длинная как при звонке",
+   "text_entities": [
+    {
+     "type": "plain",
+     "text": "Обновился...\nТеперь после уведомления вибрация не короткая а очень длинная как при звонке"
+    }
+   ]
+  },
+  {
+   "id": 63,
+   "type": "message",
+   "date": "2024-02-16T11:57:03",
+   "date_unixtime": "1708070223",
+   "from": "mrmbot",
+   "from_id": "user5726206972",
+   "reply_to_message_id": 62,
+   "text": [
+    "[\n{\n    'result': True,\n    'database': 'Srvr=\"msk-srv1c01\";Ref=\"1C_service\";',\n    'affilate': 'МСК',\n    'name': 'Иваненко Н.М.',\n    'phone': '",
+    {
+     "type": "phone",
+     "text": "9057962811"
+    },
+    "',\n    'division': 'ХД',\n    'team': '3хл',\n    'app_version': '806',\n    'os_version': '14',\n    'backend': '",
+    {
+     "type": "link",
+     "text": "https://mrm.iceberg.ru:59443/MasterService/"
+    },
+    "',\n    'last_query_dt': '16.02.2024 10:47:03',\n    'device_id': 'c43d04bf95fad0c2',\n    'add_date': '30.01.2024 10:45:16',\n    'remove_date': '01.01.0001 0:00:00',\n    'fire_date': '01.01.0001 0:00:00',\n    'error': None,\n    'team_master': 'Да',\n    'device_model': 'samsung a34xdxx SM-A346E'\n}\n]"
+   ],
+   "text_entities": [
+    {
+     "type": "plain",
+     "text": "[\n{\n    'result': True,\n    'database': 'Srvr=\"msk-srv1c01\";Ref=\"1C_service\";',\n    'affilate': 'МСК',\n    'name': 'Иваненко Н.М.',\n    'phone': '"
+    },
+    {
+     "type": "phone",
+     "text": "9057962811"
+    },
+    {
+     "type": "plain",
+     "text": "',\n    'division': 'ХД',\n    'team': '3хл',\n    'app_version': '806',\n    'os_version': '14',\n    'backend': '"
+    },
+    {
+     "type": "link",
+     "text": "https://mrm.iceberg.ru:59443/MasterService/"
+    },
+    {
+     "type": "plain",
+     "text": "',\n    'last_query_dt': '16.02.2024 10:47:03',\n    'device_id': 'c43d04bf95fad0c2',\n    'add_date': '30.01.2024 10:45:16',\n    'remove_date': '01.01.0001 0:00:00',\n    'fire_date': '01.01.0001 0:00:00',\n    'error': None,\n    'team_master': 'Да',\n    'device_model': 'samsung a34xdxx SM-A346E'\n}\n]"
+    }
+   ]
+  },
+  {
+   "id": 64,
+   "type": "message",
+   "date": "2024-02-16T11:57:34",
+   "date_unixtime": "1708070254",
+   "from": "Олег Головин",
+   "from_id": "user529607903",
+   "reply_to_message_id": 62,
+   "photo": "photos/photo_10@16-02-2024_11-57-34.jpg",
+   "width": 601,
+   "height": 758,
+   "text": "",
+   "text_entities": []
+  },
+  {
+   "id": 65,
+   "type": "message",
+   "date": "2024-02-16T14:27:31",
+   "date_unixtime": "1708079251",
+   "from": "TehPodMRM",
+   "from_id": "channel2072814622",
+   "forwarded_from": "Никита Иваненко",
+   "saved_from": "TehPodMRM",
+   "photo": "photos/photo_11@16-02-2024_14-27-31.jpg",
+   "width": 591,
+   "height": 1280,
+   "text": "Комментарии к заявке не видно пока не обновишь (смахиванием вниз)",
+   "text_entities": [
+    {
+     "type": "plain",
+     "text": "Комментарии к заявке не видно пока не обновишь (смахиванием вниз)"
+    }
+   ]
+  },
+  {
+   "id": 66,
+   "type": "message",
+   "date": "2024-02-16T14:27:33",
+   "date_unixtime": "1708079253",
+   "from": "mrmbot",
+   "from_id": "user5726206972",
+   "reply_to_message_id": 65,
+   "text": [
+    "[\n{\n    'result': True,\n    'database': 'Srvr=\"msk-srv1c01\";Ref=\"1C_service\";',\n    'affilate': 'МСК',\n    'name': 'Иваненко Н.М.',\n    'phone': '",
+    {
+     "type": "phone",
+     "text": "9057962811"
+    },
+    "',\n    'division': 'ХД',\n    'team': '3хл',\n    'app_version': '806',\n    'os_version': '14',\n    'backend': '",
+    {
+     "type": "link",
+     "text": "https://mrm.iceberg.ru:53443/MasterService/"
+    },
+    "',\n    'last_query_dt': '16.02.2024 13:17:30',\n    'device_id': 'c43d04bf95fad0c2',\n    'add_date': '30.01.2024 10:45:16',\n    'remove_date': '01.01.0001 0:00:00',\n    'fire_date': '01.01.0001 0:00:00',\n    'error': None,\n    'team_master': 'Да',\n    'device_model': 'samsung a34xdxx SM-A346E'\n}\n]"
+   ],
+   "text_entities": [
+    {
+     "type": "plain",
+     "text": "[\n{\n    'result': True,\n    'database': 'Srvr=\"msk-srv1c01\";Ref=\"1C_service\";',\n    'affilate': 'МСК',\n    'name': 'Иваненко Н.М.',\n    'phone': '"
+    },
+    {
+     "type": "phone",
+     "text": "9057962811"
+    },
+    {
+     "type": "plain",
+     "text": "',\n    'division': 'ХД',\n    'team': '3хл',\n    'app_version': '806',\n    'os_version': '14',\n    'backend': '"
+    },
+    {
+     "type": "link",
+     "text": "https://mrm.iceberg.ru:53443/MasterService/"
+    },
+    {
+     "type": "plain",
+     "text": "',\n    'last_query_dt': '16.02.2024 13:17:30',\n    'device_id': 'c43d04bf95fad0c2',\n    'add_date': '30.01.2024 10:45:16',\n    'remove_date': '01.01.0001 0:00:00',\n    'fire_date': '01.01.0001 0:00:00',\n    'error': None,\n    'team_master': 'Да',\n    'device_model': 'samsung a34xdxx SM-A346E'\n}\n]"
+    }
+   ]
+  },
+  {
+   "id": 67,
+   "type": "message",
+   "date": "2024-02-16T14:46:17",
+   "date_unixtime": "1708080377",
+   "from": "Олег Головин",
+   "from_id": "user529607903",
+   "reply_to_message_id": 65,
+   "text": [
+    {
+     "type": "link",
+     "text": "https://jira.iceberg.ru/browse/MRMDEV-567"
+    }
+   ],
+   "text_entities": [
+    {
+     "type": "link",
+     "text": "https://jira.iceberg.ru/browse/MRMDEV-567"
+    }
+   ]
+  },
+  {
+   "id": 68,
+   "type": "message",
+   "date": "2024-02-19T09:32:47",
+   "date_unixtime": "1708320767",
+   "from": "TehPodMRM",
+   "from_id": "channel2072814622",
+   "forwarded_from": "Александр",
+   "saved_from": "TehPodMRM",
+   "text": "Дьячков Александр Владимирович \n808\nЗаходишь в приложение и заявок нет вообще. Потом перезагружаешь и заявки появляются в всех вкладках.",
+   "text_entities": [
+    {
+     "type": "plain",
+     "text": "Дьячков Александр Владимирович \n808\nЗаходишь в приложение и заявок нет вообще. Потом перезагружаешь и заявки появляются в всех вкладках."
+    }
+   ]
+  },
+  {
+   "id": 69,
+   "type": "message",
+   "date": "2024-02-19T09:32:47",
+   "date_unixtime": "1708320767",
+   "from": "mrmbot",
+   "from_id": "user5726206972",
+   "reply_to_message_id": 68,
+   "text": "Unable to retrieve the hidden user id",
+   "text_entities": [
+    {
+     "type": "plain",
+     "text": "Unable to retrieve the hidden user id"
+    }
+   ]
+  },
+  {
+   "id": 70,
+   "type": "message",
+   "date": "2024-02-19T09:33:06",
+   "date_unixtime": "1708320786",
+   "from": "Олег Головин",
+   "from_id": "user529607903",
+   "reply_to_message_id": 68,
+   "photo": "photos/photo_12@19-02-2024_09-33-06.jpg",
+   "width": 576,
+   "height": 1280,
+   "text": "",
+   "text_entities": []
+  },
+  {
+   "id": 71,
+   "type": "message",
+   "date": "2024-02-19T09:34:06",
+   "date_unixtime": "1708320846",
+   "from": "Олег Головин",
+   "from_id": "user529607903",
+   "reply_to_message_id": 68,
+   "text": "Явно что то не так с интернет соединением/связью с сервером, это видно даже по уровню антенны на скриншоте, возможно в этом проблема. попробуйте использовать там где сигнал более стабильный, сообщите повторяется ли проблема. Подчеркну что с учетом изменения в ОС андроид 13-14, из-за нестабильного соединения приложение может, на некоторых экранах, например на экране с комментариями, выдавать ошибку, что приложение не отвечает, однако если нажать подождать, как правило оно работает дальше по истечении времени ожидания ответа от сервера.",
+   "text_entities": [
+    {
+     "type": "plain",
+     "text": "Явно что то не так с интернет соединением/связью с сервером, это видно даже по уровню антенны на скриншоте, возможно в этом проблема. попробуйте использовать там где сигнал более стабильный, сообщите повторяется ли проблема. Подчеркну что с учетом изменения в ОС андроид 13-14, из-за нестабильного соединения приложение может, на некоторых экранах, например на экране с комментариями, выдавать ошибку, что приложение не отвечает, однако если нажать подождать, как правило оно работает дальше по истечении времени ожидания ответа от сервера."
+    }
+   ]
+  },
+  {
+   "id": 72,
+   "type": "message",
+   "date": "2024-02-19T10:38:06",
+   "date_unixtime": "1708324686",
+   "edited": "2024-02-19T10:41:09",
+   "edited_unixtime": "1708324869",
+   "from": "TehPodMRM",
+   "from_id": "channel2072814622",
+   "forwarded_from": "TehPodMRM",
+   "saved_from": "TehPodMRM",
+   "text": "Панасенко А.Э.",
+   "text_entities": [
+    {
+     "type": "plain",
+     "text": "Панасенко А.Э."
+    }
+   ]
+  },
+  {
+   "id": 73,
+   "type": "message",
+   "date": "2024-02-19T10:38:06",
+   "date_unixtime": "1708324686",
+   "from": "mrmbot",
+   "from_id": "user5726206972",
+   "reply_to_message_id": 72,
+   "text": "Unable to retrieve the hidden user id",
+   "text_entities": [
+    {
+     "type": "plain",
+     "text": "Unable to retrieve the hidden user id"
+    }
+   ]
+  },
+  {
+   "id": 74,
+   "type": "message",
+   "date": "2024-02-19T10:39:39",
+   "date_unixtime": "1708324779",
+   "from": "Олег Головин",
+   "from_id": "user529607903",
+   "reply_to_message_id": 72,
+   "text": "1. не работают звонки\n2. не выгружаются фото на сервер\nЛичное посещение  андроид 14 ксиаоми, установлено, отключено уведомление службы в следствии чего служба может быть неактивна.Звонил с другой сим карты.",
+   "text_entities": [
+    {
+     "type": "plain",
+     "text": "1. не работают звонки\n2. не выгружаются фото на сервер\nЛичное посещение  андроид 14 ксиаоми, установлено, отключено уведомление службы в следствии чего служба может быть неактивна.Звонил с другой сим карты."
+    }
+   ]
+  },
+  {
+   "id": 75,
+   "type": "message",
+   "date": "2024-02-19T11:03:58",
+   "date_unixtime": "1708326238",
+   "from": "TehPodMRM",
+   "from_id": "channel2072814622",
+   "forwarded_from": "Максим",
+   "saved_from": "TehPodMRM",
+   "text": "Еще вопрос почему раньше когда переносишь заявку тебя возвращает в главное меню? А щас нужно по 2 раза выходить, в заявку и потом только в главное меню",
+   "text_entities": [
+    {
+     "type": "plain",
+     "text": "Еще вопрос почему раньше когда переносишь заявку тебя возвращает в главное меню? А щас нужно по 2 раза выходить, в заявку и потом только в главное меню"
+    }
+   ]
+  },
+  {
+   "id": 76,
+   "type": "message",
+   "date": "2024-02-19T11:03:59",
+   "date_unixtime": "1708326239",
+   "from": "mrmbot",
+   "from_id": "user5726206972",
+   "reply_to_message_id": 75,
+   "text": [
+    "[\n{\n    'result': True,\n    'database': 'Srvr=\"msk-srv1c01\";Ref=\"1C_service\";',\n    'affilate': 'МСК',\n    'name': 'Макушев М.К.',\n    'phone': '",
+    {
+     "type": "phone",
+     "text": "9013661311"
+    },
+    "',\n    'division': 'СМ',\n    'team': '4см',\n    'app_version': '806',\n    'os_version': '10',\n    'backend': None,\n    'last_query_dt': '19.02.2024 10:02:18',\n    'device_id': '18fe955a3fb39caa',\n    'add_date': '18.05.2023 13:15:07',\n    'remove_date': '01.01.0001 0:00:00',\n    'fire_date': '01.01.0001 0:00:00',\n    'error': None,\n    'team_master': 'Нет',\n    'device_model': 'Xiaomi grus_ru Mi 9 SE'\n}\n]"
+   ],
+   "text_entities": [
+    {
+     "type": "plain",
+     "text": "[\n{\n    'result': True,\n    'database': 'Srvr=\"msk-srv1c01\";Ref=\"1C_service\";',\n    'affilate': 'МСК',\n    'name': 'Макушев М.К.',\n    'phone': '"
+    },
+    {
+     "type": "phone",
+     "text": "9013661311"
+    },
+    {
+     "type": "plain",
+     "text": "',\n    'division': 'СМ',\n    'team': '4см',\n    'app_version': '806',\n    'os_version': '10',\n    'backend': None,\n    'last_query_dt': '19.02.2024 10:02:18',\n    'device_id': '18fe955a3fb39caa',\n    'add_date': '18.05.2023 13:15:07',\n    'remove_date': '01.01.0001 0:00:00',\n    'fire_date': '01.01.0001 0:00:00',\n    'error': None,\n    'team_master': 'Нет',\n    'device_model': 'Xiaomi grus_ru Mi 9 SE'\n}\n]"
+    }
+   ]
+  },
+  {
+   "id": 77,
+   "type": "message",
+   "date": "2024-02-19T11:34:03",
+   "date_unixtime": "1708328043",
+   "from": "Олег Головин",
+   "from_id": "user529607903",
+   "reply_to_message_id": 75,
+   "text": "Ответьте будьте добры т.к. нам нужно это для понимания, если только сегодня, то возможно это связано с блокировкой в связи с просроченными заявками, данный механизм сильно устарел имеет кучу изъянов и нуждается в переработке, если постоянно так в любой день, то это возможно недоработка UI в новых версиях начиная с 670.",
+   "text_entities": [
+    {
+     "type": "plain",
+     "text": "Ответьте будьте добры т.к. нам нужно это для понимания, если только сегодня, то возможно это связано с блокировкой в связи с просроченными заявками, данный механизм сильно устарел имеет кучу изъянов и нуждается в переработке, если постоянно так в любой день, то это возможно недоработка UI в новых версиях начиная с 670."
+    }
+   ]
+  },
+  {
+   "id": 78,
+   "type": "message",
+   "date": "2024-02-19T11:34:20",
+   "date_unixtime": "1708328060",
+   "from": "Олег Головин",
+   "from_id": "user529607903",
+   "reply_to_message_id": 75,
+   "text": "Максим, [19.02.2024 10:13]\nНет, всегда так, то есть каждый перенос заявки, раньше на старой версии перекидывало в главное меню. В новых версиях, оно так и останется в разделе переноса и приходится выходить в ручную в главное меню\n\nМаксим, [19.02.2024 10:14]\nА так как, я переношу много заявок мне это неудобно, поэтому поставил такой вопрос",
+   "text_entities": [
+    {
+     "type": "plain",
+     "text": "Максим, [19.02.2024 10:13]\nНет, всегда так, то есть каждый перенос заявки, раньше на старой версии перекидывало в главное меню. В новых версиях, оно так и останется в разделе переноса и приходится выходить в ручную в главное меню\n\nМаксим, [19.02.2024 10:14]\nА так как, я переношу много заявок мне это неудобно, поэтому поставил такой вопрос"
+    }
+   ]
+  }
+ ]
+}
