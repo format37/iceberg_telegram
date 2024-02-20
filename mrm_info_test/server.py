@@ -41,6 +41,27 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
+class DocumentProcessor:
+    def __init__(self, context_path):
+        self.context_path = context_path
+
+    def process_documents(self):
+        context_path = self.context_path
+        logger.info(f"Processing documents from {context_path}")
+        loader = DirectoryLoader(context_path, glob="*", loader_cls=TextLoader)
+        docs = loader.load()
+        logger.info(f"Loaded {len(docs)} documents")
+        api_key = os.environ.get('OPENAI_API_KEY', '')
+        embeddings = OpenAIEmbeddings(openai_api_key=api_key)
+        text_splitter = RecursiveCharacterTextSplitter()
+        documents = text_splitter.split_documents(docs)
+        logger.info(f"Split {len(documents)} documents")
+        vector = DocArrayInMemorySearch.from_documents(documents, embeddings)
+        return vector.as_retriever()
+    
+document_processor = DocumentProcessor(context_path='/server/data/')
+retriever = document_processor.process_documents()
+
 class TextOutput(BaseModel):
     text: str = Field(description="Text output")
 
@@ -149,25 +170,6 @@ def mrmsupport_bot_user_info(user_id):
         return response.json()
     else:
         return []
-    
-
-class DocumentProcessor:
-    def __init__(self, context_path):
-        self.context_path = context_path
-
-    def process_documents(self):
-        context_path = self.context_path
-        logger.info(f"Processing documents from {context_path}")
-        loader = DirectoryLoader(context_path, glob="*", loader_cls=TextLoader)
-        docs = loader.load()
-        logger.info(f"Loaded {len(docs)} documents")
-        api_key = os.environ.get('OPENAI_API_KEY', '')
-        embeddings = OpenAIEmbeddings(openai_api_key=api_key)
-        text_splitter = RecursiveCharacterTextSplitter()
-        documents = text_splitter.split_documents(docs)
-        logger.info(f"Split {len(documents)} documents")
-        vector = DocArrayInMemorySearch.from_documents(documents, embeddings)
-        return vector.as_retriever()
 
 
 @app.post("/message")
@@ -226,8 +228,8 @@ async def call_message(request: Request):
         # Get the Langchain LLM opinion
         chat_history = []
         # retriever = None
-        document_processor = DocumentProcessor(context_path='/server/data/')
-        retriever = document_processor.process_documents()
+        # document_processor = DocumentProcessor(context_path='/server/data/')
+        # retriever = document_processor.process_documents()
         
         message_text = f"""Получен запрос на техническую поддержку от пользователя мобильного приложения: "{message['text']}"
 Техническая информация о пользователе:\n"""
