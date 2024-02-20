@@ -281,6 +281,7 @@ Please be sure to use the Retrieval search database. And then provide the answer
         # results.append(response)
         # logger.info('Replying in '+str(message.chat.id))
         logger.info('Replying in '+str(message['chat']['id']))
+        logger.info(f'Answer: {answer}')
         return JSONResponse(content={
             "type": "text",
             "body": str(answer)
