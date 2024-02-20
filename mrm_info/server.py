@@ -121,8 +121,8 @@ class ChatAgent:
         tools.append(
             Tool(
                 args_schema=DocumentInput,
-                name='Knowledge base',
-                description="Providing a game information from the knowledge base",
+                name='База знаний Retrieval',
+                description="Вопросы, ответы, инструкции пользователя и специалиста техподдержки",
                 func=RetrievalQA.from_chain_type(llm=llm, retriever=self.retriever),
             )
         )
@@ -238,11 +238,11 @@ async def call_message(request: Request):
 Техническая информация о пользователе:\n"""
             message_text += str(results) if len(results) > 0 else "Не предоставлена" # Tech info from 1C
             message_text += """\n
-Пожалуйста, обратитесь к вашей базе знаний и предоставьте ответ на Русском языке в формате JSON в строгом соответствии с шаблоном: 
+Пожалуйста, обазательно обратитесь к вашей базе знаний Retrieval, а затем предоставьте ответ на Русском языке в формате JSON в строгом соответствии с шаблоном: 
 {
 "Возможные причины":"Описание возможных причин",
 "Ответ пользователю":"Ответ который получит пользователь",
-"Комментарий разработчику":"Комментарий который получат разработчики. Пустая строка если комментарий не нужен."
+"Комментарий разработчику":"Комментарий который получат разработчики."
 }"""
             message_text = message_text.replace('\n', ' ')
             chat_agent = ChatAgent(retriever)
