@@ -272,17 +272,19 @@ async def call_message(request: Request, authorization: str = Header(None)):
         else:
             results.append('User id is hidden')
 
-        # Before joining the results, convert each item to a string if it's not already one
-        results_as_strings = [json.dumps(item) if isinstance(item, dict) else str(item) for item in results]
-        # Now you can safely join the string representations of your results
-        reply += ',\n'.join(results_as_strings)
-        answer = reply + '\n]'
-        bot = telebot.TeleBot(token)
-        bot.send_message(
-            message['chat']['id'], 
-            answer, 
-            reply_to_message_id=message['message_id']
-            )
+    # TODO: Add information about the latest version of the application
+
+    # Before joining the results, convert each item to a string if it's not already one
+    results_as_strings = [json.dumps(item) if isinstance(item, dict) else str(item) for item in results]
+    # Now you can safely join the string representations of your results
+    reply += ',\n'.join(results_as_strings)
+    answer = reply + '\n]'
+    bot = telebot.TeleBot(token)
+    bot.send_message(
+        message['chat']['id'], 
+        answer, 
+        reply_to_message_id=message['message_id']
+        )
 
     user_text = ''
     if 'text' in message:
