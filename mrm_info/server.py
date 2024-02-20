@@ -283,17 +283,6 @@ async def call_message(request: Request, authorization: str = Header(None)):
             answer, 
             reply_to_message_id=message['message_id']
             )
-        # message_object = telebot.types.Message(message) # missing 6 required positional arguments: 'from_user', 'date', 'chat', 'content_type', 'options', and 'json_string'
-        """message_object = telebot.types.Message(
-            message['message_id'], 
-            message['from'], 
-            message['date'], 
-            message['chat'], 
-            'text', 
-            None, 
-            json.dumps(message)
-            )
-        bot.reply_to(message_object, answer)"""
 
     user_text = ''
     if 'text' in message:
@@ -307,21 +296,21 @@ async def call_message(request: Request, authorization: str = Header(None)):
         # document_processor = DocumentProcessor(context_path='/server/data/')
         # retriever = document_processor.process_documents()
         
-        message_text = f"""You are mobile application suport. You have received a support request from user: "{message['text']}"
+        message_text = f"""You are mobile application suport.
+You have received a support request from user: "{message['text']}"
 This request will be sent automatically to Developer team.
 User technical infrmation:\n"""
         message_text += str(results) if len(results) > 0 else "Not provided" # Tech info from 1C
         message_text += """\n
-Please, be sure to use the Retrieval search database. And then provide the answer to the user in Russian."""
+You NEED to use the Retrieval search database tool.
+This database contains significant information about user support.
+Use the obtained information to provide useful solutions or recommendations to the user in Russian."""
         message_text = message_text.replace('\n', ' ')
         chat_agent = ChatAgent(retriever)
         answer = chat_agent.agent.run(
             input=message_text, 
             chat_history=chat_history
         )
-        # logger.info(f"ChatAgent response: {response}")
-        # results.append(response)
-        # logger.info('Replying in '+str(message.chat.id))
         logger.info('Replying in '+str(message['chat']['id']))
         logger.info(f'Answer: {answer}')
         return JSONResponse(content={
