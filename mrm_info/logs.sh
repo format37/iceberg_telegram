@@ -3,6 +3,6 @@
 # echo "container id: $container_id"
 # get logs
 # sudo docker logs -f $container_id
-sudo docker logs -f mrm_info_bot_test
+sudo docker logs -f mrm_info_bot
 # connect to container
 # sudo docker exec -it $container_id /bin/bash
