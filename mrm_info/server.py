@@ -262,12 +262,14 @@ async def call_message(request: Request, authorization: str = Header(None)):
             "body": ""
             })
     
+    reply = '[\n'
+    
     if 'forward_origin' in message:
         logger.info(str(message['chat']['id'])+' in granted_chats')
         results = []
         if 'forward_from' in message:
             logger.info('Received redirect from user id: '+str(message['forward_from']['id']))
-            reply = '[\n'
+            # reply = '[\n'
             results = mrmsupport_bot_user_info(message['forward_from']['id'])
         else:
             results.append('User id is hidden')
