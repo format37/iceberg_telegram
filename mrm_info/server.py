@@ -252,7 +252,8 @@ async def call_message(request: Request, authorization: str = Header(None)):
         reply += ',\n'.join(results_as_strings)
         answer = reply + '\n]'
         bot = telebot.TeleBot(token)
-        bot.send_message(message['chat']['id'], answer)
+        # bot.send_message(message['chat']['id'], answer)
+        bot.reply_to(message['message_id'], answer)
 
     user_text = ''
     if 'text' in message:
@@ -266,11 +267,12 @@ async def call_message(request: Request, authorization: str = Header(None)):
         # document_processor = DocumentProcessor(context_path='/server/data/')
         # retriever = document_processor.process_documents()
         
-        message_text = f"""Received a support request from user: "{message['text']}"
+        message_text = f"""You are mobile application suport. You have received a support request from user: "{message['text']}"
+This request will be sent automatically to Developer team.
 User technical infrmation:\n"""
         message_text += str(results) if len(results) > 0 else "Not provided" # Tech info from 1C
         message_text += """\n
-Please be sure to use the Retrieval search database. And then provide the answer to the user in Russian."""
+Please, be sure to use the Retrieval search database. And then provide the answer to the user in Russian."""
         message_text = message_text.replace('\n', ' ')
         chat_agent = ChatAgent(retriever)
         answer = chat_agent.agent.run(
