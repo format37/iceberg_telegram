@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Request, HTTPException
+from fastapi import FastAPI, Request, HTTPException, Header
 from fastapi.responses import JSONResponse
 import os
 import logging
@@ -31,6 +31,7 @@ from langchain_experimental.utilities import PythonREPL
 import time as py_time
 from pathlib import Path
 import tiktoken
+import telebot
 
 
 # Initialize FastAPI
@@ -121,8 +122,8 @@ class ChatAgent:
         tools.append(
             Tool(
                 args_schema=DocumentInput,
-                name='База знаний Retrieval',
-                description="Вопросы, ответы, инструкции пользователя и специалиста техподдержки",
+                name='Retrieval search database',
+                description="Questions, answers, instructions",
                 func=RetrievalQA.from_chain_type(llm=llm, retriever=self.retriever),
             )
         )
@@ -173,7 +174,9 @@ def mrmsupport_bot_user_info(user_id):
 
 
 @app.post("/message")
-async def call_message(request: Request):
+async def call_message(request: Request, authorization: str = Header(None)):
+# async def call_message(request: Request):
+
     logger.info('call_message')
     message = await request.json()
     logger.info(message)
@@ -206,6 +209,18 @@ async def call_message(request: Request):
         'text': 'hello'
     }
     """
+    token = None
+    if authorization and authorization.startswith("Bearer "):
+        token = authorization.split(" ")[1]
+    
+    if token:
+        pass
+    else:
+        answer = 'Не удалось определить токен бота. Пожалуйста обратитесь к администратору.'
+        return JSONResponse(content={
+            "type": "text",
+            "body": str(answer)
+        })
 
     granted_chats = [
         '-1001853379941', # MRM master info МРМ мастер, 
@@ -215,8 +230,13 @@ async def call_message(request: Request):
 
     answer = "Система временно находится на техническом обслуживании. Приносим извенение за доставленные неудобства."
 
-    if str(message['chat']['id']) in granted_chats \
-        and 'forward_origin' in message:
+    if not str(message['chat']['id']) in granted_chats:
+        return JSONResponse(content={
+            "type": "empty",
+            "body": ""
+            })
+    
+    if 'forward_origin' in message:
         logger.info(str(message['chat']['id'])+' in granted_chats')
         results = []
         if 'forward_from' in message:
@@ -224,41 +244,41 @@ async def call_message(request: Request):
             reply = '[\n'
             results = mrmsupport_bot_user_info(message['forward_from']['id'])
         else:
-            results.append('User not found')
+            results.append('User id is hidden')
 
-        if 'text' in message:
-
-            # Get the Langchain LLM opinion
-            chat_history = []
-            # retriever = None
-            # document_processor = DocumentProcessor(context_path='/server/data/')
-            # retriever = document_processor.process_documents()
-            
-            message_text = f"""Получен запрос на техническую поддержку от пользователя мобильного приложения: "{message['text']}"
-Техническая информация о пользователе:\n"""
-            message_text += str(results) if len(results) > 0 else "Не предоставлена" # Tech info from 1C
-            message_text += """\n
-Пожалуйста, обазательно обратитесь к вашей базе знаний Retrieval, а затем предоставьте ответ на Русском языке в формате JSON в строгом соответствии с шаблоном: 
-{
-"Возможные причины":"Описание возможных причин",
-"Ответ пользователю":"Ответ который получит пользователь",
-"Комментарий разработчику":"Комментарий который получат разработчики."
-}"""
-            message_text = message_text.replace('\n', ' ')
-            chat_agent = ChatAgent(retriever)
-            response = chat_agent.agent.run(
-                input=message_text, 
-                chat_history=chat_history
-            )
-            # logger.info(f"ChatAgent response: {response}")
-            results.append(response)
-            
         # Before joining the results, convert each item to a string if it's not already one
         results_as_strings = [json.dumps(item) if isinstance(item, dict) else str(item) for item in results]
         # Now you can safely join the string representations of your results
         reply += ',\n'.join(results_as_strings)
         answer = reply + '\n]'
+        bot = telebot.TeleBot(token)
+        bot.send_message(message['chat']['id'], answer)
+
+    user_text = ''
+    if 'text' in message:
+        user_text += message['text']
+    # TODO: Implement photo reading
         
+    if 'text' in message:
+        # Get the Langchain LLM opinion
+        chat_history = []
+        # retriever = None
+        # document_processor = DocumentProcessor(context_path='/server/data/')
+        # retriever = document_processor.process_documents()
+        
+        message_text = f"""Received a support request from user: "{message['text']}"
+User technical infrmation:\n"""
+        message_text += str(results) if len(results) > 0 else "Not provided" # Tech info from 1C
+        message_text += """\n
+Please be sure to use the Retrieval search database. And then provide the answer to the user in Russian."""
+        message_text = message_text.replace('\n', ' ')
+        chat_agent = ChatAgent(retriever)
+        response = chat_agent.agent.run(
+            input=message_text, 
+            chat_history=chat_history
+        )
+        # logger.info(f"ChatAgent response: {response}")
+        results.append(response)
         # logger.info('Replying in '+str(message.chat.id))
         logger.info('Replying in '+str(message['chat']['id']))
     else:
