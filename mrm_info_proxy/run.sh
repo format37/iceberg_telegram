@@ -7,9 +7,11 @@ sudo docker rm mrm_info_proxy
 sudo docker run \
     -d \
     --restart always \
-    -p 7402:7402 \
+    -p 7403:7403 \
     --name mrm_info_proxy \
     -e MRMSUPPORTBOT_AUTH_LOGIN="login" \
     -e MRMSUPPORTBOT_AUTH_PASSWORD="password" \
     -e MRMSUPPORTBOT_TOKEN="token" \
+    -v /etc/letsencrypt/live/yourdomain.com/fullchain.pem:/cert/webhook_cert.pem \
+    -v /etc/letsencrypt/live/yourdomain.com/privkey.pem:/cert/webhook_pkey.pem \
     mrm_info_proxy
