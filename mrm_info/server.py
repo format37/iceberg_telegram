@@ -281,7 +281,7 @@ async def call_message(request: Request, authorization: str = Header(None)):
         bot.send_message(
             message['chat']['id'], 
             answer, 
-            reply_parameters=(message['message_id'])
+            reply_to_message_id=message['message_id']
             )
         # message_object = telebot.types.Message(message) # missing 6 required positional arguments: 'from_user', 'date', 'chat', 'content_type', 'options', and 'json_string'
         """message_object = telebot.types.Message(
