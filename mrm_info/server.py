@@ -32,7 +32,7 @@ import time as py_time
 from pathlib import Path
 import tiktoken
 import telebot
-
+# from pydantic import BaseModel, Field
 
 # Initialize FastAPI
 app = FastAPI()
@@ -41,6 +41,32 @@ app = FastAPI()
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
+
+"""class User(BaseModel):
+    id: int
+    is_bot: bool
+    first_name: str
+    username: str
+    language_code: str
+    is_premium: bool
+
+class Chat(BaseModel):
+    id: int
+    title: str
+    type: str
+
+class Message(BaseModel):
+    message_id: int = Field(..., alias='message_id')
+    from_: User = Field(..., alias='from')
+    chat: Chat
+    date: int
+    forward_from: User
+    forward_date: int
+    text: str
+
+    # Pydantic uses aliases to handle fields that are Python keywords
+    class Config:
+        allow_population_by_field_name = True"""
 
 class DocumentProcessor:
     def __init__(self, context_path):
@@ -253,7 +279,8 @@ async def call_message(request: Request, authorization: str = Header(None)):
         answer = reply + '\n]'
         bot = telebot.TeleBot(token)
         # bot.send_message(message['chat']['id'], answer)
-        bot.reply_to(message['message_id'], answer)
+        message_object = telebot.types.Message(message)
+        bot.reply_to(message_object, answer)
 
     user_text = ''
     if 'text' in message:
