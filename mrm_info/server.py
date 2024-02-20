@@ -259,7 +259,7 @@ async def call_message(request: Request, authorization: str = Header(None)):
         user_text += message['text']
     # TODO: Implement photo reading
         
-    if 'text' in message:
+    if user_text != '':
         # Get the Langchain LLM opinion
         chat_history = []
         # retriever = None
@@ -273,21 +273,20 @@ User technical infrmation:\n"""
 Please be sure to use the Retrieval search database. And then provide the answer to the user in Russian."""
         message_text = message_text.replace('\n', ' ')
         chat_agent = ChatAgent(retriever)
-        response = chat_agent.agent.run(
+        answer = chat_agent.agent.run(
             input=message_text, 
             chat_history=chat_history
         )
         # logger.info(f"ChatAgent response: {response}")
-        results.append(response)
+        # results.append(response)
         # logger.info('Replying in '+str(message.chat.id))
         logger.info('Replying in '+str(message['chat']['id']))
-    else:
         return JSONResponse(content={
-                "type": "empty",
-                "body": ""
-                })
+            "type": "text",
+            "body": str(answer)
+        })
 
     return JSONResponse(content={
-        "type": "text",
-        "body": str(answer)
-        })
+            "type": "empty",
+            "body": ""
+            })
