@@ -6,7 +6,7 @@ sudo docker rm mrm_info_bot_test
 sudo docker run \
     -d \
     --restart always \
-    -p 7403:7403 \
+    -p 7403:8000 \
     --name mrm_info_bot_test \
     -e MRMSUPPORTBOT_AUTH_LOGIN="" \
     -e MRMSUPPORTBOT_AUTH_PASSWORD="" \
