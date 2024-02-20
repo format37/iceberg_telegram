@@ -135,7 +135,7 @@ async def call_test():
 
 def mrmsupport_bot_user_info(user_id):
     # Server base URL
-    base_url = "http://service.icecorp.ru:7403"
+    base_url = "https://service.icecorp.ru:7403"
     url = f"{base_url}/user_info"
     headers = {'Content-Type': 'application/json'}
     token = os.environ.get('MRMSUPPORTBOT_TOKEN', '')
