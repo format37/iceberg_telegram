@@ -215,7 +215,8 @@ async def call_message(request: Request):
 
     answer = "Система временно находится на техническом обслуживании. Приносим извенение за доставленные неудобства."
 
-    if str(message['chat']['id']) in granted_chats and 'forward_origin' in message:
+    if str(message['chat']['id']) in granted_chats \
+        and 'forward_origin' in message:
         logger.info(str(message['chat']['id'])+' in granted_chats')
         results = []
         if 'forward_from' in message:
@@ -225,50 +226,41 @@ async def call_message(request: Request):
         else:
             results.append('User not found')
 
-        # Get the Langchain LLM opinion
-        chat_history = []
-        # retriever = None
-        # document_processor = DocumentProcessor(context_path='/server/data/')
-        # retriever = document_processor.process_documents()
-        
-        message_text = f"""Получен запрос на техническую поддержку от пользователя мобильного приложения: "{message['text']}"
+        if 'text' in message:
+
+            # Get the Langchain LLM opinion
+            chat_history = []
+            # retriever = None
+            # document_processor = DocumentProcessor(context_path='/server/data/')
+            # retriever = document_processor.process_documents()
+            
+            message_text = f"""Получен запрос на техническую поддержку от пользователя мобильного приложения: "{message['text']}"
 Техническая информация о пользователе:\n"""
-        message_text += str(results) if len(results) > 0 else "Не предоставлена" # Tech info from 1C
-        message_text += """\n
+            message_text += str(results) if len(results) > 0 else "Не предоставлена" # Tech info from 1C
+            message_text += """\n
 Пожалуйста, обратитесь к вашей базе знаний и предоставьте ответ на Русском языке в формате JSON в строгом соответствии с шаблоном: 
 {
 "Возможные причины":"Описание возможных причин",
-
 "Ответ пользователю":"Ответ который получит пользователь",
-
 "Комментарий разработчику":"Комментарий который получат разработчики. Пустая строка если комментарий не нужен."
 }"""
-        message_text = message_text.replace('\n', ' ')
-        chat_agent = ChatAgent(retriever)
-        response = chat_agent.agent.run(
-            input=message_text, 
-            chat_history=chat_history
-        )
-        # logger.info(f"ChatAgent response: {response}")
-        results.append(response)
-        
-        """if len(results) == 0:
-            answer = 'User not found'
-            logger.info(answer)
-        else:"""
-        
-        # reply += ',\n'.join(results)
+            message_text = message_text.replace('\n', ' ')
+            chat_agent = ChatAgent(retriever)
+            response = chat_agent.agent.run(
+                input=message_text, 
+                chat_history=chat_history
+            )
+            # logger.info(f"ChatAgent response: {response}")
+            results.append(response)
+            
         # Before joining the results, convert each item to a string if it's not already one
         results_as_strings = [json.dumps(item) if isinstance(item, dict) else str(item) for item in results]
         # Now you can safely join the string representations of your results
-        reply += ',\n'.join(results_as_strings)  # This line replaces line 230 in your code
-        
+        reply += ',\n'.join(results_as_strings)
         answer = reply + '\n]'
+        
         # logger.info('Replying in '+str(message.chat.id))
         logger.info('Replying in '+str(message['chat']['id']))
-        """else:
-            answer = 'Unable to retrieve the hidden user id'
-            logger.info(answer)"""
     else:
         return JSONResponse(content={
                 "type": "empty",
