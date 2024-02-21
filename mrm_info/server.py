@@ -43,32 +43,6 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
-"""class User(BaseModel):
-    id: int
-    is_bot: bool
-    first_name: str
-    username: str
-    language_code: str
-    is_premium: bool
-
-class Chat(BaseModel):
-    id: int
-    title: str
-    type: str
-
-class Message(BaseModel):
-    message_id: int = Field(..., alias='message_id')
-    from_: User = Field(..., alias='from')
-    chat: Chat
-    date: int
-    forward_from: User
-    forward_date: int
-    text: str
-
-    # Pydantic uses aliases to handle fields that are Python keywords
-    class Config:
-        allow_population_by_field_name = True"""
-
 class DocumentProcessor:
     def __init__(self, context_path):
         self.context_path = context_path
@@ -87,7 +61,7 @@ class DocumentProcessor:
         vector = DocArrayInMemorySearch.from_documents(documents, embeddings)
         return vector.as_retriever()
     
-document_processor = DocumentProcessor(context_path='/server/data/')
+document_processor = DocumentProcessor(context_path='/server/data/retrieval/')
 retriever = document_processor.process_documents()
 
 class TextOutput(BaseModel):
@@ -174,6 +148,79 @@ class ChatAgent:
             args_schema=BotActionType,
             return_direct=return_direct,
         )
+    
+def save_to_chat_history(
+        chat_id, 
+        message_text, 
+        message_id,
+        type,
+        message_date = None,
+        name_of_user = 'AI'
+        ):
+    # chat_id = message['chat']['id']
+    # message_text = message['text']
+    # Prepare a folder
+    path = f'./data/chats/{chat_id}'
+    os.makedirs(path, exist_ok=True)
+    # filename = f'{message["date"]}_{message["message_id"]}.json'
+    if message_date is None:
+        message_date = py_time.strftime('%Y-%m-%d-%H-%M-%S', py_time.localtime())
+    log_file_name = f'{message_date}_{message_id}.json'        
+
+    data_dir = '/server/data/chats'
+    chat_log_path = os.path.join(data_dir, str(chat_id))
+    Path(chat_log_path).mkdir(parents=True, exist_ok=True)
+    # timestamp = int(time.time())
+    # log_file_name = f"{timestamp}.json"
+    with open(os.path.join(chat_log_path, log_file_name), 'w') as log_file:
+        json.dump({
+            "type": type,
+            "text": f"{message_text}"
+            }, log_file)
+        
+def date_of_latest_message(message_date, chat_id: str):
+    '''Reads the chat history from a folder.'''
+    chat_history = []
+    data_dir = '/server/data/chats'
+    chat_log_path = os.path.join(data_dir, str(chat_id))
+    # Create the chat log path if not exist
+    Path(chat_log_path).mkdir(parents=True, exist_ok=True)
+    folders = os.listdir(chat_log_path)
+    if len(folders) == 0:
+        return message_date
+    for log_file in sorted(folders):
+        with open(os.path.join(chat_log_path, log_file), 'r') as file:
+            try:
+                message = json.load(file)
+                chat_history.append(message)
+            except Exception as e:
+                logger.info(f'Error reading chat history: {e}')
+                # Remove
+                os.remove(os.path.join(chat_log_path, log_file))
+    return chat_history[-1]['date']
+        
+            
+def read_chat_history(chat_id: str):
+    '''Reads the chat history from a folder.'''
+    chat_history = []
+    data_dir = '/server/data/chats'
+    chat_log_path = os.path.join(data_dir, str(chat_id))
+    # Create the chat log path if not exist
+    Path(chat_log_path).mkdir(parents=True, exist_ok=True)
+    # self.crop_queue(chat_id=chat_id)
+    for log_file in sorted(os.listdir(chat_log_path)):
+        with open(os.path.join(chat_log_path, log_file), 'r') as file:
+            try:
+                message = json.load(file)
+                if message['type'] == 'AIMessage':
+                    chat_history.append(AIMessage(content=message['text']))
+                elif message['type'] == 'HumanMessage':
+                    chat_history.append(HumanMessage(content=message['text']))
+            except Exception as e:
+                logger.info(f'Error reading chat history: {e}')
+                # Remove
+                os.remove(os.path.join(chat_log_path, log_file))
+    return chat_history
 
 
 @app.get("/test")
@@ -323,6 +370,25 @@ async def call_message(request: Request, authorization: str = Header(None)):
             "body": ""
             })
     
+    if date_of_latest_message(message['date'], message['chat']['id']) != message['date']:
+        # Return empty
+        logger.info('Cancelling task: Message is not the latest')
+        return JSONResponse(content={
+            "type": "empty",
+            "body": ""
+            })
+    
+    if 'reply_to_message' in message and 'message_id' in message['reply_to_message']:
+        # Save to chat history
+        save_to_chat_history(
+            message['reply_to_message']['message_id'], 
+            message['text'], 
+            message['message_id'],
+            'text',
+            message['date'],
+            message['from']['first_name']
+            )
+    
     reply = '[\n'
     results = []
     
@@ -354,12 +420,27 @@ async def call_message(request: Request, authorization: str = Header(None)):
     user_text = ''
     if 'text' in message:
         user_text += message['text']
+
+    if date_of_latest_message(message['date'], message['chat']['id']) != message['date']:
+        # Return empty
+        logger.info('Cancelling task: Message is not the latest')
+        return JSONResponse(content={
+            "type": "empty",
+            "body": ""
+            })
     
     # Photo description
     if 'photo' in message:
         user_text += photo_description(bot, message)
         
     if user_text != '':
+        if date_of_latest_message(message['date'], message['chat']['id']) != message['date']:
+            # Return empty
+            logger.info('Cancelling task: Message is not the latest')
+            return JSONResponse(content={
+                "type": "empty",
+                "body": ""
+                })
         # Get the Langchain LLM opinion
         chat_history = []
         # retriever = None
