@@ -195,7 +195,12 @@ def date_of_latest_message(message_date, chat_id: str):
         with open(os.path.join(chat_log_path, log_file), 'r') as file:
             try:
                 message = json.load(file)
-                chat_history.append(message)
+                # chat_history.append(message)
+                # Esctract date from file_name = f'{message_date}_{message_id}.json'
+                chat_history.append({
+                    'date': int(log_file.split('_')[0]),
+                    'message_id': int(log_file.split('_')[1].split('.')[0])
+                })
             except Exception as e:
                 logger.info(f'Error reading chat history: {e}')
                 # Remove
