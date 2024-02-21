@@ -194,7 +194,7 @@ def date_of_latest_message(message_date, chat_id: str):
     for log_file in sorted(folders):
         with open(os.path.join(chat_log_path, log_file), 'r') as file:
             try:
-                message = json.load(file)
+                # message = json.load(file)
                 # chat_history.append(message)
                 # Extract date from file_name = f'{message_date}_{message_id}.json'
                 chat_history.append({
@@ -379,10 +379,14 @@ async def call_message(request: Request, authorization: str = Header(None)):
             })
     
     if 'reply_to_message' in message and \
-        'message_id' in message['reply_to_message'] and \
-        date_of_latest_message(
+        'message_id' in message['reply_to_message']:
+        reply_to_message_id = message['reply_to_message']['message_id']
+    else:
+        reply_to_message_id = message['message_id']
+
+    if date_of_latest_message(
         message['date'], 
-        message['reply_to_message']['message_id']
+        reply_to_message_id
         ) != message['date']:
         # Return empty
         logger.info('Cancelling task: Message is not the latest')
@@ -434,11 +438,9 @@ async def call_message(request: Request, authorization: str = Header(None)):
     if 'text' in message:
         user_text += message['text']
 
-    if 'reply_to_message' in message and \
-        'message_id' in message['reply_to_message'] and \
-        date_of_latest_message(
+    if date_of_latest_message(
         message['date'], 
-        message['reply_to_message']['message_id']
+        reply_to_message_id
         ) != message['date']:
         # Return empty
         logger.info('Cancelling task: Message is not the latest')
@@ -452,11 +454,9 @@ async def call_message(request: Request, authorization: str = Header(None)):
         user_text += photo_description(bot, message)
         
     if user_text != '':
-        if 'reply_to_message' in message and \
-            'message_id' in message['reply_to_message'] and \
-            date_of_latest_message(
+        if date_of_latest_message(
             message['date'], 
-            message['reply_to_message']['message_id']
+            reply_to_message_id
             ) != message['date']:
             # Return empty
             logger.info('Cancelling task: Message is not the latest')
@@ -486,18 +486,18 @@ Don't forget to add space between paragraphs."""
             input=message_text, 
             chat_history=chat_history
         )
-        if 'reply_to_message' in message and \
-            'message_id' in message['reply_to_message'] and \
-            date_of_latest_message(
+        
+        if date_of_latest_message(
             message['date'], 
-            message['reply_to_message']['message_id']
+            reply_to_message_id
             ) != message['date']:
             # Return empty
             logger.info('Cancelling task: Message is not the latest')
             return JSONResponse(content={
-            "type": "empty",
-            "body": ""
-            })
+                "type": "empty",
+                "body": ""
+                })
+
         logger.info('Replying in '+str(message['chat']['id']))
         logger.info(f'Answer: {answer}')
         return JSONResponse(content={
