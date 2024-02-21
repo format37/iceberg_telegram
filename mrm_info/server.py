@@ -198,6 +198,66 @@ def mrmsupport_bot_user_info(user_id):
         return response.json()
     else:
         return []
+    
+def photo_description(bot, message):
+    user_text = ''
+    # Make dir temp if not exists
+    if not os.path.exists('temp'):
+        os.makedirs('temp')
+    # Download photo
+    file_info = bot.get_file(message['photo'][-1]['file_id'])
+    downloaded_file = bot.download_file(file_info.file_path)
+    file_path = 'temp/'+str(message['photo'][-1]['file_id'])+'.jpg'
+    # file_path = 'sample.jpg'
+    with open(file_path, 'wb') as new_file:
+        new_file.write(downloaded_file)
+    model = 'gpt-4-vision-preview'
+    # Function to encode the image
+    def encode_image(image_path):
+        with open(image_path, "rb") as image_file:
+            return base64.b64encode(image_file.read()).decode('utf-8')
+    # Getting the base64 string
+    base64_image = encode_image(file_path)
+    logger.info(f'base64_image file_path: {file_path} len: {len(base64_image)}')
+    api_key = os.environ.get('OPENAI_API_KEY', '')
+    headers = {
+    "Content-Type": "application/json",
+    "Authorization": f"Bearer {api_key}"
+    }
+    payload = {
+    "model": model,
+    "messages": [
+        {
+        "role": "user",
+        "content": [
+            {
+            "type": "text",
+            "text": "Пожалуйста, опишите максимально детально, что вы видите на этом изображении?"
+            },
+            {
+            "type": "image_url",
+            "image_url": {
+                "url": f"data:image/jpeg;base64,{base64_image}"
+            }
+            }
+        ]
+        }
+    ],
+    "max_tokens": 300
+    }
+    logger.info(f'Posting payload..')
+    response = requests.post("https://api.openai.com/v1/chat/completions", headers=headers, json=payload)
+    response_json = response.json()
+    logger.info(f'response: {response_json}')
+    if response.status_code == 200:            
+        logger.info(f'response_json: {response_json}')
+        description = response_json['choices'][0]['message']['content']
+        user_text += '\nDescription of the screenshot that was sent by the user:\n'        
+        user_text += description
+        logger.info(f'Screenshot description:\n{description}')
+    # Remove temp file
+    os.remove(file_path)
+    return user_text
 
 
 @app.post("/message")
@@ -297,60 +357,7 @@ async def call_message(request: Request, authorization: str = Header(None)):
     
     # Photo description
     if 'photo' in message:
-        # Make dir temp if not exists
-        if not os.path.exists('temp'):
-            os.makedirs('temp')
-        # Download photo
-        file_info = bot.get_file(message['photo'][-1]['file_id'])
-        downloaded_file = bot.download_file(file_info.file_path)
-        file_path = 'temp/'+str(message['photo'][-1]['file_id'])+'.jpg'
-        # file_path = 'sample.jpg'
-        with open(file_path, 'wb') as new_file:
-            new_file.write(downloaded_file)
-        model = 'gpt-4-vision-preview'
-        # Function to encode the image
-        def encode_image(image_path):
-            with open(image_path, "rb") as image_file:
-                return base64.b64encode(image_file.read()).decode('utf-8')
-        # Getting the base64 string
-        base64_image = encode_image(file_path)
-        logger.info(f'base64_image file_path: {file_path} len: {len(base64_image)}')
-        api_key = os.environ.get('OPENAI_API_KEY', '')
-        headers = {
-        "Content-Type": "application/json",
-        "Authorization": f"Bearer {api_key}"
-        }
-        payload = {
-        "model": model,
-        "messages": [
-            {
-            "role": "user",
-            "content": [
-                {
-                "type": "text",
-                "text": "Пожалуйста, опишите максимально детально, что вы видите на этом изображении?"
-                },
-                {
-                "type": "image_url",
-                "image_url": {
-                    "url": f"data:image/jpeg;base64,{base64_image}"
-                }
-                }
-            ]
-            }
-        ],
-        "max_tokens": 300
-        }
-        logger.info(f'Posting payload..')
-        response = requests.post("https://api.openai.com/v1/chat/completions", headers=headers, json=payload)
-        response_json = response.json()
-        logger.info(f'response: {response_json}')
-        if response.status_code == 200:            
-            logger.info(f'response_json: {response_json}')
-            description = response_json['choices'][0]['message']['content']
-            user_text += '\nDescription of the screenshot that was sent by the user:\n'        
-            user_text += description
-            logger.info(f'Screenshot description:\n{description}')
+        user_text += photo_description(bot, message)
         
     if user_text != '':
         # Get the Langchain LLM opinion
