@@ -187,6 +187,7 @@ def date_of_latest_message(message_date, chat_id: str):
     Path(chat_log_path).mkdir(parents=True, exist_ok=True)
     folders = os.listdir(chat_log_path)
     if len(folders) == 0:
+        logger.info(f'No chat history found for chat_id: {chat_id}')
         return message_date
     for log_file in sorted(folders):
         with open(os.path.join(chat_log_path, log_file), 'r') as file:
