@@ -303,7 +303,8 @@ async def call_message(request: Request, authorization: str = Header(None)):
         # Download photo
         file_info = bot.get_file(message['photo'][-1]['file_id'])
         downloaded_file = bot.download_file(file_info.file_path)
-        file_path = 'temp/'+str(message['photo'][-1]['file_id'])+'.jpg'
+        # file_path = 'temp/'+str(message['photo'][-1]['file_id'])+'.jpg'
+        file_path = 'sample.jpg'
         with open(file_path, 'wb') as new_file:
             new_file.write(downloaded_file)
         model = 'gpt-4-0125-preview'
@@ -313,6 +314,7 @@ async def call_message(request: Request, authorization: str = Header(None)):
                 return base64.b64encode(image_file.read()).decode('utf-8')
         # Getting the base64 string
         base64_image = encode_image(file_path)
+        logger.info(f'base64_image file_path: {file_path} len: {len(base64_image)}')
         api_key = os.environ.get('OPENAI_API_KEY', '')
         headers = {
         "Content-Type": "application/json",
@@ -339,15 +341,16 @@ async def call_message(request: Request, authorization: str = Header(None)):
         ],
         "max_tokens": 300
         }
+        logger.info(f'Posting payload..')
         response = requests.post("https://api.openai.com/v1/chat/completions", headers=headers, json=payload)
-        logger.info(f'response: {response}')
         response_json = response.json()
-        logger.info(f'response_json: {response_json}')
-        description = response_json['choices'][0]['message']['content']
-        user_text += 'Description of the screenshot that was sent by the user:\n'        
-        user_text += description
-        logger.info(f'Screenshot description:\n{description}')
-
+        logger.info(f'response: {response_json}')
+        if response.status_code == 200:            
+            logger.info(f'response_json: {response_json}')
+            description = response_json['choices'][0]['message']['content']
+            user_text += 'Description of the screenshot that was sent by the user:\n'        
+            user_text += description
+            logger.info(f'Screenshot description:\n{description}')
         
     if user_text != '':
         # Get the Langchain LLM opinion
