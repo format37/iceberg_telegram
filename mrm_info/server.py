@@ -340,7 +340,10 @@ async def call_message(request: Request, authorization: str = Header(None)):
         "max_tokens": 300
         }
         response = requests.post("https://api.openai.com/v1/chat/completions", headers=headers, json=payload)
-        description = response.json()['choices'][0]['message']['content']
+        logger.info(f'response: {response}')
+        response_json = response.json()
+        logger.info(f'response_json: {response_json}')
+        description = response_json['choices'][0]['message']['content']
         user_text += 'Description of the screenshot that was sent by the user:\n'        
         user_text += description
         logger.info(f'Screenshot description:\n{description}')
