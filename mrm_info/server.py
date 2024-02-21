@@ -463,6 +463,13 @@ Don't forget to add space between paragraphs."""
             input=message_text, 
             chat_history=chat_history
         )
+        if date_of_latest_message(message['date'], message['chat']['id']) != message['date']:
+            # Return empty
+            logger.info('Cancelling task: Message is not the latest')
+            return JSONResponse(content={
+                "type": "empty",
+                "body": ""
+                })
         logger.info('Replying in '+str(message['chat']['id']))
         logger.info(f'Answer: {answer}')
         return JSONResponse(content={
