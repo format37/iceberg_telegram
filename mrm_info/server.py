@@ -33,6 +33,7 @@ from pathlib import Path
 import tiktoken
 import telebot
 # from pydantic import BaseModel, Field
+import base64
 
 # Initialize FastAPI
 app = FastAPI()
@@ -293,7 +294,57 @@ async def call_message(request: Request, authorization: str = Header(None)):
     user_text = ''
     if 'text' in message:
         user_text += message['text']
-    # TODO: Implement photo reading
+    
+    # Photo description
+    if 'photo' in message:
+        # Make dir temp if not exists
+        if not os.path.exists('temp'):
+            os.makedirs('temp')
+        # Download photo
+        file_info = bot.get_file(message['photo'][-1]['file_id'])
+        downloaded_file = bot.download_file(file_info.file_path)
+        file_path = 'temp/'+str(message['photo'][-1]['file_id'])+'.jpg'
+        with open(file_path, 'wb') as new_file:
+            new_file.write(downloaded_file)
+        model = 'gpt-4-0125-preview'
+        # Function to encode the image
+        def encode_image(image_path):
+            with open(image_path, "rb") as image_file:
+                return base64.b64encode(image_file.read()).decode('utf-8')
+        # Getting the base64 string
+        base64_image = encode_image(file_path)
+        api_key = os.environ.get('OPENAI_API_KEY', '')
+        headers = {
+        "Content-Type": "application/json",
+        "Authorization": f"Bearer {api_key}"
+        }
+        payload = {
+        "model": model,
+        "messages": [
+            {
+            "role": "user",
+            "content": [
+                {
+                "type": "text",
+                "text": "Пожалуйста, опишите максимально детально, что вы видите на этом изображении?"
+                },
+                {
+                "type": "image_url",
+                "image_url": {
+                    "url": f"data:image/jpeg;base64,{base64_image}"
+                }
+                }
+            ]
+            }
+        ],
+        "max_tokens": 300
+        }
+        response = requests.post("https://api.openai.com/v1/chat/completions", headers=headers, json=payload)
+        description = response.json()['choices'][0]['message']['content']
+        user_text += 'Description of the screenshot that was sent by the user:\n'        
+        user_text += description
+        logger.info(f'Screenshot description:\n{description}')
+
         
     if user_text != '':
         # Get the Langchain LLM opinion
@@ -310,7 +361,8 @@ User technical infrmation:\n"""
         message_text += """\n
 You NEED to use the Retrieval search database tool.
 This database contains significant information about user support.
-Use the obtained information to provide useful solutions or recommendations to the user in Russian."""
+Use the obtained information to provide useful solutions or recommendations to the user in Russian.
+Don't forget to add space between paragraphs."""
         message_text = message_text.replace('\n', ' ')
         chat_agent = ChatAgent(retriever)
         answer = chat_agent.agent.run(
