@@ -196,7 +196,7 @@ def date_of_latest_message(message_date, chat_id: str):
             try:
                 message = json.load(file)
                 # chat_history.append(message)
-                # Esctract date from file_name = f'{message_date}_{message_id}.json'
+                # Extract date from file_name = f'{message_date}_{message_id}.json'
                 chat_history.append({
                     'date': int(log_file.split('_')[0]),
                     'message_id': int(log_file.split('_')[1].split('.')[0])
