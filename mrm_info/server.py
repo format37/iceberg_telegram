@@ -394,17 +394,16 @@ async def call_message(request: Request, authorization: str = Header(None)):
             "type": "empty",
             "body": ""
             })
-    
-    if 'reply_to_message' in message and 'message_id' in message['reply_to_message']:
-        # Save to chat history
-        save_to_chat_history(
-            message['reply_to_message']['message_id'], 
-            message['text'], 
-            message['message_id'],
-            'text',
-            message['date'],
-            message['from']['first_name']
-            )
+
+    # Save to chat history
+    save_to_chat_history(
+        reply_to_message_id, 
+        message['text'], 
+        message['message_id'],
+        'text',
+        message['date'],
+        message['from']['first_name']
+        )
     
     reply = '[\n'
     results = []
