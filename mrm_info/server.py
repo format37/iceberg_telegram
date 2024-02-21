@@ -263,16 +263,18 @@ async def call_message(request: Request, authorization: str = Header(None)):
             })
     
     reply = '[\n'
+    results = []
     
     if 'forward_origin' in message:
-        logger.info(str(message['chat']['id'])+' in granted_chats')
-        results = []
+        logger.info(str(message['chat']['id'])+' in granted_chats')        
         if 'forward_from' in message:
             logger.info('Received redirect from user id: '+str(message['forward_from']['id']))
             # reply = '[\n'
             results = mrmsupport_bot_user_info(message['forward_from']['id'])
         else:
             results.append('User id is hidden')
+    else:
+        results.append('User id is hidden')
 
     # TODO: Add information about the latest version of the application
 
