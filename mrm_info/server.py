@@ -303,11 +303,11 @@ async def call_message(request: Request, authorization: str = Header(None)):
         # Download photo
         file_info = bot.get_file(message['photo'][-1]['file_id'])
         downloaded_file = bot.download_file(file_info.file_path)
-        # file_path = 'temp/'+str(message['photo'][-1]['file_id'])+'.jpg'
-        file_path = 'sample.jpg'
+        file_path = 'temp/'+str(message['photo'][-1]['file_id'])+'.jpg'
+        # file_path = 'sample.jpg'
         with open(file_path, 'wb') as new_file:
             new_file.write(downloaded_file)
-        model = 'gpt-4-0125-preview'
+        model = 'gpt-4-vision-preview'
         # Function to encode the image
         def encode_image(image_path):
             with open(image_path, "rb") as image_file:
