@@ -348,7 +348,7 @@ async def call_message(request: Request, authorization: str = Header(None)):
         if response.status_code == 200:            
             logger.info(f'response_json: {response_json}')
             description = response_json['choices'][0]['message']['content']
-            user_text += 'Description of the screenshot that was sent by the user:\n'        
+            user_text += '\nDescription of the screenshot that was sent by the user:\n'        
             user_text += description
             logger.info(f'Screenshot description:\n{description}')
         
@@ -360,7 +360,7 @@ async def call_message(request: Request, authorization: str = Header(None)):
         # retriever = document_processor.process_documents()
         
         message_text = f"""You are mobile application suport.
-You have received a support request from user: "{message['text']}"
+You have received a support request from user: "{user_text}"
 This request will be sent automatically to Developer team.
 User technical infrmation:\n"""
         message_text += str(results) if len(results) > 0 else "Not provided" # Tech info from 1C
