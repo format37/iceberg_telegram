@@ -315,6 +315,13 @@ def photo_description(bot, message):
     return user_text
 
 
+def message_is_deprecated(message, reply_to_message_id):
+    if date_of_latest_message(message['date'], reply_to_message_id) > message['date']:
+        logger.info('Cancelling task: Message is not the latest')
+        return False
+    return True
+
+
 @app.post("/message")
 async def call_message(request: Request, authorization: str = Header(None)):
 # async def call_message(request: Request):
@@ -378,18 +385,15 @@ async def call_message(request: Request, authorization: str = Header(None)):
             "body": ""
             })
     
-    if 'reply_to_message' in message and \
+    if 'message_thread_id' in message:
+        reply_to_message_id = message['message_thread_id']
+    elif 'reply_to_message' in message and \
         'message_id' in message['reply_to_message']:
         reply_to_message_id = message['reply_to_message']['message_id']
     else:
         reply_to_message_id = message['message_id']
 
-    if date_of_latest_message(
-        message['date'], 
-        reply_to_message_id
-        ) != message['date']:
-        # Return empty
-        logger.info('Cancelling task: Message is not the latest')
+    if message_is_deprecated(message, reply_to_message_id):
         return JSONResponse(content={
             "type": "empty",
             "body": ""
@@ -437,12 +441,7 @@ async def call_message(request: Request, authorization: str = Header(None)):
     if 'text' in message:
         user_text += message['text']
 
-    if date_of_latest_message(
-        message['date'], 
-        reply_to_message_id
-        ) != message['date']:
-        # Return empty
-        logger.info('Cancelling task: Message is not the latest')
+    if message_is_deprecated(message, reply_to_message_id):
         return JSONResponse(content={
             "type": "empty",
             "body": ""
@@ -453,12 +452,7 @@ async def call_message(request: Request, authorization: str = Header(None)):
         user_text += photo_description(bot, message)
         
     if user_text != '':
-        if date_of_latest_message(
-            message['date'], 
-            reply_to_message_id
-            ) != message['date']:
-            # Return empty
-            logger.info('Cancelling task: Message is not the latest')
+        if message_is_deprecated(message, reply_to_message_id):
             return JSONResponse(content={
                 "type": "empty",
                 "body": ""
@@ -487,12 +481,7 @@ Don't forget to add space between paragraphs."""
             chat_history=chat_history
         )
         
-        if date_of_latest_message(
-            message['date'], 
-            reply_to_message_id
-            ) != message['date']:
-            # Return empty
-            logger.info('Cancelling task: Message is not the latest')
+        if message_is_deprecated(message, reply_to_message_id):
             return JSONResponse(content={
                 "type": "empty",
                 "body": ""
