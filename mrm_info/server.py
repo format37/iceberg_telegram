@@ -75,7 +75,7 @@ class DocumentInput(BaseModel):
     question: str = Field()
 
 class ChatAgent:
-    async def __init__(self, retriever):
+    def __init__(self, retriever):
         # Initialize logging
         logging.basicConfig(level=logging.INFO)
         self.logger = logging.getLogger(__name__)
@@ -90,8 +90,8 @@ class ChatAgent:
         # self.bot_instance = bot_instance  # Passing the Bot instance to the ChatAgent
         # self.logger.info(f"ChatAgent function: {self.bot_instance.bot_action_come}")
         # self.agent = self.initialize_agent()
-        self.agent = await self.initialize_agent()
-        
+        # self.agent = await self.initialize_agent()
+        self.agent = None        
 
     async def initialize_agent(self):
         llm = ChatOpenAI(
@@ -130,7 +130,7 @@ class ChatAgent:
                 func=RetrievalQA.from_chain_type(llm=llm, retriever=self.retriever),
             )
         )
-        return initialize_agent(
+        self.agent = initialize_agent(
             tools,
             llm,
             agent='chat-conversational-react-description',
@@ -481,6 +481,7 @@ Don't recommend to call technical support because this request is already in the
 Don't forget to add space between paragraphs."""
         message_text = message_text.replace('\n', ' ')
         chat_agent = ChatAgent(retriever)
+        await chat_agent.initialize_agent()
         answer = chat_agent.agent.run(
             input=message_text, 
             chat_history=chat_history
