@@ -81,8 +81,8 @@ class ChatAgent:
         self.logger.setLevel(logging.INFO)
         # self.config = bot_instance.config
         self.config = {
-            'model': 'gpt-4-0125-preview',
-            # 'model': 'gpt-3.5-turbo',
+            # 'model': 'gpt-4-0125-preview',
+            'model': 'gpt-3.5-turbo',
             'temperature': 0.7,
         }
         self.retriever = retriever
