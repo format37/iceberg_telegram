@@ -316,7 +316,10 @@ def photo_description(bot, message):
 
 
 def message_is_deprecated(event_id, message, reply_to_message_id):
-    if date_of_latest_message(message['date'], reply_to_message_id) > message['date']:
+    current_date = message['date']
+    latest_date = date_of_latest_message(message['date'], reply_to_message_id)
+    logger.info(f'[{event_id}] current_date: {current_date} latest_date: {latest_date}')
+    if current_date < latest_date:
         logger.info(f'[{event_id}] Cancelling task: Message is not the latest')
         return True
     return False
