@@ -210,7 +210,7 @@ async def date_of_latest_message(message_date, chat_id: str):
     return chat_history[-1]['date']
         
             
-def read_chat_history(chat_id: str):
+async def read_chat_history(chat_id: str):
     '''Reads the chat history from a folder.'''
     chat_history = []
     data_dir = '/server/data/chats'
@@ -239,7 +239,7 @@ async def call_test():
     return JSONResponse(content={"status": "ok"})
 
 
-def mrmsupport_bot_user_info(user_id):
+async def mrmsupport_bot_user_info(user_id):
     # Server base URL
     base_url = "https://service.icecorp.ru:7403"
     url = f"{base_url}/user_info"
@@ -256,7 +256,7 @@ def mrmsupport_bot_user_info(user_id):
     else:
         return []
     
-def photo_description(bot, message):
+async def photo_description(bot, message):
     user_text = ''
     # Make dir temp if not exists
     if not os.path.exists('temp'):
@@ -270,11 +270,11 @@ def photo_description(bot, message):
         new_file.write(downloaded_file)
     model = 'gpt-4-vision-preview'
     # Function to encode the image
-    def encode_image(image_path):
+    async def encode_image(image_path):
         with open(image_path, "rb") as image_file:
             return base64.b64encode(image_file.read()).decode('utf-8')
     # Getting the base64 string
-    base64_image = encode_image(file_path)
+    base64_image = await encode_image(file_path)
     logger.info(f'base64_image file_path: {file_path} len: {len(base64_image)}')
     api_key = os.environ.get('OPENAI_API_KEY', '')
     headers = {
@@ -422,7 +422,7 @@ async def call_message(request: Request, authorization: str = Header(None)):
         if 'forward_from' in message:
             logger.info('Received redirect from user id: '+str(message['forward_from']['id']))
             # reply = '[\n'
-            results = mrmsupport_bot_user_info(message['forward_from']['id'])
+            results = await mrmsupport_bot_user_info(message['forward_from']['id'])
         else:
             results.append('User id is hidden')
     else:
@@ -454,7 +454,7 @@ async def call_message(request: Request, authorization: str = Header(None)):
     
     # Photo description
     if 'photo' in message:
-        user_text += photo_description(bot, message)
+        user_text += await photo_description(bot, message)
         
     if user_text != '':
         if await message_is_deprecated(2, message, reply_to_message_id):
