@@ -141,7 +141,7 @@ class ChatAgent:
 
 
     @staticmethod
-    def create_structured_tool(func, name, description, return_direct):
+    async def create_structured_tool(func, name, description, return_direct):
         print(f"create_structured_tool name: {name} func: {func}")
         return StructuredTool.from_function(
             func=func,
@@ -151,7 +151,7 @@ class ChatAgent:
             return_direct=return_direct,
         )
     
-def save_to_chat_history(
+async def save_to_chat_history(
         chat_id, 
         message_text, 
         message_id,
@@ -180,7 +180,7 @@ def save_to_chat_history(
             "text": f"{message_text}"
             }, log_file)
         
-def date_of_latest_message(message_date, chat_id: str):
+async def date_of_latest_message(message_date, chat_id: str):
     '''Reads the chat history from a folder.'''
     chat_history = []
     data_dir = '/server/data/chats'
@@ -317,9 +317,9 @@ def photo_description(bot, message):
     return user_text
 
 
-def message_is_deprecated(event_id, message, reply_to_message_id):
+async def message_is_deprecated(event_id, message, reply_to_message_id):
     current_date = message['date']
-    latest_date = date_of_latest_message(message['date'], reply_to_message_id)
+    latest_date = await date_of_latest_message(message['date'], reply_to_message_id)
     logger.info(f'[{event_id}] current_date: {current_date} latest_date: {latest_date}')
     if current_date < latest_date:
         logger.info(f'[{event_id}] Cancelling task: Message is not the latest')
@@ -398,14 +398,14 @@ async def call_message(request: Request, authorization: str = Header(None)):
     else:
         reply_to_message_id = message['message_id']
 
-    if message_is_deprecated(0, message, reply_to_message_id):
+    if await message_is_deprecated(0, message, reply_to_message_id):
         return JSONResponse(content={
             "type": "empty",
             "body": ""
             })
 
     # Save to chat history
-    save_to_chat_history(
+    await save_to_chat_history(
         reply_to_message_id, 
         message['text'], 
         message['message_id'],
@@ -446,7 +446,7 @@ async def call_message(request: Request, authorization: str = Header(None)):
     if 'text' in message:
         user_text += message['text']
 
-    if message_is_deprecated(1, message, reply_to_message_id):
+    if await message_is_deprecated(1, message, reply_to_message_id):
         return JSONResponse(content={
             "type": "empty",
             "body": ""
@@ -457,7 +457,7 @@ async def call_message(request: Request, authorization: str = Header(None)):
         user_text += photo_description(bot, message)
         
     if user_text != '':
-        if message_is_deprecated(2, message, reply_to_message_id):
+        if await message_is_deprecated(2, message, reply_to_message_id):
             return JSONResponse(content={
                 "type": "empty",
                 "body": ""
@@ -487,7 +487,7 @@ Don't forget to add space between paragraphs."""
             chat_history=chat_history
         )
         
-        if message_is_deprecated(3, message, reply_to_message_id):
+        if await message_is_deprecated(3, message, reply_to_message_id):
             return JSONResponse(content={
                 "type": "empty",
                 "body": ""
