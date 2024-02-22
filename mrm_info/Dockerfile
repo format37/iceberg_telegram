@@ -3,4 +3,6 @@ WORKDIR /server
 COPY requirements.txt /server
 RUN pip3 install -r requirements.txt --no-cache-dir
 COPY server.py /server
-CMD ["uvicorn", "server:app", "--host", "0.0.0.0"]
+# CMD ["uvicorn", "server:app", "--host", "0.0.0.0"]
+# gunicorn -w 4 -k uvicorn.workers.UvicornWorker your_fastapi_app:app
+CMD ["gunicorn", "-w", "4", "-k", "uvicorn.workers.UvicornWorker", "server:app", "--host", "0.0.0.0"]
