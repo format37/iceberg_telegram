@@ -478,6 +478,7 @@ User technical infrmation:\n"""
 You NEED to use the Retrieval search database tool.
 This database contains significant information about user support.
 Use the obtained information to provide useful solutions or recommendations to the user in Russian.
+Don't recommend to call technical support because this request is already in the queue.
 Don't forget to add space between paragraphs."""
         message_text = message_text.replace('\n', ' ')
         chat_agent = ChatAgent(retriever)
