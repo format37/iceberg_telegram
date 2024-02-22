@@ -34,6 +34,7 @@ import tiktoken
 import telebot
 # from pydantic import BaseModel, Field
 import base64
+import aiofiles
 
 # Initialize FastAPI
 app = FastAPI()
@@ -74,7 +75,7 @@ class DocumentInput(BaseModel):
     question: str = Field()
 
 class ChatAgent:
-    def __init__(self, retriever):
+    async def __init__(self, retriever):
         # Initialize logging
         logging.basicConfig(level=logging.INFO)
         self.logger = logging.getLogger(__name__)
@@ -88,10 +89,11 @@ class ChatAgent:
         self.retriever = retriever
         # self.bot_instance = bot_instance  # Passing the Bot instance to the ChatAgent
         # self.logger.info(f"ChatAgent function: {self.bot_instance.bot_action_come}")
-        self.agent = self.initialize_agent()
+        # self.agent = self.initialize_agent()
+        self.agent = await self.initialize_agent()
         
 
-    def initialize_agent(self):
+    async def initialize_agent(self):
         llm = ChatOpenAI(
             openai_api_key=os.environ.get('OPENAI_API_KEY', ''),
             model=self.config['model'],
