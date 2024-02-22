@@ -315,11 +315,11 @@ def photo_description(bot, message):
     return user_text
 
 
-def message_is_deprecated(message, reply_to_message_id):
+def message_is_deprecated(event_id, message, reply_to_message_id):
     if date_of_latest_message(message['date'], reply_to_message_id) > message['date']:
-        logger.info('Cancelling task: Message is not the latest')
-        return False
-    return True
+        logger.info(f'[{event_id}] Cancelling task: Message is not the latest')
+        return True
+    return False
 
 
 @app.post("/message")
@@ -393,7 +393,7 @@ async def call_message(request: Request, authorization: str = Header(None)):
     else:
         reply_to_message_id = message['message_id']
 
-    if message_is_deprecated(message, reply_to_message_id):
+    if message_is_deprecated(0, message, reply_to_message_id):
         return JSONResponse(content={
             "type": "empty",
             "body": ""
@@ -441,7 +441,7 @@ async def call_message(request: Request, authorization: str = Header(None)):
     if 'text' in message:
         user_text += message['text']
 
-    if message_is_deprecated(message, reply_to_message_id):
+    if message_is_deprecated(1, message, reply_to_message_id):
         return JSONResponse(content={
             "type": "empty",
             "body": ""
@@ -452,7 +452,7 @@ async def call_message(request: Request, authorization: str = Header(None)):
         user_text += photo_description(bot, message)
         
     if user_text != '':
-        if message_is_deprecated(message, reply_to_message_id):
+        if message_is_deprecated(2, message, reply_to_message_id):
             return JSONResponse(content={
                 "type": "empty",
                 "body": ""
@@ -481,7 +481,7 @@ Don't forget to add space between paragraphs."""
             chat_history=chat_history
         )
         
-        if message_is_deprecated(message, reply_to_message_id):
+        if message_is_deprecated(3, message, reply_to_message_id):
             return JSONResponse(content={
                 "type": "empty",
                 "body": ""
