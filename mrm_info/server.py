@@ -174,11 +174,19 @@ async def save_to_chat_history(
     Path(chat_log_path).mkdir(parents=True, exist_ok=True)
     # timestamp = int(time.time())
     # log_file_name = f"{timestamp}.json"
-    with open(os.path.join(chat_log_path, log_file_name), 'w') as log_file:
+    """with open(os.path.join(chat_log_path, log_file_name), 'w') as log_file:
         json.dump({
             "type": type,
             "text": f"{message_text}"
-            }, log_file)
+            }, log_file)"""
+    async with aiofiles.open(os.path.join(chat_log_path, log_file_name), 'w') as log_file:
+        await log_file.write(json.dumps({
+            "type": type,
+            "text": f"{message_text}",
+            "date": message_date,
+            "message_id": message_id,
+            "name_of_user": name_of_user
+            }))
         
 async def date_of_latest_message(message_date, chat_id: str):
     '''Reads the chat history from a folder.'''
@@ -329,7 +337,6 @@ async def message_is_deprecated(event_id, message, reply_to_message_id):
 
 @app.post("/message")
 async def call_message(request: Request, authorization: str = Header(None)):
-# async def call_message(request: Request):
 
     logger.info('call_message')
     message = await request.json()
