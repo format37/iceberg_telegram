@@ -432,7 +432,7 @@ async def call_message(request: Request, authorization: str = Header(None)):
     reply = '[\n'
     results = []
     
-    if configuration_in_history(message['chat']['id']):
+    if await configuration_in_history(message['chat']['id']):
         if 'forward_origin' in message:
             logger.info(str(message['chat']['id'])+' in granted_chats')        
             if 'forward_from' in message:
