@@ -410,7 +410,8 @@ async def call_message(request: Request, authorization: str = Header(None)):
         message['message_id'],
         'HumanMessage',
         message['date'],
-        message['from']['first_name']
+        message['from']['first_name'],
+        '0-incoming'
         )
     
     reply = '[\n'
@@ -442,7 +443,8 @@ async def call_message(request: Request, authorization: str = Header(None)):
         message['message_id'],
         'AIMessage',
         message['date'],
-        message['from']['first_name']
+        message['from']['first_name'],
+        '1-configuration'
         )
 
     bot = telebot.TeleBot(token)
@@ -510,7 +512,8 @@ Don't forget to add space between paragraphs."""
             message['message_id'],
             'AIMessage',
             message['date'],
-            message['from']['first_name']
+            message['from']['first_name'],
+            '9-llm'
             )
 
         logger.info('Replying in '+str(message['chat']['id']))
