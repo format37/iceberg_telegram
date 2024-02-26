@@ -441,9 +441,11 @@ async def call_message(request: Request, authorization: str = Header(None)):
     # Photo description
     if 'photo' in message:
         message_text += await photo_description(bot, message)
-        message_text += 'User comment: '
+        if 'text' in message:
+            message_text += 'User comment: '
 
-    message_text += message['text']
+    if 'text' in message:
+        message_text += message['text']
     logger.info(f'[1] DEBUG: User message: {message_text}')
 
     if await message_is_deprecated(0, message, reply_to_message_id):
