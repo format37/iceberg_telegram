@@ -159,12 +159,9 @@ async def save_to_chat_history(
         message_date = None,
         name_of_user = 'AI'
         ):
-    # chat_id = message['chat']['id']
-    # message_text = message['text']
     # Prepare a folder
     path = f'./data/chats/{chat_id}'
     os.makedirs(path, exist_ok=True)
-    # filename = f'{message["date"]}_{message["message_id"]}.json'
     if message_date is None:
         message_date = py_time.strftime('%Y-%m-%d-%H-%M-%S', py_time.localtime())
     log_file_name = f'{message_date}_{message_id}.json'        
@@ -172,13 +169,6 @@ async def save_to_chat_history(
     data_dir = '/server/data/chats'
     chat_log_path = os.path.join(data_dir, str(chat_id))
     Path(chat_log_path).mkdir(parents=True, exist_ok=True)
-    # timestamp = int(time.time())
-    # log_file_name = f"{timestamp}.json"
-    """with open(os.path.join(chat_log_path, log_file_name), 'w') as log_file:
-        json.dump({
-            "type": type,
-            "text": f"{message_text}"
-            }, log_file)"""
     async with aiofiles.open(os.path.join(chat_log_path, log_file_name), 'w') as log_file:
         await log_file.write(json.dumps({
             "type": type,
@@ -186,7 +176,7 @@ async def save_to_chat_history(
             "date": message_date,
             "message_id": message_id,
             "name_of_user": name_of_user
-            }))
+        }, ensure_ascii=False))
         
 async def date_of_latest_message(message_date, chat_id: str):
     '''Reads the chat history from a folder.'''
@@ -416,7 +406,7 @@ async def call_message(request: Request, authorization: str = Header(None)):
         reply_to_message_id, 
         message['text'], 
         message['message_id'],
-        'text',
+        'HumanMessage',
         message['date'],
         message['from']['first_name']
         )
@@ -442,6 +432,17 @@ async def call_message(request: Request, authorization: str = Header(None)):
     # Now you can safely join the string representations of your results
     reply += ',\n'.join(results_as_strings)
     answer = reply + '\n]'
+
+    # Save to chat history
+    await save_to_chat_history(
+        reply_to_message_id, 
+        message['text'], 
+        message['message_id'],
+        'AIMessage',
+        message['date'],
+        message['from']['first_name']
+        )
+
     bot = telebot.TeleBot(token)
     bot.send_message(
         message['chat']['id'], 
@@ -499,6 +500,16 @@ Don't forget to add space between paragraphs."""
                 "type": "empty",
                 "body": ""
                 })
+        
+        # Save to chat history
+        await save_to_chat_history(
+            reply_to_message_id, 
+            message['text'], 
+            message['message_id'],
+            'AIMessage',
+            message['date'],
+            message['from']['first_name']
+            )
 
         logger.info('Replying in '+str(message['chat']['id']))
         logger.info(f'Answer: {answer}')
