@@ -248,6 +248,25 @@ async def read_chat_history(chat_id: str):
                 os.remove(os.path.join(chat_log_path, log_file))
     return chat_history
 
+async def read_chat_history_as_structure(chat_id: str):
+    '''Reads the chat history from a folder.'''
+    chat_history = []
+    data_dir = '/server/data/chats'
+    chat_log_path = os.path.join(data_dir, str(chat_id))
+    # Create the chat log path if not exist
+    Path(chat_log_path).mkdir(parents=True, exist_ok=True)
+    # self.crop_queue(chat_id=chat_id)
+    for log_file in sorted(os.listdir(chat_log_path)):
+        with open(os.path.join(chat_log_path, log_file), 'r') as file:
+            try:
+                message = json.load(file)
+                chat_history.append(message)
+            except Exception as e:
+                logger.info(f'Error reading chat history: {e}')
+                # Remove
+                os.remove(os.path.join(chat_log_path, log_file))
+    return chat_history
+
 
 @app.get("/test")
 async def call_test():
@@ -479,13 +498,13 @@ async def call_message(request: Request, authorization: str = Header(None)):
     """user_text = ''
     if 'text' in message:
         user_text += message['text']"""
-    # Read chat history
-    chat_history = await read_chat_history(reply_to_message_id)
-    logger.info(f'[3] DEBUG:chat_history: {chat_history}')
-    if len(chat_history):
-        user_text = chat_history[-1]['text']
-    else:
-        user_text = message_text
+    # Read chat history as a struct to get the latest user message
+    """chat_history_struct = await read_chat_history_as_structure(reply_to_message_id)
+    logger.info(f'[3] DEBUG:chat_history: {chat_history_struct}')
+    if len(chat_history_struct):
+        user_text = chat_history_struct[-1]['text']
+    else:"""
+    user_text = message_text
     logger.info(f'[4] DEBUG: User text: {user_text}')
 
     if await message_is_deprecated(1, message, reply_to_message_id):
@@ -497,6 +516,9 @@ async def call_message(request: Request, authorization: str = Header(None)):
     # Photo description
     """if 'photo' in message:
         user_text += await photo_description(bot, message)"""
+    
+    # Read chat history in LLM fromat
+    chat_history = await read_chat_history(reply_to_message_id)
         
     if user_text != '':
         if await message_is_deprecated(2, message, reply_to_message_id):
