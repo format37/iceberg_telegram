@@ -157,15 +157,16 @@ async def save_to_chat_history(
         message_id,
         type,
         message_date = None,
-        name_of_user = 'AI'
+        name_of_user = 'AI',
+        event_id = 'default'
         ):
-    logger.info(f'save_to_chat_history chat_id: {chat_id} message_id: {message_id} type: {type} message_date: {message_date} name_of_user: {name_of_user}')
+    logger.info(f'save_to_chat_history chat_id: {chat_id} message_id: {message_id} type: {type} message_date: {message_date} name_of_user: {name_of_user} event_id: {event_id}')
     # Prepare a folder
     path = f'./data/chats/{chat_id}'
     os.makedirs(path, exist_ok=True)
     if message_date is None:
         message_date = py_time.strftime('%Y-%m-%d-%H-%M-%S', py_time.localtime())
-    log_file_name = f'{message_date}_{message_id}.json'        
+    log_file_name = f'{message_date}_{message_id}_{event_id}.json'
 
     data_dir = '/server/data/chats'
     chat_log_path = os.path.join(data_dir, str(chat_id))
