@@ -159,6 +159,7 @@ async def save_to_chat_history(
         message_date = None,
         name_of_user = 'AI'
         ):
+    logger.info(f'save_to_chat_history chat_id: {chat_id} message_id: {message_id} type: {type} message_date: {message_date} name_of_user: {name_of_user}')
     # Prepare a folder
     path = f'./data/chats/{chat_id}'
     os.makedirs(path, exist_ok=True)
