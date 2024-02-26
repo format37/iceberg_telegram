@@ -413,6 +413,16 @@ async def call_message(request: Request, authorization: str = Header(None)):
     else:
         reply_to_message_id = message['message_id']
 
+    message_text = ''
+
+    # Photo description
+    if 'photo' in message:
+        message_text += await photo_description(bot, message)
+        message_text += 'User comment: '
+
+    message_text += message['text']
+    logger.info(f'[1] DEBUG: User message: {message_text}')
+
     if await message_is_deprecated(0, message, reply_to_message_id):
         return JSONResponse(content={
             "type": "empty",
@@ -422,7 +432,7 @@ async def call_message(request: Request, authorization: str = Header(None)):
     # Save to chat history
     await save_to_chat_history(
         reply_to_message_id, 
-        message['text'], 
+        message_text, 
         message['message_id'],
         'HumanMessage',
         message['date'],
@@ -466,9 +476,17 @@ async def call_message(request: Request, authorization: str = Header(None)):
             reply_to_message_id=message['message_id']
             )
 
-    user_text = ''
+    """user_text = ''
     if 'text' in message:
-        user_text += message['text']
+        user_text += message['text']"""
+    # Read chat history
+    chat_history = await read_chat_history(reply_to_message_id)
+    logger.info(f'[3] DEBUG:chat_history: {chat_history}')
+    if len(chat_history):
+        user_text = chat_history[-1]['text']
+    else:
+        user_text = message_text
+    logger.info(f'[4] DEBUG: User text: {user_text}')
 
     if await message_is_deprecated(1, message, reply_to_message_id):
         return JSONResponse(content={
@@ -477,8 +495,8 @@ async def call_message(request: Request, authorization: str = Header(None)):
             })
     
     # Photo description
-    if 'photo' in message:
-        user_text += await photo_description(bot, message)
+    """if 'photo' in message:
+        user_text += await photo_description(bot, message)"""
         
     if user_text != '':
         if await message_is_deprecated(2, message, reply_to_message_id):
@@ -487,7 +505,7 @@ async def call_message(request: Request, authorization: str = Header(None)):
                 "body": ""
                 })
         # Get the Langchain LLM opinion
-        chat_history = []
+        # chat_history = []
         # retriever = None
         # document_processor = DocumentProcessor(context_path='/server/data/')
         # retriever = document_processor.process_documents()
