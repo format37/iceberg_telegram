@@ -436,7 +436,7 @@ async def call_message(request: Request, authorization: str = Header(None)):
     # Save to chat history
     await save_to_chat_history(
         reply_to_message_id, 
-        message['text'], 
+        answer, 
         message['message_id'],
         'AIMessage',
         message['date'],
@@ -504,7 +504,7 @@ Don't forget to add space between paragraphs."""
         # Save to chat history
         await save_to_chat_history(
             reply_to_message_id, 
-            message['text'], 
+            answer, 
             message['message_id'],
             'AIMessage',
             message['date'],
