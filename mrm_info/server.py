@@ -436,6 +436,8 @@ async def call_message(request: Request, authorization: str = Header(None)):
 
     message_text = ''
 
+    bot = telebot.TeleBot(token)
+
     # Photo description
     if 'photo' in message:
         message_text += await photo_description(bot, message)
@@ -490,7 +492,7 @@ async def call_message(request: Request, authorization: str = Header(None)):
             '1-configuration'
             )
 
-        bot = telebot.TeleBot(token)
+        
         bot.send_message(
             message['chat']['id'], 
             answer, 
