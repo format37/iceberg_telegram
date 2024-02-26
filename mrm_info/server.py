@@ -151,6 +151,20 @@ class ChatAgent:
             return_direct=return_direct,
         )
     
+async def configuration_in_history(chat_id: str):
+    '''Reads the chat history from a folder.'''
+    chat_history = []
+    data_dir = '/server/data/chats'
+    chat_log_path = os.path.join(data_dir, str(chat_id))
+    # Create the chat log path if not exist
+    Path(chat_log_path).mkdir(parents=True, exist_ok=True)
+    # self.crop_queue(chat_id=chat_id)
+    for log_file in sorted(os.listdir(chat_log_path)):
+        # Return True if 'configuration' word is in the file_name
+        if 'configuration' in log_file:
+            return True
+    return False
+    
 async def save_to_chat_history(
         chat_id, 
         message_text, 
@@ -417,42 +431,43 @@ async def call_message(request: Request, authorization: str = Header(None)):
     reply = '[\n'
     results = []
     
-    if 'forward_origin' in message:
-        logger.info(str(message['chat']['id'])+' in granted_chats')        
-        if 'forward_from' in message:
-            logger.info('Received redirect from user id: '+str(message['forward_from']['id']))
-            # reply = '[\n'
-            results = await mrmsupport_bot_user_info(message['forward_from']['id'])
+    if configuration_in_history(message['chat']['id']):
+        if 'forward_origin' in message:
+            logger.info(str(message['chat']['id'])+' in granted_chats')        
+            if 'forward_from' in message:
+                logger.info('Received redirect from user id: '+str(message['forward_from']['id']))
+                # reply = '[\n'
+                results = await mrmsupport_bot_user_info(message['forward_from']['id'])
+            else:
+                results.append('User id is hidden')
         else:
             results.append('User id is hidden')
-    else:
-        results.append('User id is hidden')
 
-    # TODO: Add information about the latest version of the application
+        # TODO: Add information about the latest version of the application
 
-    # Before joining the results, convert each item to a string if it's not already one
-    results_as_strings = [json.dumps(item) if isinstance(item, dict) else str(item) for item in results]
-    # Now you can safely join the string representations of your results
-    reply += ',\n'.join(results_as_strings)
-    answer = reply + '\n]'
+        # Before joining the results, convert each item to a string if it's not already one
+        results_as_strings = [json.dumps(item) if isinstance(item, dict) else str(item) for item in results]
+        # Now you can safely join the string representations of your results
+        reply += ',\n'.join(results_as_strings)
+        answer = reply + '\n]'
 
-    # Save to chat history
-    await save_to_chat_history(
-        reply_to_message_id, 
-        answer, 
-        message['message_id'],
-        'AIMessage',
-        message['date'],
-        message['from']['first_name'],
-        '1-configuration'
-        )
+        # Save to chat history
+        await save_to_chat_history(
+            reply_to_message_id, 
+            answer, 
+            message['message_id'],
+            'AIMessage',
+            message['date'],
+            message['from']['first_name'],
+            '1-configuration'
+            )
 
-    bot = telebot.TeleBot(token)
-    bot.send_message(
-        message['chat']['id'], 
-        answer, 
-        reply_to_message_id=message['message_id']
-        )
+        bot = telebot.TeleBot(token)
+        bot.send_message(
+            message['chat']['id'], 
+            answer, 
+            reply_to_message_id=message['message_id']
+            )
 
     user_text = ''
     if 'text' in message:
