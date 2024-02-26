@@ -234,10 +234,12 @@ async def read_chat_history(chat_id: str):
     # Create the chat log path if not exist
     Path(chat_log_path).mkdir(parents=True, exist_ok=True)
     # self.crop_queue(chat_id=chat_id)
+    logger.info(f'[5] DEBUG: Listing chat_log_path: {chat_log_path}')
     for log_file in sorted(os.listdir(chat_log_path)):
         with open(os.path.join(chat_log_path, log_file), 'r') as file:
             try:
                 message = json.load(file)
+                logger.info(f'[5] DEBUG: message: {message}')
                 if message['type'] == 'AIMessage':
                     chat_history.append(AIMessage(content=message['text']))
                 elif message['type'] == 'HumanMessage':
@@ -519,6 +521,7 @@ async def call_message(request: Request, authorization: str = Header(None)):
     
     # Read chat history in LLM fromat
     chat_history = await read_chat_history(reply_to_message_id)
+    logger.info(f'[6] DEBUG:chat_history: {chat_history}')
         
     if user_text != '':
         if await message_is_deprecated(2, message, reply_to_message_id):
