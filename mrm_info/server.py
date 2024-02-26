@@ -152,17 +152,18 @@ class ChatAgent:
         )
     
 async def configuration_in_history(chat_id: str):
-    '''Reads the chat history from a folder.'''
-    chat_history = []
     data_dir = '/server/data/chats'
     chat_log_path = os.path.join(data_dir, str(chat_id))
     # Create the chat log path if not exist
     Path(chat_log_path).mkdir(parents=True, exist_ok=True)
     # self.crop_queue(chat_id=chat_id)
     for log_file in sorted(os.listdir(chat_log_path)):
+        logger.info(f'log_file: {log_file}')
         # Return True if 'configuration' word is in the file_name
         if 'configuration' in log_file:
+            logger.info(f'configuration_in_history chat_id: {chat_id} True')
             return True
+    logger.info(f'NOT configuration_in_history chat_id: {chat_id} False')
     return False
     
 async def save_to_chat_history(
