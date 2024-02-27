@@ -337,7 +337,7 @@ async def photo_description(bot, message):
         ]
         }
     ],
-    "max_tokens": 300
+    "max_tokens": 1500
     }
     logger.info(f'Posting payload..')
     response = requests.post("https://api.openai.com/v1/chat/completions", headers=headers, json=payload)
@@ -473,7 +473,7 @@ async def call_message(request: Request, authorization: str = Header(None)):
             logger.info('Received redirect from user id: '+str(message['forward_from']['id']))
             results = await mrmsupport_bot_user_info(message['forward_from']['id'])
         else:
-            results.append('User id is hidden')
+            results.append('Техническая информация о пользователе недоступна')
 
         # TODO: Add information about the latest version of the application
 
