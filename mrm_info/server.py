@@ -346,7 +346,7 @@ async def photo_description(bot, message):
     if response.status_code == 200:            
         logger.info(f'response_json: {response_json}')
         description = response_json['choices'][0]['message']['content']
-        user_text += '\nDescription of the screenshot that was sent by the user:\n'        
+        user_text += '\nОписание скриншота, который прислал пользователь:\n'        
         user_text += description
         logger.info(f'Screenshot description:\n{description}')
     # Remove temp file
@@ -551,7 +551,8 @@ You NEED to use the Retrieval search database tool.
 This database contains significant information about user support.
 Use the obtained information to provide useful solutions or recommendations to the user in Russian.
 Don't recommend to call technical support because this request is already in the queue.
-Don't forget to add space between paragraphs."""
+Don't forget to add space between paragraphs.
+Пожалуйста, предоставьте рекоммендации пользовтелю на русском языке. Можете задать уточняющие вопросы если необходимо."""
         message_text = message_text.replace('\n', ' ')
         chat_agent = ChatAgent(retriever)
         await chat_agent.initialize_agent()
