@@ -351,6 +351,8 @@ async def photo_description(bot, message):
         logger.info(f'Screenshot description:\n{description}')
     # Remove temp file
     os.remove(file_path)
+    if 'caption' in message:
+        user_text += '\nUser comment: '+message['caption']
     return user_text
 
 
