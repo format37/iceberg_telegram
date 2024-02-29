@@ -180,6 +180,7 @@ async def call_message(request: Request, authorization: str = Header(None)):
             # Find the name of the latest apk, using sorting by name descending
             for file in sorted(os.listdir(apt_list_path), reverse=True):
                 if file.endswith(".apk"):
+                    logger.info("mrmsupport_bot_test. latest apk: "+str(file))
                     apk_link = 'https://soft.iceberg.ru/apk/'+file
                     break
         except Exception as e:
