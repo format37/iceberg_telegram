@@ -174,7 +174,7 @@ async def call_message(request: Request, authorization: str = Header(None)):
             })
     
     elif message['text'] == 'Скачать приложение' and message['chat']['type'] == 'private':
-        apk_link = 'http://service.icecorp.ru/mrm/apk/702.apk' # Default link
+        apk_link = 'http://service.icecorp.ru/mrm/apk/807.apk' # Default link
         try:
             apt_list_path = '/mnt/soft/apk'
             # Find the name of the latest apk, using sorting by name descending
@@ -189,6 +189,13 @@ async def call_message(request: Request, authorization: str = Header(None)):
             "type": "text",
             "body": str(answer)
             })
+    elif message['text'] == 'Скачать Updater' and message['chat']['type'] == 'private':
+        apk_link = 'http://mpk.iceberg.ru:45080/updater.apk' # Static link
+        answer = 'Скачать Updater можно по ссылке:\n'+apk_link
+        return JSONResponse(content={
+            "type": "text",
+            "body": str(answer)
+            })
     else:
         # elif message['text'] == '/start':
         keyboard_dict = get_keyboard(message['text'])
@@ -196,7 +203,8 @@ async def call_message(request: Request, authorization: str = Header(None)):
         return JSONResponse(content={
             "type": "keyboard",
             "body": keyboard_dict
-            })  
+            })
+
 
 
 @app.post("/callback")
