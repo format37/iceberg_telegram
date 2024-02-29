@@ -174,14 +174,15 @@ async def call_message(request: Request, authorization: str = Header(None)):
             })
     
     elif message['text'] == 'Скачать приложение' and message['chat']['type'] == 'private':
-        apk_link = 'https://service.icecorp.ru/apk/807.apk' # Default link
+        server_address = 'https://service.icecorp.ru/apk/'
+        apk_link = f'{server_address}807.apk' # Default link
         try:
             apt_list_path = '/mnt/soft/apk'
             # Find the name of the latest apk, using sorting by name descending
             for file in sorted(os.listdir(apt_list_path), reverse=True):
                 if file.endswith(".apk"):
                     logger.info("mrmsupport_bot_test. latest apk: "+str(file))
-                    apk_link = 'https://soft.iceberg.ru/apk/'+file
+                    apk_link = f'{server_address}{file}'
                     break
         except Exception as e:
             logger.error("mrmsupport_bot_test. apk_link: "+str(e))
