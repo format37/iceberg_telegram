@@ -174,7 +174,7 @@ async def call_message(request: Request, authorization: str = Header(None)):
             })
     
     elif message['text'] == 'Скачать приложение' and message['chat']['type'] == 'private':
-        apk_link = 'http://service.icecorp.ru/mrm/apk/807.apk' # Default link
+        apk_link = 'https://service.icecorp.ru/apk/807.apk' # Default link
         try:
             apt_list_path = '/mnt/soft/apk'
             # Find the name of the latest apk, using sorting by name descending
