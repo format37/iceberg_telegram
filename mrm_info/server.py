@@ -293,6 +293,18 @@ async def mrmsupport_bot_user_info(user_id):
     else:
         return []
     
+async def mrmsupport_bot_actual_version():
+    # Server base URL
+    base_url = "https://service.icecorp.ru:7403"
+    url = f"{base_url}/actual_version"
+    headers = {'Content-Type': 'application/json'}
+    response = requests.post(url, headers=headers)
+    logger.info(f"Actual Version Endpoint Response: {response}")
+    if response.status_code == 200:
+        return response.json()
+    else:
+        return []
+    
 async def photo_description(bot, message):
     user_text = ''
     # Make dir temp if not exists
@@ -477,7 +489,10 @@ async def call_message(request: Request, authorization: str = Header(None)):
         else:
             results.append('Техническая информация о пользователе недоступна')
 
-        # TODO: Add information about the latest version of the application
+        # Add information about the latest version of the application
+        actual_version_info = await mrmsupport_bot_actual_version()
+        if len(actual_version_info) > 0:
+            results.append('Актуальная версия приложения: '+str(actual_version_info['version']))            
 
         # Before joining the results, convert each item to a string if it's not already one
         results_as_strings = [json.dumps(item) if isinstance(item, dict) else str(item) for item in results]
