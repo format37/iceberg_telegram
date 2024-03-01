@@ -492,11 +492,11 @@ async def call_message(request: Request, authorization: str = Header(None)):
         # Add information about the latest version of the application
         actual_version_info = await mrmsupport_bot_actual_version()
         if len(actual_version_info) > 0:
-            # results.append('Актуальная версия приложения: '+str(actual_version_info['version']))
-            new_element = """{
-    "Available Update Version": """+str(actual_version_info['version'])+""",
-    "Update link": """+actual_version_info['link']+"""
-}"""
+            new_element = {
+                'Available Update Version': actual_version_info['version'],
+                'Update link': actual_version_info['link']
+            }
+            # logger.info(f'new_element: {new_element}')
             results.append(new_element)
 
         # Before joining the results, convert each item to a string if it's not already one
