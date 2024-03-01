@@ -21,6 +21,30 @@ async def call_test():
     logger.info('call_test')
     return JSONResponse(content={"status": "ok"})
 
+@app.post("/actual_version")
+async def call_actual_version(request: Request):
+    logger.info(f'call_actual_version. request: {request}')
+    server_address = 'https://service.icecorp.ru/apk/'
+    version = 807
+    try:
+        apt_list_path = '/mnt/soft/apk'
+        # Find the name of the latest apk, using sorting by name descending
+        for file in sorted(os.listdir(apt_list_path), reverse=True):
+            if file.endswith(".apk"):
+                logger.info("mrmsupport_bot_test. latest apk: "+str(file))
+                apk_link = f'{server_address}{file}'
+                version = file.split('.')[0]
+                break
+        
+    except Exception as e:
+        logger.error("mrmsupport_bot_test. apk_link: "+str(e))
+    apk_link = f'{server_address}{version}.apk' # Default link
+    return JSONResponse(content={
+        "version": version,
+        "link": apk_link
+        })
+    
+
 @app.post("/user_info")
 async def call_user_info(request: Request):
     logger.info(f'call_user_info. request: {request}')
