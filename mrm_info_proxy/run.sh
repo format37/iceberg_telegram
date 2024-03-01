@@ -14,4 +14,5 @@ sudo docker run \
     -e MRMSUPPORTBOT_TOKEN="token" \
     -v /etc/letsencrypt/live/yourdomain.com/fullchain.pem:/cert/webhook_cert.pem \
     -v /etc/letsencrypt/live/yourdomain.com/privkey.pem:/cert/webhook_pkey.pem \
+    -v /mnt/soft:/mnt/soft
     mrm_info_proxy
