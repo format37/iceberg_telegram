@@ -82,8 +82,8 @@ class ChatAgent:
         self.logger.setLevel(logging.INFO)
         # self.config = bot_instance.config
         self.config = {
-            'model': 'gpt-4-0125-preview',
-            # 'model': 'gpt-3.5-turbo',
+            # 'model': 'gpt-4-0125-preview',
+            'model': 'gpt-3.5-turbo', # test
             'temperature': 0.7,
         }
         self.retriever = retriever
@@ -478,6 +478,13 @@ async def call_message(request: Request, authorization: str = Header(None)):
         message['from']['first_name'],
         '0-incoming'
         )
+    
+    if 'reply_to_message' in message:
+        # Return empty
+        return JSONResponse(content={
+            "type": "empty",
+            "body": ""
+            })
     
     reply = '[\n'
     results = []
