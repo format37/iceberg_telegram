@@ -480,11 +480,15 @@ async def call_message(request: Request, authorization: str = Header(None)):
         )
     
     if 'reply_to_message' in message:
-        # Return empty
-        return JSONResponse(content={
-            "type": "empty",
-            "body": ""
-            })
+        if 'mrminfotestbot' in message['reply_to_message']['from']['username'] or \
+            'mrminfobot' in message['reply_to_message']['from']['username']:
+            pass # Ok, we need to reply to direct message to bot
+        else:
+            # Return empty
+            return JSONResponse(content={
+                "type": "empty",
+                "body": ""
+                })
     
     reply = '[\n'
     results = []
