@@ -82,9 +82,9 @@ class ChatAgent:
         self.logger.setLevel(logging.INFO)
         # self.config = bot_instance.config
         self.config = {
-            # 'model': 'gpt-4-0125-preview',
-            'model': 'gpt-3.5-turbo', # test
-            'temperature': 0.7,
+            'model': 'gpt-4-0125-preview',
+            # 'model': 'gpt-3.5-turbo', # test
+            'temperature': 0.6,
         }
         self.retriever = retriever
         # self.bot_instance = bot_instance  # Passing the Bot instance to the ChatAgent
@@ -572,18 +572,18 @@ async def call_message(request: Request, authorization: str = Header(None)):
         # document_processor = DocumentProcessor(context_path='/server/data/')
         # retriever = document_processor.process_documents()
         
-        message_text = f"""You are mobile application suport.
-You have received a support request from user: "{user_text}"
-This request will be sent automatically to Developer team.
-User technical infrmation:\n"""
+        message_text = f"""Вы представитель технической поддержки и разработчик Мобильного приложения мастера.
+К вам поступил запрос от пользователя: "{user_text}"
+Разработчик приложения уже увидел это сообщение.
+Техническая информация о пользвателе:\n"""
         message_text += str(results) if len(results) > 0 else "Not provided" # Tech info from 1C
         message_text += """\n
-You NEED to use the Retrieval search database tool.
-This database contains significant information about user support.
-Use the obtained information to provide useful solutions or recommendations to the user in Russian.
-Don't recommend to call technical support because this request is already in the queue.
-Don't forget to add space between paragraphs.
-Пожалуйста, предоставьте рекоммендации пользовтелю на русском языке. Можете задать уточняющие вопросы если необходимо."""
+Рекомендуется использовать Retrieval search database tool, если это может быть полезно в контексте запроса пользователя.
+Retrieval search database содержит набор ответов на частые вопросы пользователей, а так же набор инструкций пользователя и инструкций о том как правильно вести поддержку пользователей.
+Ваш ответ должен быть на русском языке.
+Используйте пустые строки для разделения абзацев.
+Не предлагайте обновить приложение, если 'app_version' уже соответствует 'Available Update Version'.
+Пожалуйста, предоставьте рекоммендации пользовтелю, как ему решить его проблему. Можете задать уточняющие вопросы если необходимо."""
         message_text = message_text.replace('\n', ' ')
         chat_agent = ChatAgent(retriever)
         await chat_agent.initialize_agent()
