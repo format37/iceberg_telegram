@@ -17,6 +17,7 @@ from langchain.tools import Tool
 from langchain.agents import initialize_agent
 import os
 from langchain.chains import RetrievalQA
+import uvicorn
 
 class DocumentProcessor:
     def __init__(self, context_path):
@@ -310,7 +311,10 @@ Retrieval search database содержит набор ответов на час
                 })
 
 
-if __name__ == "__main__":
+"""if __name__ == "__main__":
     import uvicorn
     application = Application()
-    uvicorn.run(application.app, host="0.0.0.0", port=8000)
+    uvicorn.run(application.app, host="0.0.0.0", port=8000)"""
+
+application = Application()
+app = application.app
