@@ -12,6 +12,7 @@ class OneCProxyService:
     def _make_request(self, endpoint: str, method: str, headers: Dict[str, str], data: Any):
         url = f"{self.base_url}/{endpoint}"
         try:
+            self.logger.info(f"Request to {endpoint} Endpoint: {url}")
             if method.lower() == 'post':
                 response = requests.post(url, headers=headers, json=data)
             # You can add support for other HTTP methods here (GET, PUT, DELETE)
@@ -27,7 +28,7 @@ class OneCProxyService:
 
         except requests.RequestException as e:
             self.logger.error(f"Request to {endpoint} failed: {e}")
-            return None
+            return []
 
     async def get_user_info(self, user_id: int) -> Dict[str, Any]:
         headers = {'Content-Type': 'application/json'}
