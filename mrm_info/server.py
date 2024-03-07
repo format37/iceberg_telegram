@@ -226,14 +226,14 @@ class Application:
                 else:
                     results.append('Техническая информация о пользователе недоступна')
                 # Add information about the latest version of the application
-                actual_version_info = self.onec_service.get_actual_version()
+                actual_version_info = await self.onec_service.get_actual_version()
                 
-                self.logger.info(f'actual_version_info: {actual_version_info}')
+                """self.logger.info(f'actual_version_info: {actual_version_info}')
                 # Return empty: TODO: Remove this
                 return JSONResponse(content={
                     "type": "empty",
                     "body": ""
-                    })
+                    })"""
 
                 if len(actual_version_info) > 0:
                     new_element = {
