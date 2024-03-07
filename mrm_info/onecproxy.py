@@ -4,9 +4,9 @@ import logging
 from typing import Any, Dict
 
 class OneCProxyService:
-    def __init__(self, base_url: str):
+    def __init__(self, base_url, logger):
         self.base_url = base_url
-        self.logger = logging.getLogger(self.__class__.__name__)
+        self.logger = logger
         self.token = os.environ.get('MRMSUPPORTBOT_TOKEN', '')
 
     def _make_request(self, endpoint: str, method: str, headers: Dict[str, str], data: Any):
