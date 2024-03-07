@@ -102,13 +102,17 @@ class ChatAgent:
 class Application:
     def __init__(self):
         self.config_manager = ConfigManager('config.json')
-        self.chat_history_service = ChatHistoryService(self.config_manager.get("chats_dir"))
+        self.logger = self.setup_logging()
+        self.chat_history_service = ChatHistoryService(
+            self.config_manager.get("chats_dir"),
+            self.logger
+            )
         self.photo_description_service = PhotoDescriptionService(self.config_manager.get("temp_dir"), self.config_manager.get("api_key"))
         self.onec_service = OneCProxyService(self.config_manager.get("onec_base_url"))
         
         self.app = FastAPI()
         self.setup_routes()
-        self.logger = self.setup_logging()
+        
         self.document_processor = DocumentProcessor(
             context_path=self.config_manager.get("retrieval_dir")
             )

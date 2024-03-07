@@ -6,8 +6,9 @@ import aiofiles
 from langchain.schema import AIMessage, HumanMessage
 
 class ChatHistoryService:
-    def __init__(self, data_dir):
+    def __init__(self, data_dir, logger):
         self.data_dir = data_dir
+        self.logger = logger
 
     def chat_log_path(self, chat_id):
         return os.path.join(self.data_dir, str(chat_id))
