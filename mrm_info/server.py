@@ -195,7 +195,7 @@ class Application:
                 message_text,
                 message['message_id'],
                 'HumanMessage',
-                message['from']['username'],
+                message['from']['first_name'],
                 '0-incoming'
             )
 
@@ -238,7 +238,7 @@ class Application:
                 answer,
                 message['message_id'],
                 'AIMessage',
-                message['from']['username'],
+                message['from']['first_name'],
                 '1-configuration'
             )
 
