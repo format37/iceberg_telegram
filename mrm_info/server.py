@@ -48,11 +48,11 @@ class DocumentInput(BaseModel):
     question: str = Field()
 
 class ChatAgent:
-    def __init__(self, retriever, model, temperature):
+    def __init__(self, retriever, model, temperature, logger):
         # Initialize logging
         logging.basicConfig(level=logging.INFO)
-        self.logger = logging.getLogger(__name__)
-        self.logger.setLevel(logging.INFO)
+        self.logger = logger
+        self.logger.info(f'ChatAgent init with model: {model} and temperature: {temperature}')
         # self.config = bot_instance.config
         self.config = {
             'model': model,
@@ -294,7 +294,8 @@ Retrieval search database содержит набор ответов на час
                 chat_agent = ChatAgent(
                     retriever=self.retriever, 
                     model=self.config_manager.get("model"), 
-                    temperature=self.config_manager.get("temperature")
+                    temperature=self.config_manager.get("temperature"),
+                    logger=self.logger
                     )
                 await chat_agent.initialize_agent()
                 answer = chat_agent.agent.run(
