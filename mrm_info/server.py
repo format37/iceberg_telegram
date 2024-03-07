@@ -36,8 +36,6 @@ class DocumentProcessor:
         vector = DocArrayInMemorySearch.from_documents(documents, embeddings)
         return vector.as_retriever()
     
-document_processor = DocumentProcessor(context_path='/server/data/retrieval/')
-retriever = document_processor.process_documents()
 
 class TextOutput(BaseModel):
     text: str = Field(description="Text output")
@@ -110,8 +108,11 @@ class Application:
         self.app = FastAPI()
         self.setup_routes()
         self.logger = self.setup_logging()
-        self.document_processor = DocumentProcessor(context_path=self.config_manager.get("retrieval_dir"))
-        self.retriever = document_processor.process_documents()
+        self.document_processor = DocumentProcessor(
+            context_path=self.config_manager.get("retrieval_dir"),
+            logger=self.logger
+            )
+        self.retriever = self.document_processor.process_documents()
 
     def setup_logging(self):
         logging.basicConfig(level=logging.INFO)
