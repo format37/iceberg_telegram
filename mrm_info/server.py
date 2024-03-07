@@ -190,6 +190,10 @@ class Application:
                     # Handle exception, perhaps log it or send a message to admin
                     print(f"Error during photo description: {e}")
 
+            if 'text' in message:
+                message_text += message['text']
+            self.logger.info(f'[1] DEBUG: User message: {message_text}')
+
             if await self.chat_history_service.is_message_deprecated(0, message, reply_to_message_id):
                 return JSONResponse(content={
                     "type": "empty",
@@ -227,13 +231,6 @@ class Application:
                     results.append('Техническая информация о пользователе недоступна')
                 # Add information about the latest version of the application
                 actual_version_info = await self.onec_service.get_actual_version()
-                
-                """self.logger.info(f'actual_version_info: {actual_version_info}')
-                # Return empty: TODO: Remove this
-                return JSONResponse(content={
-                    "type": "empty",
-                    "body": ""
-                    })"""
 
                 if len(actual_version_info) > 0:
                     new_element = {
