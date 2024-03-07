@@ -7,7 +7,7 @@ from onecproxy import OneCProxyService
 import telebot
 import logging
 import json
-from langchain_environment import ChatAgent
+from langchain_environment import ChatAgent, DocumentProcessor
 # import uvicorn
 
 class Application:
