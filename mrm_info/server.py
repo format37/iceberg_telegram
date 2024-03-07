@@ -110,10 +110,9 @@ class Application:
         self.setup_routes()
         self.logger = self.setup_logging()
         self.document_processor = DocumentProcessor(
-            context_path=self.config_manager.get("retrieval_dir"),
-            logger=self.logger
+            context_path=self.config_manager.get("retrieval_dir")
             )
-        self.retriever = self.document_processor.process_documents()
+        self.retriever = self.document_processor.process_documents(self.logger)
 
     def setup_logging(self):
         logging.basicConfig(level=logging.INFO)
