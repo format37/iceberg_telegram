@@ -107,8 +107,15 @@ class Application:
             self.config_manager.get("chats_dir"),
             self.logger
             )
-        self.photo_description_service = PhotoDescriptionService(self.config_manager.get("temp_dir"), self.config_manager.get("api_key"))
-        self.onec_service = OneCProxyService(self.config_manager.get("onec_base_url"))
+        self.photo_description_service = PhotoDescriptionService(
+            self.config_manager.get("temp_dir"), 
+            self.config_manager.get("api_key"),
+            self.logger
+            )
+        self.onec_service = OneCProxyService(
+            self.config_manager.get("onec_base_url"),
+            self.logger
+            )
         
         self.app = FastAPI()
         self.setup_routes()

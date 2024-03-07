@@ -4,10 +4,11 @@ import requests
 from pathlib import Path
 
 class PhotoDescriptionService:
-    def __init__(self, temp_dir, api_key, llm_model='gpt-4-vision-preview'):
+    def __init__(self, temp_dir, api_key, llm_model='gpt-4-vision-preview', logger=None):
         self.temp_dir = temp_dir
         self.api_key = api_key
         self.llm_model = llm_model
+        self.logger = logger
 
     @staticmethod
     async def encode_image_to_base64(image_path):
