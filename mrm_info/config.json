@@ -1,0 +1,8 @@
+{
+    "chats_dir": "./data/chats/",
+    "retrieval_dir": "./data/retrieval/",
+    "temp_dir": "./data/temp/",
+    "onec_base_url": "https://service.icecorp.ru:7403",
+    "model": "'gpt-3.5-turbo",
+    "temperature": 0.7
+}
