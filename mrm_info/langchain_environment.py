@@ -46,7 +46,7 @@ class ChatAgent:
         self.logger.info(f'ChatAgent init with model: {model} and temperature: {temperature}')
         # self.config = bot_instance.config
         self.config = {
-            'model': model, # 'gpt-4-0125-preview' or 'gpt-3.5-turbo'
+            'model': model, # 'gpt-4-1106-preview' or 'gpt-3.5-turbo'
             'temperature': temperature
         }
         self.retriever = retriever
