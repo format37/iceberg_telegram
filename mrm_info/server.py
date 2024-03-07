@@ -116,6 +116,7 @@ class Application:
             self.config_manager.get("onec_base_url"),
             self.logger
             )
+        self.empty_response = JSONResponse(content={"type": "empty", "body": ""})
         
         self.app = FastAPI()
         self.setup_routes()
@@ -124,6 +125,9 @@ class Application:
             context_path=self.config_manager.get("retrieval_dir")
             )
         self.retriever = self.document_processor.process_documents(self.logger)
+
+    def text_response(self, text):
+        return JSONResponse(content={"type": "text", "body": str(text)})
 
     def setup_logging(self):
         logging.basicConfig(level=logging.INFO)
@@ -147,10 +151,7 @@ class Application:
             else:
                 answer = """Не удалось определить токен бота.
 Пожалуйста обратитесь к администратору."""
-                return JSONResponse(content={
-                    "type": "text",
-                    "body": str(answer)
-                })
+                return self.text_response(answer)
 
             granted_chats = [
                 '-1001853379941', # MRM master info МРМ мастер, 
@@ -161,10 +162,7 @@ class Application:
             answer = """Система временно находится на техническом обслуживании.
 Приносим извенение за доставленные неудобства."""
             if not str(message['chat']['id']) in granted_chats:
-                return JSONResponse(content={
-                    "type": "empty",
-                    "body": ""
-                    })            
+                return self.empty_response
             if 'message_thread_id' in message:
                 reply_to_message_id = message['message_thread_id']
             elif 'reply_to_message' in message and \
@@ -195,10 +193,7 @@ class Application:
             self.logger.info(f'[1] DEBUG: User message: {message_text}')
 
             if await self.chat_history_service.is_message_deprecated(0, message, reply_to_message_id):
-                return JSONResponse(content={
-                    "type": "empty",
-                    "body": ""
-                    })
+                return self.empty_response
 
             # Save to chat history
             await self.chat_history_service.save_to_chat_history(
@@ -216,10 +211,7 @@ class Application:
                     pass # Ok, we need to reply to direct message to bot
                 else:
                     # Return empty
-                    return JSONResponse(content={
-                        "type": "empty",
-                        "body": ""
-                        })
+                    return self.empty_response
             
             reply = '[\n'
             results = []
@@ -264,19 +256,13 @@ class Application:
             self.logger.info(f'[4] DEBUG: User text: {user_text}')
 
             if await self.chat_history_service.is_message_deprecated(1, message, reply_to_message_id):
-                return JSONResponse(content={
-                    "type": "empty",
-                    "body": ""
-                    })
+                return self.empty_response
             
             # Read chat history in LLM fromat
             chat_history = await self.chat_history_service.read_chat_history(message['chat']['id'])
             if user_text != '':
                 if await self.chat_history_service.is_message_deprecated(2, message, reply_to_message_id):
-                    return JSONResponse(content={
-                        "type": "empty",
-                        "body": ""
-                        })
+                    return self.empty_response
                 user_info = str(results) if len(results) > 0 else "Not provided" # Tech info from 1C
                 message_text = f"""Вы представитель технической поддержки и разработчик Мобильного приложения мастера.
 К вам поступил запрос от пользователя: "{user_text}"
@@ -304,10 +290,7 @@ Retrieval search database содержит набор ответов на час
                 )
                 # Return empty if deprecated
                 if await self.chat_history_service.is_message_deprecated(3, message, reply_to_message_id):
-                    return JSONResponse(content={
-                        "type": "empty",
-                        "body": ""
-                        })
+                    return self.empty_response
                 
                 # Save to chat history
                 await self.chat_history_service.save_to_chat_history(
@@ -321,16 +304,7 @@ Retrieval search database содержит набор ответов на час
 
                 self.logger.info('Replying in '+str(message['chat']['id']))
                 self.logger.info(f'Answer: {answer}')
-                return JSONResponse(content={
-                    "type": "text",
-                    "body": str(answer)
-                })
-
-
-"""if __name__ == "__main__":
-    import uvicorn
-    application = Application()
-    uvicorn.run(application.app, host="0.0.0.0", port=8000)"""
+                return self.text_response(answer)
 
 application = Application()
 app = application.app
