@@ -222,7 +222,7 @@ class Application:
             
             if not await self.chat_history_service.configuration_in_history(reply_to_message_id):
                 if 'forward_origin' in message and 'forward_from' in message:
-                    results = self.onec_service.get_user_info(message['forward_from']['id'])
+                    results = await self.onec_service.get_user_info(message['forward_from']['id'])
                 else:
                     results.append('Техническая информация о пользователе недоступна')
                 # Add information about the latest version of the application
