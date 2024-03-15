@@ -6,6 +6,7 @@ from requests.auth import HTTPBasicAuth  # or HTTPDigestAuth, or OAuth1, etc.
 from requests import Session
 from zeep import Client
 from zeep.transports import Transport
+from onec_request import OneC_Request
 
 # Initialize FastAPI
 app = FastAPI()
@@ -43,7 +44,27 @@ async def call_actual_version(request: Request):
         "version": version,
         "link": apk_link
         })
-    
+
+@app.post("/request_1c")
+async def call_request_1c(request: Request):
+    logger.info(f'call_request_1c. request: {request}')
+    try:
+        query_params = await request.json()
+        # master_name = data.get('master_name', '')
+        # logger.info(f"mrm_master_log master_name: {master_name}")
+        logger.info(f"request_1c query_params: {query_params}")
+        onec_request = OneC_Request('1c.json')
+        """query_params = {
+            "Идентификатор": "mrm_log_0",
+            "master_name": master_name
+        }"""
+        result_dfs = onec_request.execute_query(query_params)
+        result_str = result_dfs.to_string(index=False)        
+        logger.info(f"Received from mrm_logs:\n{result_str}")
+        return JSONResponse(content={"result": result_str})
+    except Exception as e:
+        logger.error(f"Error in call_request_1c: {str(e)}")
+        raise HTTPException(status_code=500, detail="Internal Server Error")
 
 @app.post("/user_info")
 async def call_user_info(request: Request):

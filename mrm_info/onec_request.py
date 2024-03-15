@@ -20,6 +20,7 @@ class OneC_Request:
         self.logger.setLevel(logging.INFO)
 
     def execute_query(self, query_params, df_dtype=None):
+        self.logger.info(f'Executing 1C query with params: {query_params}')
         result_dfs = {}
 
         for client_name, client_url in self.clients.items():

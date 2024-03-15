@@ -8,8 +8,6 @@ from langchain.tools import Tool
 from langchain.agents import initialize_agent
 import os
 from langchain.chains import RetrievalQA
-from onec_request import OneC_Request
-
 
 class DocumentProcessor:
     def __init__(self, context_path):
@@ -90,6 +88,7 @@ class ChatAgent:
         )
 
     def mrm_master_log(self, master_name):
+        self.logger.info(f"mrm_master_log master_name: {master_name}")
         onec_request = OneC_Request('1c.json')
         query_params = {
             "Идентификатор": "mrm_log_0",
