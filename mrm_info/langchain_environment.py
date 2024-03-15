@@ -8,6 +8,7 @@ from langchain.tools import Tool
 from langchain.agents import initialize_agent
 import os
 from langchain.chains import RetrievalQA
+from onec_request import OneC_Request
 
 
 class DocumentProcessor:
@@ -38,6 +39,9 @@ class BotActionType(BaseModel):
 class DocumentInput(BaseModel):
     question: str = Field()
 
+class mrm_master_log_args(BaseModel):
+    param: str = Field(description="""Provide the name of master.""")
+
 class ChatAgent:
     def __init__(self, retriever, model, temperature, logger):
         # Initialize logging
@@ -59,6 +63,7 @@ class ChatAgent:
             temperature=self.config['temperature'],
         )
         tools = []
+        # Tool: Retrieval
         tools.append(
             Tool(
                 args_schema=DocumentInput,
@@ -67,6 +72,14 @@ class ChatAgent:
                 func=RetrievalQA.from_chain_type(llm=llm, retriever=self.retriever),
             )
         )
+        StructuredTool.from_function(
+                func=self.mrm_master_log,
+                name="master log",
+                description="Получает последнее сообщение из логов по имени мастера. Вам следует предоставить имя мастера в качестве параметра.",
+                args_schema=mrm_master_log_args,
+                return_direct=False,
+                # coroutine= ... <- you can specify an async method if desired as well
+            )
         self.agent = initialize_agent(
             tools,
             llm,
@@ -74,6 +87,19 @@ class ChatAgent:
             verbose=True,
             handle_parsing_errors=True
         )
+
+    def mrm_master_log(self, master_name):
+        onec_request = OneC_Request('1c.json')
+        query_params = {
+            "Идентификатор": "mrm_log_0",
+            "master_name": master_name
+        }
+        result_dfs = onec_request.execute_query(query_params)
+        # Convert the DataFrame to a structured string
+        result_str = result_dfs.to_string(index=False)        
+        self.logger.info(f"Received from mrm_logs:\n{result_str}")
+        return result_str
+        
 
     @staticmethod
     async def create_structured_tool(func, name, description, return_direct):

@@ -1,0 +1,9 @@
+{
+    "clientPath": {  
+        "msk": "http://ip/productionMSK/ws/OuterQuery?wsdl",
+        "spb": "http://ip/productionSPB/ws/OuterQuery?wsdl",
+        "region": "http://ip/productionNNOV/ws/OuterQuery?wsdl"    
+    },
+    "login": "login",
+    "password": "pass"
+    }
