@@ -55,7 +55,7 @@ async def call_request_1c(request: Request):
         result_dfs = onec_request.execute_query(query_params)
         
         # Convert each DataFrame to a string and concatenate them
-        result_str = '\n'.join(df.to_string(index=False) for df in result_dfs)
+        result_str = '\n'.join(df for df in result_dfs)
         
         logger.info(f"Received from mrm_logs:\n{result_str}")
         return JSONResponse(content={"result": result_str})
