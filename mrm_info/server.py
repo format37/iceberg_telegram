@@ -117,7 +117,7 @@ class Application:
                 message['message_id'],
                 'HumanMessage',
                 message['from']['first_name'],
-                '0-incoming'
+                'incoming'
             )
 
             if 'reply_to_message' in message:
@@ -158,7 +158,7 @@ class Application:
                 message['message_id'],
                 'AIMessage',
                 message['from']['first_name'],
-                '1-configuration'
+                'configuration'
             )
 
             bot.send_message(
@@ -214,7 +214,7 @@ Retrieval search database содержит набор ответов на час
                     message['message_id'],
                     'AIMessage',
                     message['from']['first_name'],
-                    '9-llm'
+                    'llm'
                 )
 
                 self.logger.info('Replying in '+str(message['chat']['id']))

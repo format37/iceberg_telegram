@@ -72,7 +72,7 @@ class ChatAgent:
                 func=RetrievalQA.from_chain_type(llm=llm, retriever=self.retriever),
             )
         )
-        StructuredTool.from_function(
+        mrm_logs_tool = StructuredTool.from_function(
                 func=self.mrm_master_log,
                 name="master log",
                 description="Получает последнее сообщение из логов по имени мастера. Вам следует предоставить имя мастера в качестве параметра.",
@@ -80,6 +80,7 @@ class ChatAgent:
                 return_direct=False,
                 # coroutine= ... <- you can specify an async method if desired as well
             )
+        tools.append(mrm_logs_tool)
         self.agent = initialize_agent(
             tools,
             llm,
