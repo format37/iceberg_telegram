@@ -167,7 +167,8 @@ class Application:
                 message['message_id'],
                 'AIMessage',
                 message['from']['first_name'],
-                'configuration'
+                'configuration',
+                date_override=message['date']
             )
 
             bot.send_message(

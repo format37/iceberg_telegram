@@ -20,12 +20,17 @@ class ChatHistoryService:
             message_id, 
             message_type, 
             user_name, 
-            event_id='default'
+            event_id='default',
+            date_override=None
             ):
         self.logger.info(f'[{event_id}] Saving message to chat history for chat_id: {chat_id} for message_id: {message_id}')
-        message_date = py_time.strftime('%Y-%m-%d-%H-%M-%S', py_time.localtime())
-        parsed_time = py_time.strptime(message_date, '%Y-%m-%d-%H-%M-%S')
-        unix_timestamp = int(py_time.mktime(parsed_time))
+        if date_override is None:
+            message_date = py_time.strftime('%Y-%m-%d-%H-%M-%S', py_time.localtime())
+            parsed_time = py_time.strptime(message_date, '%Y-%m-%d-%H-%M-%S')
+            unix_timestamp = int(py_time.mktime(parsed_time))
+        else:
+            unix_timestamp = date_override
+            message_date = py_time.strftime('%Y-%m-%d-%H-%M-%S', py_time.localtime(unix_timestamp))
         # log_file_name = f'{message_date}_{message_id}_{event_id}.json'
         log_file_name = f'{unix_timestamp}_{message_id}_{event_id}.json'
 
