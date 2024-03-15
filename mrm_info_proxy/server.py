@@ -52,7 +52,7 @@ async def call_request_1c(request: Request):
         query_params = await request.json()
         logger.info(f"request_1c query_params: {query_params}")
         onec_request = OneC_Request('1c.json')
-        result_dfs = onec_request.execute_query(query_params)
+        result_dfs = onec_request.execute_query(query_params, df_dtype=str)
         
         # Create a dictionary to store the structured JSON for each key
         result_dict = {}
