@@ -153,8 +153,16 @@ class Application:
                 answer = reply + '\n]'
 
             # Save to chat history
-            await self.chat_history_service.save_to_chat_history(
+            """await self.chat_history_service.save_to_chat_history(
                 message['chat']['id'],
+                answer,
+                message['message_id'],
+                'AIMessage',
+                message['from']['first_name'],
+                'configuration'
+            )"""
+            await self.chat_history_service.save_to_chat_history(
+                message['message_id'],
                 answer,
                 message['message_id'],
                 'AIMessage',
@@ -176,6 +184,7 @@ class Application:
             
             # Read chat history in LLM fromat
             chat_history = await self.chat_history_service.read_chat_history(message['chat']['id'])
+            # chat_history = await self.chat_history_service.read_chat_history(
             if user_text != '':
                 if await self.chat_history_service.is_message_deprecated(2, message, reply_to_message_id):
                     return self.empty_response

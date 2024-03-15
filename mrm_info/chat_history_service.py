@@ -72,7 +72,6 @@ class ChatHistoryService:
         latest_date = 0
         for log_file in sorted(log_files, reverse=True):
             try:
-                # Extract date from file_name = f'{message_date}_{message_id}.json'
                 message_date = int(log_file.split('_')[0])
                 latest_date = max(latest_date, message_date)
             except Exception as e:
