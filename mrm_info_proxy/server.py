@@ -54,13 +54,14 @@ async def call_request_1c(request: Request):
         onec_request = OneC_Request('1c.json')
         result_dfs = onec_request.execute_query(query_params)
         
-        # Create a dictionary to store the result strings for each key
+        # Create a dictionary to store the structured JSON for each key
         result_dict = {}
         
         # Iterate over the keys and DataFrames in result_dfs
         for key, df in result_dfs.items():
-            # Convert the DataFrame to a string and store it in the result dictionary
-            result_dict[key] = df.to_string(index=False)
+            # Convert the DataFrame to a list of dictionaries
+            data = df.to_dict(orient='records')
+            result_dict[key] = data
         
         logger.info(f"Received from mrm_logs:\n{result_dict}")
         return JSONResponse(content={"result": result_dict})
