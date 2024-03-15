@@ -55,6 +55,7 @@ class ChatHistoryService:
         return False
     
     async def date_of_latest_message(self, chat_id: str):
+        self.logger.info(f'DEBUG: date_of_latest_message chat_id: {chat_id}')
         chat_log_path = self.chat_log_path(chat_id)
         Path(chat_log_path).mkdir(parents=True, exist_ok=True)
         log_files = os.listdir(chat_log_path)
@@ -65,7 +66,7 @@ class ChatHistoryService:
 
         self.logger.info(f'Chat history for chat_id: {chat_id} is {len(log_files)} messages.')
 
-        latest_date = 0
+        latest_date = '0'
         for log_file in sorted(log_files, reverse=True):
             try:
                 # Extract date from file_name = f'{message_date}_{message_id}.json'
