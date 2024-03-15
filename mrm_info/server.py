@@ -21,7 +21,7 @@ class Application:
         self.photo_description_service = PhotoDescriptionService(
             self.config_manager.get("temp_dir"), 
             self.config_manager.get("api_key"),
-            self.logger
+            logger = self.logger
             )
         self.onec_service = OneCProxyService(
             self.config_manager.get("onec_base_url"),
@@ -91,8 +91,7 @@ class Application:
                     self.logger.info('Photo detected, getting description...')
                     description = await self.photo_description_service.get_photo_description(
                             bot, 
-                            message,
-                            logger = self.logger
+                            message
                             )
                     description = str(description)
                     self.logger.info(f'Photo description: {description}')
