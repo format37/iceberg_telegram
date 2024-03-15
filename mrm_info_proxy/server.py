@@ -54,11 +54,16 @@ async def call_request_1c(request: Request):
         onec_request = OneC_Request('1c.json')
         result_dfs = onec_request.execute_query(query_params)
         
-        # Convert each DataFrame to a string and concatenate them
-        result_str = '\n'.join(df for df in result_dfs)
+        # Create a dictionary to store the result strings for each key
+        result_dict = {}
         
-        logger.info(f"Received from mrm_logs:\n{result_str}")
-        return JSONResponse(content={"result": result_str})
+        # Iterate over the keys and DataFrames in result_dfs
+        for key, df in result_dfs.items():
+            # Convert the DataFrame to a string and store it in the result dictionary
+            result_dict[key] = df.to_string(index=False)
+        
+        logger.info(f"Received from mrm_logs:\n{result_dict}")
+        return JSONResponse(content={"result": result_dict})
     except Exception as e:
         logger.error(f"Error in call_request_1c: {str(e)}")
         raise HTTPException(status_code=500, detail="Internal Server Error")
