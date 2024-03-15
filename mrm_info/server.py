@@ -93,6 +93,7 @@ class Application:
                             bot, 
                             message
                             )
+                    description = str(description)
                     self.logger.info(f'Photo description: {description}')
                     message_text += description
                     if 'text' in message:
