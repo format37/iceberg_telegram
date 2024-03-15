@@ -22,7 +22,7 @@ class ChatHistoryService:
             user_name, 
             event_id='default'
             ):
-        self.logger.info(f'[{event_id}] Saving message to chat history for chat_id: {chat_id}')
+        self.logger.info(f'[{event_id}] Saving message to chat history for chat_id: {chat_id} for message_id: {message_id}')
         message_date = py_time.strftime('%Y-%m-%d-%H-%M-%S', py_time.localtime())
         log_file_name = f'{message_date}_{message_id}_{event_id}.json'
 

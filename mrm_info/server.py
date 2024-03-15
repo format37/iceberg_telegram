@@ -111,8 +111,9 @@ class Application:
                 return self.empty_response
 
             # Save to chat history
-            await self.chat_history_service.save_to_chat_history(
-                message['chat']['id'],
+            # message['chat']['id'],
+            await self.chat_history_service.save_to_chat_history(                
+                message['message_id'],
                 message_text,
                 message['message_id'],
                 'HumanMessage',
