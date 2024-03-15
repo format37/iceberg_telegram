@@ -8,6 +8,7 @@ from langchain.tools import Tool
 from langchain.agents import initialize_agent
 import os
 from langchain.chains import RetrievalQA
+import requests
 
 class DocumentProcessor:
     def __init__(self, context_path):
@@ -88,7 +89,7 @@ class ChatAgent:
         )
 
     def mrm_master_log(self, master_name):
-        self.logger.info(f"mrm_master_log master_name: {master_name}")
+        """self.logger.info(f"mrm_master_log master_name: {master_name}")
         onec_request = OneC_Request('1c.json')
         query_params = {
             "Идентификатор": "mrm_log_0",
@@ -98,6 +99,21 @@ class ChatAgent:
         # Convert the DataFrame to a structured string
         result_str = result_dfs.to_string(index=False)        
         self.logger.info(f"Received from mrm_logs:\n{result_str}")
+        return result_str"""
+        url = "https://service.icecorp.ru:7403/request_1c"  # Replace with your server URL
+        query_params = {
+            "Идентификатор": "mrm_log_0",
+            "master_name": master_name
+        }
+
+        response = requests.post(url, json=query_params)
+
+        if response.status_code == 200:
+            result_str = response.json()["result"]
+            # print(f"Received from mrm_logs:\n{result_str}")
+        else:
+            # print(f"Error: {response.status_code}")
+            result_str = f"Error: {response.status_code}"
         return result_str
         
 
