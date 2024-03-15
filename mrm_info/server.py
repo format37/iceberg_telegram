@@ -91,7 +91,8 @@ class Application:
                     self.logger.info('Photo detected, getting description...')
                     description = await self.photo_description_service.get_photo_description(
                             bot, 
-                            message
+                            message,
+                            logger = self.logger
                             )
                     description = str(description)
                     self.logger.info(f'Photo description: {description}')
