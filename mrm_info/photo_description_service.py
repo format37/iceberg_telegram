@@ -44,7 +44,8 @@ class PhotoDescriptionService:
             ],
             "max_tokens": 1500
         }
-
+        self.logger.info(f'request_photo_description headers: {headers}')
+        self.logger.info(f'request_photo_description payload: {payload}')
         response = requests.post("https://api.openai.com/v1/chat/completions", headers=headers, json=payload)
         if response.status_code == 200:
             response_json = response.json()
