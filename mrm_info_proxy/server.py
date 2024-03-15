@@ -45,6 +45,31 @@ async def call_actual_version(request: Request):
         "link": apk_link
         })
 
+"""@app.post("/request_1c")
+async def call_request_1c(request: Request):
+    logger.info(f'call_request_1c. request: {request}')
+    try:
+        query_params = await request.json()
+        logger.info(f"request_1c query_params: {query_params}")
+        onec_request = OneC_Request('1c.json')
+        result_dfs = onec_request.execute_query(query_params)
+        
+        # Create a dictionary to store the result strings for each key
+        result_dict = {}
+        
+        # Iterate over the keys and DataFrames in result_dfs
+        for key, df in result_dfs.items():
+            # Convert the DataFrame to a string and store it in the result dictionary
+            result_dict[key] = df.to_string(index=False)
+        
+        logger.info(f"Received from mrm_logs:\n{result_dict}")
+        return JSONResponse(content={"result": result_dict})
+    except Exception as e:
+        logger.error(f"Error in call_request_1c: {str(e)}")
+        raise HTTPException(status_code=500, detail="Internal Server Error")"""
+
+import numpy as np
+
 @app.post("/request_1c")
 async def call_request_1c(request: Request):
     logger.info(f'call_request_1c. request: {request}')
@@ -52,13 +77,16 @@ async def call_request_1c(request: Request):
         query_params = await request.json()
         logger.info(f"request_1c query_params: {query_params}")
         onec_request = OneC_Request('1c.json')
-        result_dfs = onec_request.execute_query(query_params, df_dtype=str)
+        result_dfs = onec_request.execute_query(query_params)
         
         # Create a dictionary to store the structured JSON for each key
         result_dict = {}
         
         # Iterate over the keys and DataFrames in result_dfs
         for key, df in result_dfs.items():
+            # Convert nan values to None
+            df = df.replace({np.nan: None})
+            
             # Convert the DataFrame to a list of dictionaries
             data = df.to_dict(orient='records')
             result_dict[key] = data
