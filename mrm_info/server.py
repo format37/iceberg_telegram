@@ -153,14 +153,6 @@ class Application:
                 answer = reply + '\n]'
 
             # Save to chat history
-            """await self.chat_history_service.save_to_chat_history(
-                message['chat']['id'],
-                answer,
-                message['message_id'],
-                'AIMessage',
-                message['from']['first_name'],
-                'configuration'
-            )"""
             await self.chat_history_service.save_to_chat_history(
                 message['message_id'],
                 answer,
