@@ -9,6 +9,7 @@ import logging
 import json
 from langchain_environment import ChatAgent, DocumentProcessor
 # import uvicorn
+import os
 
 class Application:
     def __init__(self):
@@ -20,7 +21,7 @@ class Application:
             )
         self.photo_description_service = PhotoDescriptionService(
             self.config_manager.get("temp_dir"), 
-            self.config_manager.get("api_key"),
+            os.environ.get('OPENAI_API_KEY', ''),
             logger = self.logger
             )
         self.onec_service = OneCProxyService(
