@@ -88,16 +88,18 @@ class Application:
             # Photo description
             if 'photo' in message:
                 try:
+                    self.logger.info('Photo detected, getting description...')
                     description = await self.photo_description_service.get_photo_description(
                             bot, 
                             message
                             )
+                    self.logger.info(f'Photo description: {description}')
                     message_text += description
                     if 'text' in message:
                         message_text += '\nUser comment: '
                 except Exception as e:
                     # Handle exception, perhaps log it or send a message to admin
-                    print(f"Error during photo description: {e}")
+                    self.logger.info(f"Error during photo description: {e}")
 
             if 'text' in message:
                 message_text += message['text']
