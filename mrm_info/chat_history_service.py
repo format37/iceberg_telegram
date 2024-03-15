@@ -69,7 +69,7 @@ class ChatHistoryService:
 
         self.logger.info(f'Chat history for chat_id: {chat_id} is {len(log_files)} messages.')
 
-        latest_date = '0'
+        latest_date = 0
         for log_file in sorted(log_files, reverse=True):
             try:
                 # Extract date from file_name = f'{message_date}_{message_id}.json'
