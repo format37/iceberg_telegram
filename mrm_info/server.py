@@ -90,6 +90,11 @@ class Application:
             else:
                 reply_to_message_id = message['message_id']
 
+            if 'message_thread_id' in message
+                message_thread_id = message['message_thread_id']
+            else:
+                message_thread_id = message['message_id']
+
             message_text = ''
             bot = telebot.TeleBot(token)
 
@@ -120,9 +125,9 @@ class Application:
             # Save to chat history
             # message['chat']['id'],
             await self.chat_history_service.save_to_chat_history(                
-                message['message_id'],
+                message_thread_id,
                 message_text,
-                message['message_id'],
+                message_thread_id,
                 'HumanMessage',
                 message['from']['first_name'],
                 '0_incoming',
@@ -162,9 +167,9 @@ class Application:
 
             # Save to chat history
             await self.chat_history_service.save_to_chat_history(
-                message['message_id'],
+                message_thread_id,
                 answer,
-                message['message_id'],
+                message_thread_id,
                 'AIMessage',
                 message['from']['first_name'],
                 '1_configuration',
@@ -175,7 +180,7 @@ class Application:
                 bot.send_message(
                     message['chat']['id'], 
                     answer, 
-                    reply_to_message_id=message['message_id']
+                    reply_to_message_id=message_thread_id
                     )
             
             user_text = message_text
@@ -186,7 +191,7 @@ class Application:
             
             # Read chat history in LLM fromat
             # chat_history = await self.chat_history_service.read_chat_history(message['chat']['id'])
-            chat_history = await self.chat_history_service.read_chat_history(message['message_id'])
+            chat_history = await self.chat_history_service.read_chat_history(message_thread_id)
             # chat_history = await self.chat_history_service.read_chat_history(
             if user_text != '':
                 if await self.chat_history_service.is_message_deprecated(2, message, reply_to_message_id):
@@ -222,10 +227,18 @@ class Application:
                     return self.empty_response
                 
                 # Save to chat history
-                await self.chat_history_service.save_to_chat_history(
+                """await self.chat_history_service.save_to_chat_history(
                     message['chat']['id'],
                     answer,
-                    message['message_id'],
+                    message_thread_id,
+                    'AIMessage',
+                    message['from']['first_name'],
+                    '1_llm'
+                )"""
+                await self.chat_history_service.save_to_chat_history(
+                    message_thread_id,
+                    answer,
+                    message_thread_id,
                     'AIMessage',
                     message['from']['first_name'],
                     '1_llm'
