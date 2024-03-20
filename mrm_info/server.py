@@ -38,6 +38,14 @@ class Application:
             )
         self.retriever = self.document_processor.process_documents(self.logger)
 
+        self.chat_agent = ChatAgent(
+            retriever=self.retriever, 
+            model=self.config_manager.get("model"), 
+            temperature=self.config_manager.get("temperature"),
+            logger=self.logger
+            )
+        self.chat_agent.initialize_agent()
+
     def text_response(self, text):
         return JSONResponse(content={"type": "text", "body": str(text)})
 
@@ -198,14 +206,16 @@ Retrieval search database содержит набор ответов на час
 Можете предоставить ваши "размышления вслух" или задать уточняющие вопросы если необходимо.
 """
                 message_text = message_text.replace('\n', ' ')
-                chat_agent = ChatAgent(
+                """chat_agent = ChatAgent(
                     retriever=self.retriever, 
                     model=self.config_manager.get("model"), 
                     temperature=self.config_manager.get("temperature"),
                     logger=self.logger
                     )
-                await chat_agent.initialize_agent()
-                answer = chat_agent.agent.run(
+                await chat_agent.initialize_agent()"""
+                # Log the count of messages in chat history
+                self.logger.info(f'Calling LLM with chat history length: {len(chat_history)}')
+                answer = self.chat_agent.agent.run(
                     input=message_text, 
                     chat_history=chat_history
                 )

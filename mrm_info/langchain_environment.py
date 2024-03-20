@@ -49,13 +49,13 @@ class ChatAgent:
         self.logger.info(f'ChatAgent init with model: {model} and temperature: {temperature}')
         # self.config = bot_instance.config
         self.config = {
-            'model': model, # 'gpt-4-1106-preview' or 'gpt-3.5-turbo'
+            'model': model,
             'temperature': temperature
         }
         self.retriever = retriever
         self.agent = None        
 
-    async def initialize_agent(self):
+    def initialize_agent(self):
         llm = ChatOpenAI(
             openai_api_key=os.environ.get('OPENAI_API_KEY', ''),
             model=self.config['model'],
