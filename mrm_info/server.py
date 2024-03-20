@@ -178,10 +178,12 @@ class Application:
                 for item in results:
                     if isinstance(item, dict):
                         # results_as_strings.append(json.dumps(item, ensure_ascii=False))
-                        current_result = ''
+                        current_result = '{'
                         for key, value in item.items():
-                            current_result += f'{key}: {value}\n'
+                            current_result += f'"{key}": "{value}",\n'
+                        current_result += '}'
                         results_as_strings.append(current_result)
+
                     else:
                         results_as_strings.append(str(item))
                 # Now you can safely join the string representations of your results
