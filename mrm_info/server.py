@@ -162,7 +162,7 @@ class Application:
                         else:
                             results[info_id]['is_update_required'] = f'Необходимо обновление приложения до версии {actual_version_info["version"]}!'
                         # Add current date to the results. Get date from the system time
-                        results[info_id]['current_date'] = f'Текущая дата: {datetime.datetime.now().strftime("%d-%m-%Y %H:%M:%S")}'
+                        results[info_id]['current_date'] = f'{datetime.datetime.now().strftime("%d-%m-%Y %H:%M:%S")}'
                             
                 else:
                     results.append('Техническая информация о пользователе недоступна')
