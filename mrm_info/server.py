@@ -151,7 +151,7 @@ class Application:
                 actual_version_info = await self.onec_service.get_actual_version()
                 if 'forward_origin' in message and 'forward_from' in message:
                     results = await self.onec_service.get_user_info(message['forward_from']['id'])
-                    for info_id in len(results):
+                    for info_id in range(len(results)):
                         # results[info_id] = json.loads(results[info_id])
                         tech_info = results[info_id]
                         app_version = tech_info['app_version']
