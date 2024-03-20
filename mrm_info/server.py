@@ -117,7 +117,8 @@ class Application:
                 message['message_id'],
                 'HumanMessage',
                 message['from']['first_name'],
-                'incoming'
+                '0_incoming',
+                date_override=message['date']
             )
 
             if 'reply_to_message' in message:
@@ -158,7 +159,7 @@ class Application:
                 message['message_id'],
                 'AIMessage',
                 message['from']['first_name'],
-                'configuration',
+                '1_configuration',
                 date_override=message['date']
             )
 
@@ -219,7 +220,7 @@ Retrieval search database содержит набор ответов на час
                     message['message_id'],
                     'AIMessage',
                     message['from']['first_name'],
-                    'llm'
+                    '1_llm'
                 )
 
                 self.logger.info('Replying in '+str(message['chat']['id']))
