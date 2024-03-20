@@ -134,7 +134,9 @@ class Application:
                 date_override=message['date']
             )
 
-            if 'reply_to_message' in message:
+            if 'reply_to_message' in message and \
+                'from' in message['reply_to_message'] and \
+                'username' in message['reply_to_message']['from']:
                 if 'mrminfotestbot' in message['reply_to_message']['from']['username'] or \
                     'mrminfobot' in message['reply_to_message']['from']['username']:
                     pass # Ok, we need to reply to direct message to bot
