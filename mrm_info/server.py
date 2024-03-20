@@ -209,7 +209,7 @@ class Application:
 """
                 else:
                     message_text = f"""Вы сотрудник технической поддержки Мобильного приложения мастера.
-Помогите коллегам, учитывая контекст переписки. На данный момент к вам обращаются с сообщением: {user_text}"""
+Помогите коллегам, учитывая контекст переписки. Используйте доступные вам инструменты, если это имеет смысл. На данный момент к вам обращаются с сообщением: {user_text}"""
                 # message_text = message_text.replace('\n', ' ')
                 # Log the count of messages in chat history
                 self.logger.info(f'Calling LLM with chat history length: {len(chat_history)}')
