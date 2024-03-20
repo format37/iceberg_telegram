@@ -11,6 +11,7 @@ import json
 from langchain_environment import ChatAgent, DocumentProcessor
 import os
 import ast
+import datetime
 
 class Application:
     def __init__(self):
@@ -160,6 +161,8 @@ class Application:
                             results[info_id]['is_update_required'] = f'Версия актуальна. Обновление не требуется.'
                         else:
                             results[info_id]['is_update_required'] = f'Необходимо обновление приложения до версии {actual_version_info["version"]}!'
+                        # Add current date to the results. Get date from the system time
+                        results[info_id]['current_date'] = f'Текущая дата: {datetime.datetime.now().strftime("%d-%m-%Y %H:%M:%S")}'
                             
                 else:
                     results.append('Техническая информация о пользователе недоступна')
