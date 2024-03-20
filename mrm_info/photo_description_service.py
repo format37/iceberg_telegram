@@ -27,10 +27,13 @@ class PhotoDescriptionService:
     async def remove_temp_file(self, file_path):
         os.remove(file_path)
 
-    async def request_photo_description(self, image_base64):
+    async def request_photo_description(self, image_base64, caption=''):
         headers = {"Content-Type": "application/json", "Authorization": f"Bearer {self.api_key}"}
-        prompt_text = "Пожалуйста, опишите максимально детально, что вы видите на этом изображении?"
-
+        if caption != '':
+            prompt_text = f"Пожалуйста, опишите максимально детально, что вы видите на этом изображении, в контексте комментария пользователя: {caption}"
+        else:
+            prompt_text += "Пожалуйста, опишите максимально детально, что вы видите на этом изображении?"
+        self.logger.info(f'request_photo_description request: {prompt_text}')
         payload = {
             "model": self.llm_model,
             "messages": [
@@ -60,12 +63,13 @@ class PhotoDescriptionService:
         file_path = await self.download_photo(bot, photo_id)
 
         try:
-            base64_image = await self.encode_image_to_base64(file_path)
-            description = await self.request_photo_description(base64_image)
-            user_text += '\nОписание скриншота, который прислал пользователь:\n' + description
-
             if 'caption' in message:
-                user_text += '\nUser comment: ' + message['caption']
+                caption = message['caption']
+            base64_image = await self.encode_image_to_base64(file_path)
+            description = await self.request_photo_description(base64_image, caption)
+            user_text += '\nОписание скриншота, который прислал пользователь:\n' + description
+            if 'caption' in message:
+                user_text += '\nUser comment: ' + caption
         finally:
             await self.remove_temp_file(file_path)
 

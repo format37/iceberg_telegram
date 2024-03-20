@@ -71,8 +71,7 @@ class Application:
                 '-1002087087929' # TehPodMRM Comments
             ]
             
-            answer = """Система временно находится на техническом обслуживании.
-Приносим извенение за доставленные неудобства."""
+            answer = ""
             if not str(message['chat']['id']) in granted_chats:
                 return self.empty_response
             if 'message_thread_id' in message:
@@ -163,11 +162,12 @@ class Application:
                 date_override=message['date']
             )
 
-            bot.send_message(
-                message['chat']['id'], 
-                answer, 
-                reply_to_message_id=message['message_id']
-                )
+            if answer != '':
+                bot.send_message(
+                    message['chat']['id'], 
+                    answer, 
+                    reply_to_message_id=message['message_id']
+                    )
             
             user_text = message_text
             self.logger.info(f'[4] DEBUG: User text: {user_text}')
