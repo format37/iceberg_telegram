@@ -192,7 +192,8 @@ class Application:
                 if await self.chat_history_service.is_message_deprecated(2, message, reply_to_message_id):
                     return self.empty_response
                 user_info = str(results) if len(results) > 0 else "Not provided" # Tech info from 1C
-                message_text = f"""Вы сотрудник технической поддержки Мобильного приложения мастера.
+                if len(chat_history) < 3:
+                    message_text = f"""Вы сотрудник технической поддержки Мобильного приложения мастера.
 К нам поступил запрос от пользователя: "{user_text}"
 Разработчик приложения тоже увидел это сообщение.
 Техническая информация о пользвателе:
@@ -206,14 +207,10 @@ class Application:
 Используйте пустые строки для разделения абзацев.
 Можете предоставить ваши "размышления вслух" или задать уточняющие вопросы если необходимо.
 """
-                message_text = message_text.replace('\n', ' ')
-                """chat_agent = ChatAgent(
-                    retriever=self.retriever, 
-                    model=self.config_manager.get("model"), 
-                    temperature=self.config_manager.get("temperature"),
-                    logger=self.logger
-                    )
-                await chat_agent.initialize_agent()"""
+                else:
+                    message_text = f"""Вы сотрудник технической поддержки Мобильного приложения мастера.
+Помогите коллегам, учитывая контекст переписки. На данный момент к вам обращаются с сообщением: {user_text}"""
+                # message_text = message_text.replace('\n', ' ')
                 # Log the count of messages in chat history
                 self.logger.info(f'Calling LLM with chat history length: {len(chat_history)}')
                 answer = self.chat_agent.agent.run(
