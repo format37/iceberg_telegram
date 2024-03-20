@@ -165,16 +165,16 @@ class Application:
                 reply += ',\n'.join(results_as_strings)
                 answer = reply + '\n]'
 
-            # Save to chat history
-            await self.chat_history_service.save_to_chat_history(
-                message_thread_id,
-                answer,
-                message_thread_id,
-                'AIMessage',
-                message['from']['first_name'],
-                '1_configuration',
-                date_override=message['date']
-            )
+                # Save to chat history
+                await self.chat_history_service.save_to_chat_history(
+                    message_thread_id,
+                    answer,
+                    message_thread_id,
+                    'AIMessage',
+                    message['from']['first_name'],
+                    '1_configuration',
+                    date_override=message['date']
+                )
 
             if answer != '':
                 bot.send_message(
