@@ -153,12 +153,14 @@ class Application:
                     results = await self.onec_service.get_user_info(message['forward_from']['id'])
                     for info_id in range(len(results)):
                         self.logger.info(f'# DEBUG results: {results}')
-                        tech_info = results[info_id]
+                        # Convert item to JSON using ast
+                        results[info_id] = ast.literal_eval(results[info_id])                        
+                        # tech_info = results[info_id]
                         # convert tech_info string to dictionary using ast.literal_eval()
-                        self.logger.info(f'> DEBUG tech_info type: {type(tech_info)}')
-                        tech_info = ast.literal_eval(tech_info)
-                        self.logger.info(f'< DEBUG tech_info type: {type(tech_info)}')
-                        app_version = tech_info['app_version']
+                        # self.logger.info(f'> DEBUG tech_info type: {type(tech_info)}')
+                        # tech_info = ast.literal_eval(tech_info)
+                        # self.logger.info(f'< DEBUG tech_info type: {type(tech_info)}')
+                        app_version = results[info_id]['app_version']
                         if app_version == actual_version_info['version']:
                             results[info_id]['is_update_required'] = f'Версия актуальна. Обновление не требуется.'
                         else:
