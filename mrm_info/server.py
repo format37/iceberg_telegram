@@ -173,7 +173,7 @@ class Application:
                     results.append(new_element)
 
                 # Before joining the results, convert each item to a string if it's not already one
-                results_as_strings = [json.dumps(item) if isinstance(item, dict) else str(item) for item in results]
+                results_as_strings = [json.dumps(item, ensure_ascii=False) if isinstance(item, dict) else str(item) for item in results]
                 # Now you can safely join the string representations of your results
                 reply += ',\n'.join(results_as_strings)
                 answer = reply + '\n]'
