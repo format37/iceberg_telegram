@@ -8,8 +8,8 @@ import telebot
 import logging
 import json
 from langchain_environment import ChatAgent, DocumentProcessor
-# import uvicorn
 import os
+import ast
 
 class Application:
     def __init__(self):
@@ -152,18 +152,16 @@ class Application:
                 if 'forward_origin' in message and 'forward_from' in message:
                     results = await self.onec_service.get_user_info(message['forward_from']['id'])
                     for info_id in range(len(results)):
-                        # results[info_id] = json.loads(results[info_id])
                         self.logger.info(f'# DEBUG results: {results}')
                         tech_info = results[info_id]
-                        # convert tech_info string to json
+                        # convert tech_info string to dictionary using ast.literal_eval()
                         self.logger.info(f'> DEBUG tech_info type: {type(tech_info)}')
-                        tech_info = json.loads(tech_info)
+                        tech_info = ast.literal_eval(tech_info)
                         self.logger.info(f'< DEBUG tech_info type: {type(tech_info)}')
                         app_version = tech_info['app_version']
                         if app_version == actual_version_info['version']:
-                            results[info_id]['is_update_required'] = f'Версия актуальна. Обновление не  требуется.'
+                            results[info_id]['is_update_required'] = f'Версия актуальна. Обновление не требуется.'
                         else:
-                            # results.append('Версия приложения не актуальна')
                             results[info_id]['is_update_required'] = f'Необходимо обновление приложения до версии {actual_version_info["version"]}!'
                             
                 else:
