@@ -1,4 +1,5 @@
 from langchain_community.tools import StructuredTool
+from langchain_experimental.utilities import PythonREPL
 from langchain_community.document_loaders import TextLoader, DirectoryLoader
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 from langchain.text_splitter import RecursiveCharacterTextSplitter
@@ -39,7 +40,7 @@ class DocumentInput(BaseModel):
     question: str = Field()
 
 class mrm_master_log_args(BaseModel):
-    param: str = Field(description="""Provide the name of master.""")
+    param: str = Field(description="""Предоставьте имя мастера""")
 
 class ChatAgent:
     def __init__(self, retriever, model, temperature, logger):
@@ -63,23 +64,33 @@ class ChatAgent:
         )
         tools = []
         # Tool: Retrieval
-        tools.append(
-            Tool(
+        retrieval_tool = Tool(
                 args_schema=DocumentInput,
                 name='Issue retrieval database',
                 description="Issue retrieval database содержит набор решений различных ситуаций которые имели место в прошлом. Испольуйте как можно чаще что бы найти решение проблемы.",
                 func=RetrievalQA.from_chain_type(llm=llm, retriever=self.retriever),
             )
-        )
+        tools.append(retrieval_tool)
+        # Tool: mrm_master_log
         mrm_logs_tool = StructuredTool.from_function(
                 func=self.mrm_master_log,
-                name="master log",
+                name="Логи мастера",
                 description="Получает последнее сообщение из логов по имени мастера. Вам следует предоставить имя мастера в качестве параметра.",
                 args_schema=mrm_master_log_args,
                 return_direct=False,
                 # coroutine= ... <- you can specify an async method if desired as well
             )
         tools.append(mrm_logs_tool)
+        # Tool python interpreter
+        python_repl = PythonREPL()
+        repl_tool = Tool(
+            name="python_repl",
+            description="A Python shell. Use this to execute python commands. Input should be a valid python command. If you want to see the output of a value, you should print it out with `print(...)`.",
+            func=python_repl.run,
+            return_direct=False,
+        )
+        tools.append(repl_tool)
+
         self.agent = initialize_agent(
             tools,
             llm,
