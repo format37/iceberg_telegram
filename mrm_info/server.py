@@ -124,7 +124,6 @@ class Application:
                 return self.empty_response
 
             # Save to chat history
-            # message['chat']['id'],
             await self.chat_history_service.save_to_chat_history(                
                 message_thread_id,
                 message_text,
