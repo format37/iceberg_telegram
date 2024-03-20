@@ -148,19 +148,29 @@ class Application:
             results = []
             
             if not await self.chat_history_service.configuration_in_history(reply_to_message_id):
+                actual_version_info = await self.onec_service.get_actual_version()
                 if 'forward_origin' in message and 'forward_from' in message:
                     results = await self.onec_service.get_user_info(message['forward_from']['id'])
+                    for info_id in len(results):
+                        # results[info_id] = json.loads(results[info_id])
+                        tech_info = results[info_id]
+                        app_version = tech_info['app_version']
+                        if app_version == actual_version_info['version']:
+                            results[info_id]['is_update_required'] = f'Версия актуальна. Обновление не  требуется.'
+                        else:
+                            # results.append('Версия приложения не актуальна')
+                            results[info_id]['is_update_required'] = f'Необходимо обновление приложения до версии {actual_version_info["version"]}!'
+                            
                 else:
                     results.append('Техническая информация о пользователе недоступна')
                 # Add information about the latest version of the application
-                actual_version_info = await self.onec_service.get_actual_version()
-
                 if len(actual_version_info) > 0:
                     new_element = {
                         'Available Update Version': actual_version_info['version'],
                         'Update link': actual_version_info['link']
                     }
                     results.append(new_element)
+
                 # Before joining the results, convert each item to a string if it's not already one
                 results_as_strings = [json.dumps(item) if isinstance(item, dict) else str(item) for item in results]
                 # Now you can safely join the string representations of your results
