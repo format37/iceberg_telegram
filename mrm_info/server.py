@@ -185,7 +185,8 @@ class Application:
                 return self.empty_response
             
             # Read chat history in LLM fromat
-            chat_history = await self.chat_history_service.read_chat_history(message['chat']['id'])
+            # chat_history = await self.chat_history_service.read_chat_history(message['chat']['id'])
+            chat_history = await self.chat_history_service.read_chat_history(message['message_id'])
             # chat_history = await self.chat_history_service.read_chat_history(
             if user_text != '':
                 if await self.chat_history_service.is_message_deprecated(2, message, reply_to_message_id):
