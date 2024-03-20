@@ -66,8 +66,8 @@ class ChatAgent:
         tools.append(
             Tool(
                 args_schema=DocumentInput,
-                name='Retrieval search database',
-                description="Questions, answers, instructions",
+                name='Issue retrieval database',
+                description="Issue retrieval database содержит набор решений различных ситуаций которые имели место в прошлом. Испольуйте как можно чаще что бы найти решение проблемы.",
                 func=RetrievalQA.from_chain_type(llm=llm, retriever=self.retriever),
             )
         )
