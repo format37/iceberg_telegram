@@ -90,7 +90,7 @@ class Application:
             else:
                 reply_to_message_id = message['message_id']
 
-            if 'message_thread_id' in message
+            if 'message_thread_id' in message:
                 message_thread_id = message['message_thread_id']
             else:
                 message_thread_id = message['message_id']
