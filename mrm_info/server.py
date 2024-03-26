@@ -64,7 +64,8 @@ class Application:
             message = await request.json()
             self.logger.info(message)
 
-            if 'forward_from' in message:
+            if 'forward_from' in message or \
+                ('reply_to_message' in message and message['reply_to_message']['from']['is_bot']):
                 pass # Ok, we need to send a tech report
             else:
                 # Return empty
