@@ -143,6 +143,7 @@ class Application:
                     pass # Ok, we need to reply to direct message to bot
                 else:
                     # Return empty
+                    self.logger.info('0: Not a reply to bot')
                     return self.empty_response
             
             reply = '[\n'
@@ -225,7 +226,12 @@ class Application:
                     pass # Ok, we need to reply to direct message to bot
                 else:
                     # Return empty
+                    self.logger.info('1: Not a reply to bot')
                     return self.empty_response
+            else:
+                # Return empty
+                self.logger.info('2: Not a reply to bot')
+                return self.empty_response
             
             # Read chat history in LLM fromat
             # chat_history = await self.chat_history_service.read_chat_history(message['chat']['id'])
