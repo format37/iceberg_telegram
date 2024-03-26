@@ -216,6 +216,17 @@ class Application:
             if await self.chat_history_service.is_message_deprecated(1, message, reply_to_message_id):
                 return self.empty_response
             
+            # Avoid of answering if message is not reply to bot
+            if 'reply_to_message' in message and \
+                'from' in message['reply_to_message'] and \
+                'username' in message['reply_to_message']['from']:
+                if 'mrminfotestbot' in message['reply_to_message']['from']['username'] or \
+                    'mrminfobot' in message['reply_to_message']['from']['username']:
+                    pass # Ok, we need to reply to direct message to bot
+                else:
+                    # Return empty
+                    return self.empty_response
+            
             # Read chat history in LLM fromat
             # chat_history = await self.chat_history_service.read_chat_history(message['chat']['id'])
             chat_history = await self.chat_history_service.read_chat_history(message_thread_id)
