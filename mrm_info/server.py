@@ -68,6 +68,15 @@ class Application:
                 ('reply_to_message' in message and message['reply_to_message']['from']['is_bot']):
                 pass # Ok, we need to send a tech report
             else:
+                # Save to hostory
+                await self.chat_history_service.save_to_chat_history(
+                    message['message_id'],
+                    message['text'],
+                    message['message_id'],
+                    'HumanMessage',
+                    message['from']['first_name'],
+                    '0_incoming'
+                )
                 # Return empty
                 self.logger.info('0: Not a reply to bot')
                 return self.empty_response
