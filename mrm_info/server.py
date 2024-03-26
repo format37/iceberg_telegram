@@ -64,6 +64,13 @@ class Application:
             message = await request.json()
             self.logger.info(message)
 
+            if 'forward_from' in message:
+                pass # Ok, we need to send a tech report
+            else:
+                # Return empty
+                self.logger.info('0: Not a reply to bot')
+                return self.empty_response
+
             token = None
             if authorization and authorization.startswith("Bearer "):
                 token = authorization.split(" ")[1]
