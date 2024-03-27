@@ -133,9 +133,11 @@ class ChatAgent:
             filename = f"/tmp/{uid_name}.txt"
             with open(filename, "w") as f:
                 f.write(str(result_str))
+                self.logger.info(f"Logs saved to {filename}")
             # Send file to the user via bot
             # self.bot_instance.send_file(f"/tmp/{uid_name}.txt")
             with open(filename, 'rb') as f:
+                self.logger.info(f"Sending {filename} to the chat_id: {self.chat_id}")
                 self.bot_instance.send_document(
                     self.chat_id, # Working only with a single chat_id
                     f
