@@ -40,13 +40,14 @@ class Application:
             )
         self.retriever = self.document_processor.process_documents(self.logger)
 
-        self.chat_agent = ChatAgent(
+        self.chat_agent = None
+        """self.chat_agent = ChatAgent(
             retriever=self.retriever, 
             model=self.config_manager.get("model"), 
             temperature=self.config_manager.get("temperature"),
             logger=self.logger
             )
-        self.chat_agent.initialize_agent()
+        self.chat_agent.initialize_agent()"""
 
     def text_response(self, text):
         return JSONResponse(content={"type": "text", "body": str(text)})
@@ -63,6 +64,16 @@ class Application:
             self.logger.info('handle_message')
             message = await request.json()
             self.logger.info(message)
+
+            granted_chats = [
+                '-1001853379941', # MRM master info МРМ мастер, 
+                '-1002094333974', # botchat (test)
+                '-1002087087929' # TehPodMRM Comments
+            ]
+            
+            answer = ""
+            if not str(message['chat']['id']) in granted_chats:
+                return self.empty_response
 
             if 'forward_from' in message or \
                 ('reply_to_message' in message and message['reply_to_message']['from']['is_bot']):
@@ -91,16 +102,7 @@ class Application:
                 answer = """Не удалось определить токен бота.
 Пожалуйста обратитесь к администратору."""
                 return self.text_response(answer)
-
-            granted_chats = [
-                '-1001853379941', # MRM master info МРМ мастер, 
-                '-1002094333974', # botchat (test)
-                '-1002087087929' # TehPodMRM Comments
-            ]
             
-            answer = ""
-            if not str(message['chat']['id']) in granted_chats:
-                return self.empty_response
             if 'message_thread_id' in message:
                 reply_to_message_id = message['message_thread_id']
             elif 'reply_to_message' in message and \
@@ -277,6 +279,18 @@ class Application:
                     message_text = f"""Вы сотрудник технической поддержки Мобильного приложения мастера.
 Помогите коллегам, учитывая контекст переписки. Используйте доступные вам инструменты, если это имеет смысл. На данный момент к вам обращаются с сообщением: {user_text}"""
                 # message_text = message_text.replace('\n', ' ')
+                    
+                if self.chat_agent is None:
+                    self.chat_agent = ChatAgent(
+                        retriever=self.retriever,
+                        model=self.config_manager.get("model"),
+                        temperature=self.config_manager.get("temperature"),
+                        logger=self.logger,
+                        bot_instance=bot, # Working only with a single bot
+                        chat_id=message['chat']['id']
+                        )
+                    self.chat_agent.initialize_agent()
+
                 # Log the count of messages in chat history
                 self.logger.info(f'Calling LLM with chat history length: {len(chat_history)}')
                 answer = self.chat_agent.agent.run(

@@ -10,6 +10,7 @@ from langchain.agents import initialize_agent
 import os
 from langchain.chains import RetrievalQA
 import requests
+import uuid
 
 class DocumentProcessor:
     def __init__(self, context_path):
@@ -43,7 +44,7 @@ class mrm_master_log_args(BaseModel):
     param: str = Field(description="""Предоставьте имя мастера""")
 
 class ChatAgent:
-    def __init__(self, retriever, model, temperature, logger):
+    def __init__(self, retriever, model, temperature, logger, bot_instance, chat_id):
         # Initialize logging
         # logging.basicConfig(level=logging.INFO)
         self.logger = logger
@@ -54,7 +55,9 @@ class ChatAgent:
             'temperature': temperature
         }
         self.retriever = retriever
-        self.agent = None        
+        self.agent = None
+        self.bot_instance = bot_instance
+        self.chat_id = chat_id
 
     def initialize_agent(self):
         llm = ChatOpenAI(
@@ -122,6 +125,22 @@ class ChatAgent:
         if response.status_code == 200:
             result_str = response.json()["result"]
             # print(f"Received from mrm_logs:\n{result_str}")
+            # Save response as temporary file with the unique name
+            uid_name = str(uuid.uuid4())
+            # Create /tmp directory if it doesn't exist
+            if not os.path.exists("/tmp"):
+                os.makedirs("/tmp")
+            filename = f"/tmp/{uid_name}.txt"
+            with open(filename, "w") as f:
+                f.write(result_str)
+            # Send file to the user via bot
+            # self.bot_instance.send_file(f"/tmp/{uid_name}.txt")
+            with open(filename, 'rb') as f:
+                self.bot_instance.send_document(
+                    self.chat_id, # Working only with a single chat_id
+                    f
+                )
+
         else:
             # print(f"Error: {response.status_code}")
             result_str = f"Error: {response.status_code}"
