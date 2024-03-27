@@ -132,7 +132,7 @@ class ChatAgent:
                 os.makedirs("/tmp")
             filename = f"/tmp/{uid_name}.txt"
             with open(filename, "w") as f:
-                f.write(result_str)
+                f.write(str(result_str))
             # Send file to the user via bot
             # self.bot_instance.send_file(f"/tmp/{uid_name}.txt")
             with open(filename, 'rb') as f:
