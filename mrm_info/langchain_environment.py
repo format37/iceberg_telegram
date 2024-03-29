@@ -7,11 +7,12 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.vectorstores import DocArrayInMemorySearch
 from pydantic import BaseModel, Field
 from langchain.tools import Tool
-from langchain.agents import initialize_agent
+# from langchain.agents import initialize_agent
 import os
 from langchain.chains import RetrievalQA
 import requests
 import uuid
+from langchain.agents import initialize_agent, AgentType
 
 class DocumentProcessor:
     def __init__(self, context_path):
@@ -96,11 +97,12 @@ class ChatAgent:
             return_direct=False,
         )
         tools.append(repl_tool)
-
+        # agent_chain = initialize_agent(tools, llm, agent=AgentType.STRUCTURED_CHAT_ZERO_SHOT_REACT_DESCRIPTION)
         self.agent = initialize_agent(
             tools,
             llm,
-            agent='chat-conversational-react-description',
+            # agent='chat-conversational-react-description',
+            agent=AgentType.STRUCTURED_CHAT_ZERO_SHOT_REACT_DESCRIPTION,
             verbose=True,
             handle_parsing_errors=True
         )
