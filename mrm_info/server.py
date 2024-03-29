@@ -186,6 +186,8 @@ class Application:
                         results[info_id]['current_date'] = f'{datetime.datetime.now().strftime("%d-%m-%Y %H:%M:%S")}'
                         # Replace 'name' with 'master_name' in the results
                         results[info_id]['master_name'] = results[info_id].pop('name')
+                        # Replace " with ' in the results
+                        results[info_id] = {k.replace('"', "'"): v for k, v in results[info_id].items()}
                             
                 else:
                     results.append('Техническая информация о пользователе недоступна')
@@ -206,7 +208,10 @@ class Application:
                         current_result = '{'
                         for key, value in item.items():
                             current_result += f'"{key}": "{value}",\n'
-                        current_result += '}'
+                        # Remove the last comma
+                        current_result = current_result[:-2]
+                        # Add the new line and close the dictionary
+                        current_result += '\n}'
                         results_as_strings.append(current_result)
 
                     else:
