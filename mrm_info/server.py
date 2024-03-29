@@ -185,7 +185,7 @@ class Application:
                         # Add current date to the results. Get date from the system time
                         results[info_id]['current_date'] = f'{datetime.datetime.now().strftime("%d-%m-%Y %H:%M:%S")}'
                         # Replace 'name' with 'master_name' in the results
-                        results[info_id]['master_name'] = results[info_id].pop('name')
+                        results[info_id]['Имя мастера'] = results[info_id].pop('name')
                             
                 else:
                     results.append('Техническая информация о пользователе недоступна')
