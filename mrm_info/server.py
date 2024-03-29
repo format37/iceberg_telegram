@@ -76,6 +76,7 @@ class Application:
                 return self.empty_response
 
             if 'forward_from' in message or \
+                'forward_origin' in message or \
                 ('reply_to_message' in message and message['reply_to_message']['from']['is_bot']):
                 pass # Ok, we need to send a tech report
             else:
