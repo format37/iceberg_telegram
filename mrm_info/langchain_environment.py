@@ -82,7 +82,7 @@ class ChatAgent:
         mrm_logs_tool = StructuredTool.from_function(
                 func=self.mrm_master_log,
                 name="Логи мастера",
-                description="Получает последнее сообщение из логов по имени мастера. Вам следует предоставить Имя мастера и reply_to_message_id в качестве параметров.",
+                description="Получает последние сообщения из логов по имени мастера. Вам следует предоставить Имя мастера и reply_to_message_id в качестве параметров.",
                 args_schema=mrm_master_log_args,
                 return_direct=False,
                 # coroutine= ... <- you can specify an async method if desired as well
@@ -143,9 +143,9 @@ class ChatAgent:
             # Send file to the user via bot
             # self.bot_instance.send_file(f"/tmp/{uid_name}.txt")
             with open(filename, 'rb') as f:
-                self.logger.info(f"Sending {filename} to the chat_id: {self.chat_id}")
+                self.logger.info(f"Sending {filename} to the chat_id: {reply_to_message_id}")
                 self.bot_instance.send_document(
-                    self.chat_id, # Working only with a single chat_id
+                    reply_to_message_id,
                     f
                 )
 
