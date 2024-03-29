@@ -1,4 +1,5 @@
-from langchain_community.tools import StructuredTool
+# from langchain_community.tools import StructuredTool
+from langchain.tools.base import StructuredTool
 from langchain_experimental.utilities import PythonREPL
 from langchain_community.document_loaders import TextLoader, DirectoryLoader
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
