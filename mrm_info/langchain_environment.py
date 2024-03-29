@@ -148,7 +148,7 @@ class ChatAgent:
                     reply_to_message_id,
                     f
                 )
-
+            result_str = f"Логи отправлены в чат."
         else:
             # print(f"Error: {response.status_code}")
             result_str = f"Error: {response.status_code}"
