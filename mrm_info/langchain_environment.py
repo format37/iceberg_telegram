@@ -133,10 +133,10 @@ class ChatAgent:
             result_str = response.json()["result"]
             first_lines = {}
             # Convert the result_str JSON string to dictionary
-            result_json = json.loads(result_str)
-            for key in result_json:
-                if result_json[key]:
-                    first_lines[key] = [result_json[key][0]]  # Get the first element of each key's array
+            # result_json = json.loads(result_str)
+            for key in result_str:
+                if result_str[key]:
+                    first_lines[key] = [result_str[key][0]]  # Get the first element of each key's array
             answer_str = f"Файл логов в полном составе отправлен в чат. Последняя строка логов: {json.dumps(first_lines)}"  # Convert the dictionary to JSON string
             # print(f"Received from mrm_logs:\n{result_str}")
             # Save response as temporary file with the unique name
