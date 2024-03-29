@@ -14,6 +14,7 @@ import requests
 import uuid
 from langchain.agents import initialize_agent, AgentType
 import json
+import pandas as pd
 
 class DocumentProcessor:
     def __init__(self, context_path):
@@ -110,17 +111,6 @@ class ChatAgent:
 
     def mrm_master_log(self, master_name, reply_to_message_id):
         self.logger.info(f"#### mrm_master_log master_name: {master_name} reply_to_message_id: {reply_to_message_id}")
-        """self.logger.info(f"mrm_master_log master_name: {master_name}")
-        onec_request = OneC_Request('1c.json')
-        query_params = {
-            "Идентификатор": "mrm_log_0",
-            "master_name": master_name
-        }
-        result_dfs = onec_request.execute_query(query_params)
-        # Convert the DataFrame to a structured string
-        result_str = result_dfs.to_string(index=False)        
-        self.logger.info(f"Received from mrm_logs:\n{result_str}")
-        return result_str"""
         url = "https://service.icecorp.ru:7403/request_1c"  # Replace with your server URL
         query_params = {
             "Идентификатор": "mrm_log_0",
@@ -132,13 +122,49 @@ class ChatAgent:
         if response.status_code == 200:
             result_str = response.json()["result"]
             first_lines = {}
+            for key in result_str:
+                if result_str[key]:
+                    first_lines[key] = [result_str[key][0]]
+
+            # Convert the JSON data to a DataFrame
+            df = pd.DataFrame.from_dict(result_str, orient='index')
+            df = df.transpose()
+
+            # Convert the DataFrame to an HTML table
+            html_table = df.to_html(index=False)
+
+            # Save the HTML table as a temporary file with a unique name
+            uid_name = str(uuid.uuid4())
+            if not os.path.exists("/tmp"):
+                os.makedirs("/tmp")
+            filename = f"/tmp/{uid_name}.html"
+            with open(filename, "w") as f:
+                f.write(html_table)
+                self.logger.info(f"HTML table saved to {filename}")
+
+            # Send the HTML file to the user via bot
+            with open(filename, 'rb') as f:
+                self.logger.info(f"Sending {filename} to the chat_id: {reply_to_message_id}")
+                self.bot_instance.send_document(
+                    self.chat_id,
+                    f,
+                    reply_to_message_id=reply_to_message_id
+                )
+
+            answer_str = f"Файл логов в полном составе отправлен в чат. Последняя строка логов: {json.dumps(first_lines)}"
+        else:
+            answer_str = f"Error: {response.status_code}"
+        self.logger.info(f"mrm_master_log answer_str: {answer_str}")
+        return answer_str
+
+        """if response.status_code == 200:
+            result_str = response.json()["result"]
+            first_lines = {}
             # Convert the result_str JSON string to dictionary
-            # result_json = json.loads(result_str)
             for key in result_str:
                 if result_str[key]:
                     first_lines[key] = [result_str[key][0]]  # Get the first element of each key's array
             answer_str = f"Файл логов в полном составе отправлен в чат. Последняя строка логов: {json.dumps(first_lines)}"  # Convert the dictionary to JSON string
-            # print(f"Received from mrm_logs:\n{result_str}")
             # Save response as temporary file with the unique name
             uid_name = str(uuid.uuid4())
             # Create /tmp directory if it doesn't exist
@@ -149,26 +175,18 @@ class ChatAgent:
                 f.write(str(result_str))
                 self.logger.info(f"Logs saved to {filename}")
             # Send file to the user via bot
-            # self.bot_instance.send_file(f"/tmp/{uid_name}.txt")
             with open(filename, 'rb') as f:
                 self.logger.info(f"Sending {filename} to the chat_id: {reply_to_message_id}")
-                # Send to chat
-                """self.bot_instance.send_document(
-                    self.chat_id,
-                    f
-                )"""
                 # Reply to reply_to_message_id as a document
                 self.bot_instance.send_document(
                     self.chat_id,
                     f,
                     reply_to_message_id=reply_to_message_id
                 )
-            # result_str = f"Логи отправлены в чат."
         else:
-            # print(f"Error: {response.status_code}")
             answer_str = f"Error: {response.status_code}"
         self.logger.info(f"mrm_master_log answer_str: {answer_str}")
-        return answer_str
+        return answer_str"""
         
 
     @staticmethod
