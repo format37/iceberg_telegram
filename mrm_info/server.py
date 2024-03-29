@@ -184,6 +184,8 @@ class Application:
                             results[info_id]['is_update_required'] = f'Необходимо обновление приложения до версии {actual_version_info["version"]}!'
                         # Add current date to the results. Get date from the system time
                         results[info_id]['current_date'] = f'{datetime.datetime.now().strftime("%d-%m-%Y %H:%M:%S")}'
+                        # Replace 'name' with 'master_name' in the results
+                        results[info_id]['master_name'] = results[info_id].pop('name')
                             
                 else:
                     results.append('Техническая информация о пользователе недоступна')
@@ -279,7 +281,9 @@ reply_to_message_id: {reply_to_message_id}
 """
                 else:
                     message_text = f"""Вы сотрудник технической поддержки Мобильного приложения мастера.
-Помогите коллегам, учитывая контекст переписки. Используйте доступные вам инструменты, если это имеет смысл. На данный момент к вам обращаются с сообщением: {user_text}"""
+reply_to_message_id: {reply_to_message_id}
+Помогите коллегам, учитывая контекст переписки. Используйте доступные вам инструменты, если это имеет смысл. На данный момент к вам обращаются с сообщением: {user_text}
+"""
                 # message_text = message_text.replace('\n', ' ')
                     
                 if self.chat_agent is None:

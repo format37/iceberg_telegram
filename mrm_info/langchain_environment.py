@@ -44,7 +44,7 @@ class DocumentInput(BaseModel):
 
 class mrm_master_log_args(BaseModel):
     # param: str = Field(description="""Предоставьте имя мастера""")
-    master_name: str = Field(description="Имя мастера")
+    master_name: str = Field(description="master_name")
     reply_to_message_id: int = Field(description="reply_to_message_id")
 
 class ChatAgent:
@@ -82,7 +82,7 @@ class ChatAgent:
         mrm_logs_tool = StructuredTool.from_function(
                 func=self.mrm_master_log,
                 name="Логи мастера",
-                description="Получает последнее сообщение из логов по имени мастера. Вам следует предоставить имя мастера и reply_to_message_id в качестве параметров.",
+                description="Получает последнее сообщение из логов по имени мастера. Вам следует предоставить master_name и reply_to_message_id в качестве параметров.",
                 args_schema=mrm_master_log_args,
                 return_direct=False,
                 # coroutine= ... <- you can specify an async method if desired as well
