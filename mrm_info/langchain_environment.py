@@ -13,6 +13,7 @@ from langchain.chains import RetrievalQA
 import requests
 import uuid
 from langchain.agents import initialize_agent, AgentType
+import json
 
 class DocumentProcessor:
     def __init__(self, context_path):
@@ -130,9 +131,14 @@ class ChatAgent:
 
         if response.status_code == 200:
             result_str = response.json()["result"]
-            lines = result_str.split('\n')  # Split the result into lines
-            first_line = lines[0] if lines else ""  # Get the first line, or empty string if no lines
-            result_str = f"Логи отправлены в чат. Последняя строка логов: {first_line}"  # Append the first line to the message
+            first_lines = {}
+            # Convert the result_str JSON string to dictionary
+            result_json = json.loads(result_str)
+            for key in result_json:
+                if result_json[key]:
+                    first_lines[key] = [result_json[key][0]]  # Get the first element of each key's array
+            answer_str = f"Файл логов в полном составе отправлен в чат. Последняя строка логов: {json.dumps(first_lines)}"  # Convert the dictionary to JSON string
+            # print(f"Received from mrm_logs:\n{result_str}")
             # Save response as temporary file with the unique name
             uid_name = str(uuid.uuid4())
             # Create /tmp directory if it doesn't exist
@@ -143,17 +149,26 @@ class ChatAgent:
                 f.write(str(result_str))
                 self.logger.info(f"Logs saved to {filename}")
             # Send file to the user via bot
+            # self.bot_instance.send_file(f"/tmp/{uid_name}.txt")
             with open(filename, 'rb') as f:
                 self.logger.info(f"Sending {filename} to the chat_id: {reply_to_message_id}")
+                # Send to chat
+                """self.bot_instance.send_document(
+                    self.chat_id,
+                    f
+                )"""
                 # Reply to reply_to_message_id as a document
                 self.bot_instance.send_document(
                     self.chat_id,
                     f,
                     reply_to_message_id=reply_to_message_id
                 )
+            # result_str = f"Логи отправлены в чат."
         else:
-            result_str = f"Error: {response.status_code}"
-        return result_str
+            # print(f"Error: {response.status_code}")
+            answer_str = f"Error: {response.status_code}"
+        self.logger.info(f"mrm_master_log answer_str: {answer_str}")
+        return answer_str
         
 
     @staticmethod
