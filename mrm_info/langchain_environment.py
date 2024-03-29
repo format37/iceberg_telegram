@@ -126,21 +126,31 @@ class ChatAgent:
                 if result_str[key]:
                     first_lines[key] = [result_str[key][0]]
 
-            # Convert the JSON data to a DataFrame
-            df = pd.DataFrame.from_dict(result_str, orient='index')
-            df = df.transpose()
+            # Create an empty list to store the HTML tables
+            html_tables = []
 
-            # Convert the DataFrame to an HTML table
-            html_table = df.to_html(index=False)
+            # Iterate over each region
+            for region, data in result_str.items():
+                # Convert the data for the current region to a DataFrame
+                df = pd.DataFrame(data)
 
-            # Save the HTML table as a temporary file with a unique name
+                # Convert the DataFrame to an HTML table
+                html_table = df.to_html(index=False)
+
+                # Add the region name as a heading and append the HTML table to the list
+                html_tables.append(f"<h2>{region}</h2>{html_table}")
+
+            # Join the HTML tables with a newline separator
+            combined_html = "\n".join(html_tables)
+
+            # Save the combined HTML tables as a temporary file with a unique name
             uid_name = str(uuid.uuid4())
             if not os.path.exists("/tmp"):
                 os.makedirs("/tmp")
             filename = f"/tmp/{uid_name}.html"
             with open(filename, "w") as f:
-                f.write(html_table)
-                self.logger.info(f"HTML table saved to {filename}")
+                f.write(combined_html)
+                self.logger.info(f"HTML tables saved to {filename}")
 
             # Send the HTML file to the user via bot
             with open(filename, 'rb') as f:
