@@ -117,3 +117,23 @@ class ChatHistoryService:
                 os.remove(full_path)
 
         return chat_history
+    
+    async def get_master_name_from_configuration(self, message_id: str):
+        chat_log_path = self.chat_log_path(message_id)
+        Path(chat_log_path).mkdir(parents=True, exist_ok=True)
+        
+        for log_file in sorted(os.listdir(chat_log_path), reverse=True):
+            if '1_configuration' in log_file:
+                full_path = os.path.join(chat_log_path, log_file)
+                try:
+                    with open(full_path, 'r') as file:
+                        message = json.load(file)
+                        if message['type'] == 'AIMessage':
+                            configuration = json.loads(message['text'])
+                            for item in configuration:
+                                if isinstance(item, dict) and 'master_name' in item:
+                                    return item['master_name']
+                except Exception as e:
+                    self.logger.error(f'Error reading configuration file {log_file}: {e}')
+        
+        return 'Unknown master'

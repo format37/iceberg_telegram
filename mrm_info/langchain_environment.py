@@ -44,7 +44,7 @@ class DocumentInput(BaseModel):
 
 class mrm_master_log_args(BaseModel):
     # param: str = Field(description="""Предоставьте имя мастера""")
-    master_name: str = Field(description="Имя мастера")
+    master_name: str = Field(description="master_name")
     reply_to_message_id: int = Field(description="reply_to_message_id")
 
 class ChatAgent:

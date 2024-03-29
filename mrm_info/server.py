@@ -185,7 +185,7 @@ class Application:
                         # Add current date to the results. Get date from the system time
                         results[info_id]['current_date'] = f'{datetime.datetime.now().strftime("%d-%m-%Y %H:%M:%S")}'
                         # Replace 'name' with 'master_name' in the results
-                        results[info_id]['Имя мастера'] = results[info_id].pop('name')
+                        results[info_id]['master_name'] = results[info_id].pop('name')
                             
                 else:
                     results.append('Техническая информация о пользователе недоступна')
@@ -263,6 +263,7 @@ class Application:
                 if await self.chat_history_service.is_message_deprecated(2, message, reply_to_message_id):
                     return self.empty_response
                 user_info = str(results) if len(results) > 0 else "Not provided" # Tech info from 1C
+                master_name = await self.chat_history_service.get_master_name_from_configuration(message_thread_id)
                 if len(chat_history) < 3:
                     message_text = f"""Вы сотрудник технической поддержки Мобильного приложения мастера.
 К нам поступил запрос от пользователя: "{user_text}"
@@ -270,6 +271,7 @@ class Application:
 Техническая информация о пользвателе:
 {user_info}
 reply_to_message_id: {reply_to_message_id}
+master_name: {master_name}
 Ваша задача помочь разработчикам предположить что могло стать причиной проблемы пользователя и предложить путь решения.
 Формируйте ответ не для пользователя, но для Коллег из тех. поддержки.
 Вам доступен набор инструментов. Вам настоятельно рекомендуется использовать ваши инструменты.
@@ -282,6 +284,7 @@ reply_to_message_id: {reply_to_message_id}
                 else:
                     message_text = f"""Вы сотрудник технической поддержки Мобильного приложения мастера.
 reply_to_message_id: {reply_to_message_id}
+master_name: {master_name}
 Помогите коллегам, учитывая контекст переписки. Используйте доступные вам инструменты, если это имеет смысл. На данный момент к вам обращаются с сообщением: {user_text}
 """
                 # message_text = message_text.replace('\n', ' ')
