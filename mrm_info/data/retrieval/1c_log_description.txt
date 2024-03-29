@@ -1,0 +1,38 @@
+AuthenticationRequestGUID	Регистрация устройства
+BidStatusList	Статусы заявок - список
+DivisionList	Направления - список
+TeamList	Бригады - список
+MasterList	Мастера - список
+BidList	Заявки - список
+Bidinfo	Заявка - ссылка
+Masterinfo	Мастер - ссылка
+BidCommentAdd	Заявка - добавление комментария
+BidEdit	Заявка - изменение состава работ и деталей
+BidStatusUpdate	Заявка - изменение статуса
+BidPhotoAdd	Заявка - добавление фото мастера
+BidPhotoDelete	Заявка - удаление фото мастера
+BidMasterUpdate	Заявка - запрос на изменение мастера
+PartList	Детали - список
+BidMasterUpdateConfirmation	Заявка - подтверждение изменения мастера
+MasterBalancePartList	Детали - список на балансе у мастера
+WorkList	Работы - список
+BrandList	Бренды - список
+OrderPartsForMaster	Ордер - создание. Получение деталей мастером
+DivisionListPro	Направления - список (с отбором и иконками)
+BidRead	Заявка - изменение ДатаПросмотраМРМ
+GetBidContact	Контактные данные - ссылка
+OrderPartsBackFromMaster	Ордер - возврат деталей от мастера, на склад
+OrderCancel	Ордер - отмена
+MasterOrderList	Ордер - список
+NewsGet	Новости - список
+NewsMark	Новость - отметка о прочтении
+Orderinfo	Ордер - детальная информация
+MasterKPI	Показатели KPI
+OrderPartsFromSupplier	Запрос на создание документа Заказ мастера
+OrderFromSupplierList	Список документов Заказ мастера
+CallEvent	Записывает в историю заявки дату звонка
+CallBackRequest	Заказ обратного звонка
+Partinfo	Подробная информация о детали
+OfficePhoneList	OfficePhoneList
+CheckPhoneExist	Проверка наличия телефона в базе 1с
+CheckMasterPassword Проверка пароля мастера
