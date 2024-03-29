@@ -187,7 +187,11 @@ class Application:
                         # Replace 'name' with 'master_name' in the results
                         results[info_id]['master_name'] = results[info_id].pop('name')
                         # Replace " with ' in the results
-                        results[info_id] = {k.replace('"', "'"): v for k, v in results[info_id].items()}
+                        for key, value in results[info_id].items():
+                            if isinstance(value, str):
+                                results[info_id][key] = value.replace('"', "'")
+                                self.logger.info(f'# DEBUG results[{info_id}][{key}]: {results[info_id][key]}')
+
                             
                 else:
                     results.append('Техническая информация о пользователе недоступна')
