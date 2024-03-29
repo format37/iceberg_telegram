@@ -144,9 +144,16 @@ class ChatAgent:
             # self.bot_instance.send_file(f"/tmp/{uid_name}.txt")
             with open(filename, 'rb') as f:
                 self.logger.info(f"Sending {filename} to the chat_id: {reply_to_message_id}")
-                self.bot_instance.send_document(
-                    reply_to_message_id,
+                # Send to chat
+                """self.bot_instance.send_document(
+                    self.chat_id,
                     f
+                )"""
+                # Reply to reply_to_message_id as a document
+                self.bot_instance.send_document(
+                    self.chat_id,
+                    f,
+                    reply_to_message_id=reply_to_message_id
                 )
             result_str = f"Логи отправлены в чат."
         else:
