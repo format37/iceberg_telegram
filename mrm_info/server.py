@@ -267,6 +267,7 @@ class Application:
 Разработчик приложения тоже увидел это сообщение.
 Техническая информация о пользвателе:
 {user_info}
+reply_to_message_id: {reply_to_message_id}
 Ваша задача помочь разработчикам предположить что могло стать причиной проблемы пользователя и предложить путь решения.
 Формируйте ответ не для пользователя, но для Коллег из тех. поддержки.
 Вам доступен набор инструментов. Вам настоятельно рекомендуется использовать ваши инструменты.
@@ -296,7 +297,8 @@ class Application:
                 self.logger.info(f'Calling LLM with chat history length: {len(chat_history)}')
                 answer = self.chat_agent.agent.run(
                     input=message_text, 
-                    chat_history=chat_history
+                    chat_history=chat_history,
+                    reply_to_message_id=reply_to_message_id
                 )
                 # Return empty if deprecated
                 if await self.chat_history_service.is_message_deprecated(3, message, reply_to_message_id):

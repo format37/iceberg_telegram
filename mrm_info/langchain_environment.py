@@ -41,7 +41,9 @@ class DocumentInput(BaseModel):
     question: str = Field()
 
 class mrm_master_log_args(BaseModel):
-    param: str = Field(description="""Предоставьте имя мастера""")
+    # param: str = Field(description="""Предоставьте имя мастера""")
+    master_name: str = Field(description="Имя мастера")
+    reply_to_message_id: int = Field(description="reply_to_message_id")
 
 class ChatAgent:
     def __init__(self, retriever, model, temperature, logger, bot_instance, chat_id):
@@ -102,7 +104,8 @@ class ChatAgent:
             handle_parsing_errors=True
         )
 
-    def mrm_master_log(self, master_name):
+    def mrm_master_log(self, master_name, reply_to_message_id):
+        self.logger.info(f"#### mrm_master_log master_name: {master_name} reply_to_message_id: {reply_to_message_id}")
         """self.logger.info(f"mrm_master_log master_name: {master_name}")
         onec_request = OneC_Request('1c.json')
         query_params = {
