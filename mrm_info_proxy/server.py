@@ -125,6 +125,19 @@ async def call_user_info(request: Request):
 async def call_user_info(request: Request):
     logger.info(f'call_user_info. request: {request}')
     data = await request.json()
+    result = 'Not performed'
+    try:
+        data = await request.json()
+        token = data.get('token', '')
+        if token != os.environ.get('MRMSUPPORTBOT_TOKEN', ''):
+            result = f'Invalid token: {token}'
+            logger.info(result)
+            return result
+    except Exception as e:
+        result = f'Invalid request: {data}'
+        logger.info(result)
+        return result
+    
     params = data.get('params', {})
     url = "http://10.2.4.141/Test_CRM/hs/yandex/v1/order"
     r = requests.post(url, json=params, headers={'Content-Type': 'application/json'})
