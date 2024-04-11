@@ -9,6 +9,7 @@ from zeep.transports import Transport
 from onec_request import OneC_Request
 import numpy as np
 import requests
+from flask import jsonify
 
 # Initialize FastAPI
 app = FastAPI()
@@ -142,4 +143,5 @@ async def call_user_info(request: Request):
     url = "http://10.2.4.141/Test_CRM/hs/yandex/v1/order"
     r = requests.post(url, json=params, headers={'Content-Type': 'application/json'})
     logger.info(f'create_order result: {r.status_code}, {r.text}')
-    return r
+    # return r
+    return jsonify(r)
