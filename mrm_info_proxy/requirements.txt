@@ -4,3 +4,4 @@ requests==2.31.0
 pandas==2.1.2
 # matplotlib==3.8.1
 zeep==4.1.0
+flask==3.0.3
