@@ -123,8 +123,8 @@ async def call_user_info(request: Request):
     return results
 
 @app.post("/create_order")
-async def call_user_info(request: Request):
-    logger.info(f'call_user_info. request: {request}')
+async def call_create_order(request: Request):
+    logger.info(f'call_create_order. request: {request}')
     data = await request.json()
     result = 'Not performed'
     try:
@@ -133,15 +133,22 @@ async def call_user_info(request: Request):
         if token != os.environ.get('MRMSUPPORTBOT_TOKEN', ''):
             result = f'Invalid token: {token}'
             logger.info(result)
-            return result
+            return JSONResponse(content={"result": result}, status_code=401)
     except Exception as e:
         result = f'Invalid request: {data}'
         logger.info(result)
-        return result
+        return JSONResponse(content={"result": result}, status_code=400)
     
     params = data.get('params', {})
     url = "http://10.2.4.141/Test_CRM/hs/yandex/v1/order"
-    r = requests.post(url, json=params, headers={'Content-Type': 'application/json'})
-    logger.info(f'create_order result: {r.status_code}, {r.text}')
-    # return r
-    return jsonify(r)
+    try:
+        r = requests.post(url, json=params, headers={'Content-Type': 'application/json'})
+        logger.info(f'create_order result: {r.status_code}, {r.text}')
+        
+        if r.status_code == 200:
+            return JSONResponse(content={"result": r.json()})
+        else:
+            return JSONResponse(content={"result": "Error creating order", "detail": r.text}, status_code=r.status_code)
+    except requests.exceptions.RequestException as e:
+        logger.error(f"Error in call_create_order: {str(e)}")
+        return JSONResponse(content={"result": "Error creating order", "detail": str(e)}, status_code=500)
