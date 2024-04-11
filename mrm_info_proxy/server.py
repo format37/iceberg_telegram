@@ -7,6 +7,8 @@ from requests import Session
 from zeep import Client
 from zeep.transports import Transport
 from onec_request import OneC_Request
+import numpy as np
+import requests
 
 # Initialize FastAPI
 app = FastAPI()
@@ -44,31 +46,6 @@ async def call_actual_version(request: Request):
         "version": version,
         "link": apk_link
         })
-
-"""@app.post("/request_1c")
-async def call_request_1c(request: Request):
-    logger.info(f'call_request_1c. request: {request}')
-    try:
-        query_params = await request.json()
-        logger.info(f"request_1c query_params: {query_params}")
-        onec_request = OneC_Request('1c.json')
-        result_dfs = onec_request.execute_query(query_params)
-        
-        # Create a dictionary to store the result strings for each key
-        result_dict = {}
-        
-        # Iterate over the keys and DataFrames in result_dfs
-        for key, df in result_dfs.items():
-            # Convert the DataFrame to a string and store it in the result dictionary
-            result_dict[key] = df.to_string(index=False)
-        
-        logger.info(f"Received from mrm_logs:\n{result_dict}")
-        return JSONResponse(content={"result": result_dict})
-    except Exception as e:
-        logger.error(f"Error in call_request_1c: {str(e)}")
-        raise HTTPException(status_code=500, detail="Internal Server Error")"""
-
-import numpy as np
 
 @app.post("/request_1c")
 async def call_request_1c(request: Request):
@@ -143,3 +120,13 @@ async def call_user_info(request: Request):
             logger.error(str(w) + ' user_info error: ' + str(e))
     logger.info('user_info results count: ' + str(len(results)))
     return results
+
+@app.post("/create_order")
+async def call_user_info(request: Request):
+    logger.info(f'call_user_info. request: {request}')
+    data = await request.json()
+    params = data.get('params', {})
+    url = "http://10.2.4.141/Test_CRM/hs/yandex/v1/order"
+    r = requests.post(url, json=params, headers={'Content-Type': 'application/json'})
+    logger.info(f'create_order result: {r.status_code}, {r.text}')
+    return r

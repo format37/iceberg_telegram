@@ -110,7 +110,8 @@ class ChatAgent:
         )
 
     def mrm_master_log(self, master_name, reply_to_message_id):
-        self.logger.info(f"#### mrm_master_log master_name: {master_name} reply_to_message_id: {reply_to_message_id}")
+
+        self.logger.info(f"mrm_master_log master_name: {master_name} reply_to_message_id: {reply_to_message_id}")
         url = "https://service.icecorp.ru:7403/request_1c"  # Replace with your server URL
         query_params = {
             "Идентификатор": "mrm_log_0",
@@ -165,39 +166,7 @@ class ChatAgent:
         else:
             answer_str = f"Error: {response.status_code}"
         self.logger.info(f"mrm_master_log answer_str: {answer_str}")
-        return answer_str
-
-        """if response.status_code == 200:
-            result_str = response.json()["result"]
-            first_lines = {}
-            # Convert the result_str JSON string to dictionary
-            for key in result_str:
-                if result_str[key]:
-                    first_lines[key] = [result_str[key][0]]  # Get the first element of each key's array
-            answer_str = f"Файл логов в полном составе отправлен в чат. Последняя строка логов: {json.dumps(first_lines)}"  # Convert the dictionary to JSON string
-            # Save response as temporary file with the unique name
-            uid_name = str(uuid.uuid4())
-            # Create /tmp directory if it doesn't exist
-            if not os.path.exists("/tmp"):
-                os.makedirs("/tmp")
-            filename = f"/tmp/{uid_name}.txt"
-            with open(filename, "w") as f:
-                f.write(str(result_str))
-                self.logger.info(f"Logs saved to {filename}")
-            # Send file to the user via bot
-            with open(filename, 'rb') as f:
-                self.logger.info(f"Sending {filename} to the chat_id: {reply_to_message_id}")
-                # Reply to reply_to_message_id as a document
-                self.bot_instance.send_document(
-                    self.chat_id,
-                    f,
-                    reply_to_message_id=reply_to_message_id
-                )
-        else:
-            answer_str = f"Error: {response.status_code}"
-        self.logger.info(f"mrm_master_log answer_str: {answer_str}")
-        return answer_str"""
-        
+        return answer_str        
 
     @staticmethod
     async def create_structured_tool(func, name, description, return_direct):
