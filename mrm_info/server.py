@@ -172,7 +172,9 @@ class Application:
             if not await self.chat_history_service.configuration_in_history(reply_to_message_id):
                 actual_version_info = await self.onec_service.get_actual_version()
                 if 'forward_origin' in message and 'forward_from' in message:
-                    results = await self.onec_service.get_user_info(message['forward_from']['id'])
+                    phone_number = message['forward_from']['phone_number'] if 'phone_number' in message['forward_from'] else ''
+                    user_name = message['forward_from']['first_name'] if 'first_name' in message['forward_from'] else ''
+                    results = await self.onec_service.get_user_info(message['forward_from']['id'], phone_number, user_name)
                     for info_id in range(len(results)):
                         self.logger.info(f'# DEBUG results: {results}')
                         # Convert item to JSON using ast

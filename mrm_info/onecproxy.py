@@ -30,9 +30,9 @@ class OneCProxyService:
             self.logger.error(f"Request to {endpoint} failed: {e}")
             return []
 
-    async def get_user_info(self, user_id: int) -> Dict[str, Any]:
+    async def get_user_info(self, user_id: int, phone_number: str, user_name: str) -> Dict[str, Any]:
         headers = {'Content-Type': 'application/json'}
-        data = {'token': self.token, 'user_id': user_id}
+        data = {'token': self.token, 'user_id': user_id, 'phone_number': phone_number, 'user_name': user_name}
         return self._make_request(endpoint="user_info", method="POST", headers=headers, data=data)
     
     async def get_actual_version(self) -> Dict[str, Any]:

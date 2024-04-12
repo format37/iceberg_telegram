@@ -95,6 +95,8 @@ async def call_user_info(request: Request):
     
     # user_id is Telegram message['forward_from']['id']
     user_id = data.get('user_id', '')
+    phone_number = data.get('phone_number', '')
+    user_name = data.get('user_name', '')
     
     logger.info(f'call_user_info. user_id: {user_id}')
     clientPath = [
@@ -111,7 +113,7 @@ async def call_user_info(request: Request):
         client = Client(w, transport=Transport(session=session))
         logger.info('Calling user_info from: ' + str(w))
         try:
-            res = client.service.user_info(user_id, '')
+            res = client.service.user_info(user_id, phone_number, user_name)
             logger.info('user_info result: ' + str(res))
             # code		= res.result.code
             # message		= res.result.message
