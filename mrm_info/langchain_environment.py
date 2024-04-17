@@ -15,6 +15,8 @@ import uuid
 from langchain.agents import initialize_agent, AgentType
 import json
 import pandas as pd
+import datetime
+import time
 
 class DocumentProcessor:
     def __init__(self, context_path):
@@ -113,9 +115,12 @@ class ChatAgent:
 
         self.logger.info(f"mrm_master_log master_name: {master_name} reply_to_message_id: {reply_to_message_id}")
         url = "https://service.icecorp.ru:7403/request_1c"  # Replace with your server URL
+        # Date format sample 2024-02-01T13:00:00
+        current_date = datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
         query_params = {
             "Идентификатор": "mrm_log_0",
-            "master_name": master_name
+            "master_name": master_name,
+            "current_date": current_date
         }
 
         response = requests.post(url, json=query_params)
