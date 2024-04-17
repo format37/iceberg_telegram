@@ -88,7 +88,7 @@ class ChatAgent:
                 name="Логи мастера",
                 description="Получает последние сообщения из логов по имени мастера. Вам следует предоставить Имя мастера и reply_to_message_id в качестве параметров.",
                 args_schema=mrm_master_log_args,
-                return_direct=False,
+                return_direct=True,
                 # coroutine= ... <- you can specify an async method if desired as well
             )
         tools.append(mrm_logs_tool)
