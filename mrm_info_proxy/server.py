@@ -116,6 +116,7 @@ async def call_user_info(request: Request):
         if token != os.environ.get('MRMSUPPORTBOT_TOKEN', ''):
             # raise HTTPException(status_code=401, detail="Invalid token")
             logger.info(f'Invalid token: {token}')
+            logger.info(f'Expected token: {os.environ.get("MRMSUPPORTBOT_TOKEN", "")}')
             return results
     except Exception as e:
         # logger.error('call_user_info error: ' + str(e))
