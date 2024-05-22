@@ -17,5 +17,5 @@ services:
       - MRMSUPPORTBOT_TOKEN="token"
     volumes:
       - /etc/letsencrypt/live/service.icecorp.ru-0001/fullchain.pem:/cert/fullchain.pem
-      - /etc/letsencrypt/live/service.icecorp.ru-0001/privkey.pem:/cert/webhook_pkey.pem
+      - /etc/letsencrypt/live/service.icecorp.ru-0001/privkey.pem:/cert/privkey.pem
       - /mnt/soft:/mnt/soft
