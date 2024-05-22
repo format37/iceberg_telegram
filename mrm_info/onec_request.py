@@ -9,8 +9,9 @@ from zeep.transports import Transport
 import io
 
 class OneC_Request:
-    def __init__(self, config_file):
-        self.config = json.load(open(config_file))
+    def __init__(self, config):
+        # self.config = json.load(open(config_file))
+        self.config = config
         self.login = self.config['login']
         self.password = self.config['password']
         self.clients = self.config['clientPath']

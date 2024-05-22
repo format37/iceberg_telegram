@@ -12,7 +12,7 @@ sudo docker run \
     -e MRMSUPPORTBOT_AUTH_LOGIN="login" \
     -e MRMSUPPORTBOT_AUTH_PASSWORD="password" \
     -e MRMSUPPORTBOT_TOKEN="token" \
-    -v /etc/letsencrypt/live/yourdomain.com/fullchain.pem:/cert/webhook_cert.pem \
-    -v /etc/letsencrypt/live/yourdomain.com/privkey.pem:/cert/webhook_pkey.pem \
+    -v /etc/letsencrypt/live/service.icecorp.ru-0001/fullchain.pem:/cert/fullchain.pem \
+    -v /etc/letsencrypt/live/service.icecorp.ru-0001/privkey.pem:/cert/webhook_pkey.pem \
     -v /mnt/soft:/mnt/soft \
     mrm_info_proxy
