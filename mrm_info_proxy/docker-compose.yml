@@ -12,9 +12,9 @@ services:
         max-size: "1m"
         max-file: "3"
     environment:
-      - MRMSUPPORTBOT_AUTH_LOGIN="login"
-      - MRMSUPPORTBOT_AUTH_PASSWORD="password"
-      - MRMSUPPORTBOT_TOKEN="token"
+      - MRMSUPPORTBOT_AUTH_LOGIN=login
+      - MRMSUPPORTBOT_AUTH_PASSWORD=password
+      - MRMSUPPORTBOT_TOKEN=token
     volumes:
       - /etc/letsencrypt/live/service.icecorp.ru-0001/fullchain.pem:/cert/fullchain.pem
       - /etc/letsencrypt/live/service.icecorp.ru-0001/privkey.pem:/cert/privkey.pem
