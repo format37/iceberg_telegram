@@ -48,36 +48,36 @@ async def call_actual_version(request: Request):
         "link": apk_link
         })
 
-@app.post("/request_1c_db")
-async def call_request_1c(request: Request):
-    logger.info(f'call_request_1c_db. request: {request}')
-    try:
-        # query_params = await request.json()
-        # logger.info(f"request_1c query_params: {query_params}")
+# @app.post("/request_1c_db")
+# async def call_request_1c(request: Request):
+#     logger.info(f'call_request_1c_db. request: {request}')
+#     try:
+#         # query_params = await request.json()
+#         # logger.info(f"request_1c query_params: {query_params}")
         
-        params = await request.json()
-        query_params = params.get('query_params', {})
+#         params = await request.json()
+#         query_params = params.get('query_params', {})
         
-        onec_request = OneC_Request('1c.json')
-        result_dfs = onec_request.execute_query(query_params)
+#         onec_request = OneC_Request('1c.json')
+#         result_dfs = onec_request.execute_query(query_params)
 
-        # Create a dictionary to store the structured JSON for each key
-        result_dict = {}
+#         # Create a dictionary to store the structured JSON for each key
+#         result_dict = {}
         
-        # Iterate over the keys and DataFrames in result_dfs
-        for key, df in result_dfs.items():
-            # Convert nan values to None
-            df = df.replace({np.nan: None})
+#         # Iterate over the keys and DataFrames in result_dfs
+#         for key, df in result_dfs.items():
+#             # Convert nan values to None
+#             df = df.replace({np.nan: None})
             
-            # Convert the DataFrame to a list of dictionaries
-            data = df.to_dict(orient='records')
-            result_dict[key] = data
+#             # Convert the DataFrame to a list of dictionaries
+#             data = df.to_dict(orient='records')
+#             result_dict[key] = data
         
-        logger.info(f"Received from mrm_logs:\n{result_dict}")
-        return JSONResponse(content={"result": result_dict})
-    except Exception as e:
-        logger.error(f"Error in call_request_1c: {str(e)}")
-        raise HTTPException(status_code=500, detail="Internal Server Error")
+#         logger.info(f"Received from mrm_logs:\n{result_dict}")
+#         return JSONResponse(content={"result": result_dict})
+#     except Exception as e:
+#         logger.error(f"Error in call_request_1c: {str(e)}")
+#         raise HTTPException(status_code=500, detail="Internal Server Error")
 
 @app.post("/request_1c")
 async def call_request_1c(request: Request):
@@ -174,6 +174,7 @@ async def call_create_order(request: Request):
         return JSONResponse(content={"result": result}, status_code=400)
     
     params = data.get('params', {})
+    logger.info(f'create_order params: {params}')
     url = "http://10.2.4.141/Test_CRM/hs/yandex/v1/order"
     try:
         r = requests.post(url, json=params, headers={'Content-Type': 'application/json'})

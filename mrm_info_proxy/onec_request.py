@@ -25,9 +25,11 @@ class OneC_Request:
 
         for client_name, client_url in self.clients.items():
             start_time = time.time()
+            self.logger.info(f'\n\nInitialization client_name: {client_name}, client_url: {client_url}')
             client = Client(client_url, transport=Transport(session=self.session))
-            self.logger.info(f'\n\nCalling ws for: {client_name}')
+            # self.logger.info(f'\n\nCalling ws for: {client_name}')
 
+            self.logger.info(f'Executing query')
             response = client.service.ExecuteQuery(str(query_params))
             end_time = time.time()
             self.logger.info(f'Execution time: {end_time - start_time}')
