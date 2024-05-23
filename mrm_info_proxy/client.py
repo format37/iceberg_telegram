@@ -3,7 +3,7 @@ import json
 # import sys
 
 # Server base URL
-base_url = "http://service.icecorp.ru:7403"  # Adjust as necessary
+base_url = "https://service.icecorp.ru:7403"  # Adjust as necessary
 
 # Testing the /test endpoint
 def test_endpoint():
