@@ -3,8 +3,9 @@ sudo docker stop mrm_info_bot_test
 # remove container
 sudo docker rm mrm_info_bot_test
 # run container
+# -p 7403:8000 \
 sudo docker run \
-    -p 7403:8000 \
+    --network host \
     --name mrm_info_bot_test \
     -e MRMSUPPORTBOT_AUTH_LOGIN="" \
     -e MRMSUPPORTBOT_AUTH_PASSWORD="" \
