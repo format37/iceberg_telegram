@@ -118,6 +118,13 @@ class Application:
                 message_thread_id = message['message_id']
 
             message_text = ''
+            server_api_uri = 'http://localhost:8081/bot{0}/{1}'
+            telebot.apihelper.API_URL = server_api_uri
+            self.logger.info(f'Setting API_URL: {server_api_uri}')
+
+            server_file_url = 'http://localhost:8081'
+            telebot.apihelper.FILE_URL = server_file_url
+            self.logger.info(f'Setting FILE_URL: {server_file_url}')
             bot = telebot.TeleBot(token)
 
             # Photo description

@@ -177,6 +177,7 @@ async def call_create_order(request: Request):
     logger.info(f'create_order params: {params}')
     url = "http://10.2.4.141/Test_CRM/hs/yandex/v1/order"
     try:
+        logger.info(f'\n\nCalling post url: {url}')
         r = requests.post(url, json=params, headers={'Content-Type': 'application/json'})
         logger.info(f'create_order result: {r.status_code}, {r.text}')
         
