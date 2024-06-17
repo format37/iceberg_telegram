@@ -1,2 +1,2 @@
-# sudo docker-compose up --force-recreate --build -d
-sudo docker-compose up --build
+sudo docker compose down -v
+sudo docker compose up --build --force-recreate --remove-orphans

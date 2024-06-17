@@ -11,7 +11,7 @@ services:
       # - ./data:/server/data
       # - /mnt/photos:/mnt/photos
       - /mnt/soft:/mnt/soft
-      - config.json:/server/config.json
+      - ./config.json:/server/config.json
     build: ./
     ports:
       - "7404:84"
@@ -27,7 +27,7 @@ services:
       - /etc/localtime:/etc/localtime:ro
       - /etc/timezone:/etc/timezone:ro
       - /home/yurasov/projects/iceberg_telegram/data:/server/data
-      - config_test.json:/server/config.json
+      - ./config_test.json:/server/config.json
       # - ./data:/server/data
       # - /mnt/photos:/mnt/photos
       - /mnt/soft:/mnt/soft
