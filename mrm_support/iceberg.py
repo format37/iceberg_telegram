@@ -74,7 +74,7 @@ def contact_reaction(message, clientPath, token):
         logger.info('contact_reaction. message: '+str(message))
 
         try:
-            results = mrmsupport_bot_confirmphone(message['contact']['phone_number'], message['chat']['id'], clientPath ,username) 
+            results = mrmsupport_bot_confirmphone(message['contact']['phone_number'], message['chat']['id'], clientPath ,username)
             has_true_result = False
             for res in results:
                 if res:

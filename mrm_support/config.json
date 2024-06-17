@@ -1,0 +1,7 @@
+{
+    "clientPath": [
+        "http://10.2.4.123/productionMSK/ws/Telegram.1cws?wsdl",
+        "http://10.2.4.123/productionNNOV/ws/Telegram.1cws?wsdl",
+        "http://10.2.4.123/productionSPB/ws/Telegram.1cws?wsdl"
+    ]
+}

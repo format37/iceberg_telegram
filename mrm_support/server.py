@@ -12,6 +12,7 @@ from iceberg import (
     save_config,
     get_bid_keyboard
 )
+import json
 
 # Initialize FastAPI
 app = FastAPI()
@@ -20,6 +21,10 @@ app = FastAPI()
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
+
+# Read system_config form config.json
+with open('config.json') as config_file:
+    system_config = json.load(config_file)
 
 
 @app.get("/test")
@@ -60,11 +65,13 @@ async def call_message(request: Request, authorization: str = Header(None)):
     config = read_config(conf_path, message['from']['id'])
     data_path = './data/'
 
-    clientPath = [
-        'http://10.2.4.123/productionMSK/ws/Telegram.1cws?wsdl',
-        'http://10.2.4.123/productionNNOV/ws/Telegram.1cws?wsdl',
-        'http://10.2.4.123/productionSPB/ws/Telegram.1cws?wsdl'
-    ]
+    # clientPath = [
+    #     'http://10.2.4.123/productionMSK/ws/Telegram.1cws?wsdl',
+    #     'http://10.2.4.123/productionNNOV/ws/Telegram.1cws?wsdl',
+    #     'http://10.2.4.123/productionSPB/ws/Telegram.1cws?wsdl'
+    # ]
+    system_config = json.load(open('config.json'))
+    clientPath = system_config['clientPath']
     
     if 'contact' in message:
         answer = contact_reaction(message, clientPath, token)
