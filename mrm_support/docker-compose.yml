@@ -33,7 +33,7 @@ services:
       - /mnt/soft:/mnt/soft
     build: ./
     ports:
-      - "7405:84"
+      - "7406:84"
     environment:
       - TZ=Europe/Moscow
       - MRMSUPPORTBOT_AUTH_LOGIN=login
